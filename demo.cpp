@@ -10,10 +10,19 @@
 #include <time.h>
 #include <unistd.h>
 #include <memory>
+#include <fstream>
 #include "NativeBitmap.h"
 #include "LoadImage.h"
 
-std::shared_ptr<odb::NativeBitmap> tile0;
+std::shared_ptr<odb::NativeBitmap> tiles[]{
+        nullptr,
+        odb::loadBitmap("tile0.png"),
+        odb::loadBitmap("tile1.png"),
+        odb::loadBitmap("tile2.png"),
+        odb::loadBitmap("tile3.png"),
+};
+
+int tilesRoom[6][10];
 
 int px = 160;
 int py = 100;
@@ -74,26 +83,61 @@ void render() {
   int x0 = 0;
   int x1 = 0;
 
-  y0 = py;
-  y1 = 32 + py;
-  x0 = px;
-  x1 = 32 + px;
-    int* pixelData = tile0->getPixelData();
 
-  for ( int y = y0; y < y1; ++y ) {
-    for ( int x = x0; x < x1; ++x ) {
-        int pixel = (pixelData[ ( 32 * ( y - y0 )) + ( x - x0 )]);
+  for ( int ty = 0; ty < 6; ++ty ) {
+    for ( int tx = 0; tx < 10; ++tx ) {
+      std::shared_ptr<odb::NativeBitmap> tile = tiles[tilesRoom[ ty ][ tx ]];
 
-	    imageBuffer[ ( 320 * y ) + x ] = pixel;
+
+      y0 = (ty * 32);
+      y1 = 32 + (ty * 32);
+      x0 = (tx * 32);
+      x1 = 32 + (tx * 32);
+      int* pixelData = nullptr;
+
+      if ( tile != nullptr ) {
+        pixelData = tile->getPixelData();
+      }
+
+      tile = tiles[ 1 ];
+
+      int pixel = 0;
+      for ( int y = y0; y < y1; ++y ) {
+        for ( int x = x0; x < x1; ++x ) {
+
+          if ( pixelData != nullptr ) {
+            pixel = (pixelData[(32 * (y - y0)) + (x - x0)]);
+          }
+
+          imageBuffer[ ( 320 * y ) + x ] = pixel;
+        }
+      }
+
+
+
     }
   }
+
+
+
 
   copyImageBufferToVideoMemory();
     usleep(  20000 );
 }
 
 int main( int argc, char **argv ) {
-    tile0 = odb::loadBitmap("tile0.png");
+
+  std::ifstream tilemap("tilemap");
+
+  for ( int y = 0; y < 6; ++y ) {
+    for ( int x = 0; x < 10; ++x ) {
+      char ch = '0';
+
+      tilemap >> ch;
+      tilesRoom[ y ][ x ] = ch - '0';
+    }
+  }
+
 
   bool done = false;
 
