@@ -109,10 +109,19 @@ namespace odb {
 //                std::cout << pixel << ", ";
                 switch (pixel) {
                     case 155:
+                        pixel = 6;
+                        break;
+                    case 77:
                         pixel = 2;
                         break;
-                    case 104:
+                    case 51:
                         pixel = 1;
+                        break;
+                    case 104:
+                        pixel = 5;
+                        break;
+                    case 0:
+                        pixel = 0;
                         break;
                     default:
                         pixel = 0;

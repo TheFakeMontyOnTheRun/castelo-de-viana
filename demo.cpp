@@ -59,6 +59,14 @@ void copyImageBufferToVideoMemory() {
       
       offset = (y * 320) + x;
       origin = imageBuffer[ offset ];
+
+        if ( origin < 4 ) {
+            if (((x + y) % 2) == 0) {
+                continue;
+            }
+        } else {
+            origin = origin - 4;
+        }
       
       if ( buffer[ offset ] != origin ) {
         union REGS regs;
