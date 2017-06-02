@@ -14,13 +14,7 @@
 #include "NativeBitmap.h"
 #include "LoadImage.h"
 
-std::shared_ptr<odb::NativeBitmap> tiles[]{
-        nullptr,
-        odb::loadBitmap("tile0.png"),
-        odb::loadBitmap("tile1.png"),
-        odb::loadBitmap("tile2.png"),
-        odb::loadBitmap("tile3.png"),
-};
+std::vector<std::shared_ptr<odb::NativeBitmap>> tiles;
 
 int tilesRoom[6][10];
 
@@ -151,6 +145,14 @@ int main(int argc, char **argv) {
         }
     }
 
+    std::ifstream tileList("tilelist");
+    std::string buffer;
+
+    while ( tileList.good() ) {
+        std::getline( tileList, buffer );
+        std::cout << "tile: " << buffer << std::endl;
+        tiles.push_back(odb::loadBitmap(buffer));
+    }
 
     bool done = false;
 
