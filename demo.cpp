@@ -123,6 +123,10 @@ void render() {
                         pixel = (pixelData[(32 * (y - y0)) + (x - x0)]);
                     }
 
+                    if ( pixel == 0 ) {
+                        continue;
+                    }
+
                     imageBuffer[(320 * y) + x] = pixel;
                 }
             }
@@ -144,6 +148,9 @@ void render() {
     for (int y = y0; y < y1; ++y) {
         for (int x = x0; x < x1; ++x) {
             pixel = (pixelData[(32 * (y - y0)) + (x - x0)]);
+            if ( pixel == 0 ) {
+                continue;
+            }
             imageBuffer[(320 * y) + x] = pixel;
         }
     }

@@ -142,13 +142,16 @@ namespace odb {
                     case 0:
                     case 102:
                     case 101:
-                        pixel = 0;
+                        pixel = 4;
                         break;
                     case 85:
                         pixel = 3;
                         break;
                     case 255:
                         pixel = 11;
+                        break;
+                    case 149:
+                        pixel = 0;
                         break;
                     default:
                         std::cout << "wtf is " << pixel << " at " << x << ", " << y << "?" << std::endl;
