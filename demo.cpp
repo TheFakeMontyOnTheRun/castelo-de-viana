@@ -20,8 +20,8 @@ std::shared_ptr<odb::NativeBitmap> hero = odb::loadBitmap("hero.png");
 
 int tilesRoom[6][10];
 
-int px = 1;
-int py = 1;
+int px = 0;
+int py = 0;
 int vx = 0;
 int vy = 0;
 int counter = 0;
@@ -138,10 +138,10 @@ void render() {
 
 
 
-    y0 = (py * 32);
-    y1 = 32 + (py * 32);
-    x0 = (px * 32);
-    x1 = 32 + (px * 32);
+    y0 = (py );
+    y1 = 32 + y0;
+    x0 = (px);
+    x1 = 32 + x0;
     int *pixelData = hero->getPixelData();
 
     int pixel = 0;
@@ -221,16 +221,16 @@ int main(int argc, char **argv) {
                     done = true;
                     break;
                 case 'w':
-                    vy = -1;
+                    vy = -5;
                     break;
                 case 's':
-                    vy = +1;
+                    vy = +5;
                     break;
                 case 'a':
-                    vx = -1;
+                    vx = -5;
                     break;
                 case 'd':
-                    vx = +1;
+                    vx = +5;
                     break;
             }
         }
