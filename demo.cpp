@@ -16,10 +16,12 @@
 
 std::vector<std::shared_ptr<odb::NativeBitmap>> tiles;
 
+std::shared_ptr<odb::NativeBitmap> hero = odb::loadBitmap("hero.png");
+
 int tilesRoom[6][10];
 
-int px = 160;
-int py = 100;
+int px = 1;
+int py = 1;
 int vx = 0;
 int vy = 0;
 int counter = 0;
@@ -130,6 +132,22 @@ void render() {
     }
 
 
+
+
+    y0 = (py * 32);
+    y1 = 32 + (py * 32);
+    x0 = (px * 32);
+    x1 = 32 + (px * 32);
+    int *pixelData = hero->getPixelData();
+
+    int pixel = 0;
+    for (int y = y0; y < y1; ++y) {
+        for (int x = x0; x < x1; ++x) {
+            pixel = (pixelData[(32 * (y - y0)) + (x - x0)]);
+            imageBuffer[(320 * y) + x] = pixel;
+        }
+    }
+
     copyImageBufferToVideoMemory();
     usleep(20000);
 }
@@ -167,7 +185,7 @@ int main(int argc, char **argv) {
         px += vx;
         py += vy;
 
-        //    vx = vy = 0;
+        vx = vy = 0;
 
         if (px < 0) {
             px = 0;
@@ -196,16 +214,16 @@ int main(int argc, char **argv) {
                     done = true;
                     break;
                 case 'w':
-                    vy = -5 + level;
+                    vy = -1;
                     break;
                 case 's':
-                    vy = 5 + level;
+                    vy = +1;
                     break;
                 case 'a':
-                    vx = -5 + level;
+                    vx = -1;
                     break;
                 case 'd':
-                    vx = 5 + level;
+                    vx = +1;
                     break;
             }
         }
