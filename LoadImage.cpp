@@ -42,55 +42,55 @@
 
 
 #define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
 
+#include "stb_image.h"
 
 
 namespace odb {
 
-  std::vector<char> readToBuffer(FILE *fileDescriptor) {
-    const unsigned N = 1024;
+    std::vector<char> readToBuffer(FILE *fileDescriptor) {
+        const unsigned N = 1024;
 
-    fseek(fileDescriptor, 0, SEEK_END);
-    auto endPos = ftell( fileDescriptor );
-    rewind(fileDescriptor);
-    std::vector<char> total(endPos);
-    auto writeHead = std::begin( total );
-    
-    for ( int c = 0; c < endPos; ++c ) {
-      char buffer[N];
-      size_t read = fread((void *) &buffer[0], 1, N, fileDescriptor);
-      if (read) {
-	for (int c = 0; c < read; ++c) {
-	  *writeHead = (buffer[c]);
-	  writeHead = std::next(writeHead);
-	}
-      }
-      if (read < N) {
-	break;
-      }
+        fseek(fileDescriptor, 0, SEEK_END);
+        auto endPos = ftell(fileDescriptor);
+        rewind(fileDescriptor);
+        std::vector<char> total(endPos);
+        auto writeHead = std::begin(total);
+
+        for (int c = 0; c < endPos; ++c) {
+            char buffer[N];
+            size_t read = fread((void *) &buffer[0], 1, N, fileDescriptor);
+            if (read) {
+                for (int c = 0; c < read; ++c) {
+                    *writeHead = (buffer[c]);
+                    writeHead = std::next(writeHead);
+                }
+            }
+            if (read < N) {
+                break;
+            }
+        }
+
+        return total;
     }
 
-    return total;
-  }
-  
-  
-  std::vector<char> loadBinaryFileFromPath(const std::string &path) {
-    FILE *fd;
 
-    fd = fopen(path.c_str(), "rb");
+    std::vector<char> loadBinaryFileFromPath(const std::string &path) {
+        FILE *fd;
 
-    if (fd == nullptr) {
-      exit(0);
+        fd = fopen(path.c_str(), "rb");
+
+        if (fd == nullptr) {
+            exit(0);
+        }
+
+        std::vector<char> toReturn = readToBuffer(fd);
+        fclose(fd);
+
+        return toReturn;
     }
 
-    std::vector<char> toReturn = readToBuffer(fd);
-    fclose(fd);
-
-    return toReturn;
-  }
-
-    std::shared_ptr<NativeBitmap> loadBitmap( std::string path ) {
+    std::shared_ptr<NativeBitmap> loadBitmap(std::string path) {
 
         std::cout << "loading " << path << std::endl;
 
@@ -103,9 +103,9 @@ namespace odb {
                                            1);
         auto rawData = new int[xSize * ySize];
 
-        for ( int y = 0; y < ySize; ++y ) {
-            for ( int x = 0; x < xSize; ++x ) {
-                int pixel = image[ ( y * xSize ) + x ];
+        for (int y = 0; y < ySize; ++y) {
+            for (int x = 0; x < xSize; ++x) {
+                int pixel = image[(y * xSize) + x];
 //                std::cout << pixel << ", ";
                 switch (pixel) {
                     case 155:
@@ -124,15 +124,18 @@ namespace odb {
                         pixel = 0;
                         break;
                     default:
+                        std::cout << "wtf is " << pixel << "?" << std::endl;
+                        exit(0);
                         pixel = 0;
                         break;
                 }
-                rawData[ ( y * xSize ) + x ] = pixel;
-                std::cout << (( rawData[ ( y * xSize ) + x ] )) << ", ";
+                rawData[(y * xSize) + x] = pixel;
+                //std::cout << (( rawData[ ( y * xSize ) + x ] )) << ", ";
             }
-            std::cout << std::endl;
+            //std::cout << std::endl;
         }
-        std::cout << components << std::endl;stbi_image_free(image);
+        std::cout << components << std::endl;
+        stbi_image_free(image);
 //exit(0);
         return (std::make_shared<odb::NativeBitmap>(path, xSize, ySize, rawData));
     }
