@@ -38,7 +38,7 @@ void copyImageBufferToVideoMemory() {
 
     int origin = 0;
     int offset = 0;
-
+    int value = 0;
     for (int y = 0; y < 200; ++y) {
 
         if (y < 0 || y >= 200) {
@@ -54,33 +54,35 @@ void copyImageBufferToVideoMemory() {
             offset = (y * 320) + x;
             origin = imageBuffer[offset];
 
+            value = origin;
+
             if (origin < 4) {
                 if (((x + y) % 2) == 0) {
-                    origin = 0;
+                    value = 0;
                 } else {
-                    origin = origin - 4;
+                    value = origin - 4;
                 }
             }
 
             if (origin >= 8) {
                 if (((x + y) % 2) == 0) {
-                    origin = 3;
+                    value = 3;
                 } else {
-                    origin = origin - 8;
+                    value = origin - 8;
                 }
             }
 
-//            if (buffer[offset] != origin) {
+            if (buffer[offset] != origin) {
                 union REGS regs;
                 regs.h.ah = 0x0C;
-                regs.h.al = origin;
+                regs.h.al = value;
                 regs.h.bh = 0;
                 regs.x.cx = x;
                 regs.x.dx = y;
                 int86(0x10, &regs, &regs);
-//            }
+            }
 
-//            buffer[offset] = origin;
+            buffer[offset] = origin;
         }
     }
 }
@@ -129,7 +131,7 @@ void render() {
 
 
     copyImageBufferToVideoMemory();
-    usleep(20000 * 1000);
+    usleep(20000);
 }
 
 int main(int argc, char **argv) {
