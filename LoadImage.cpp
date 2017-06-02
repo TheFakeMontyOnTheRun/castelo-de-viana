@@ -98,7 +98,20 @@ namespace odb {
         int xSize;
         int ySize;
         int components;
-
+/*
+ * 0 black
+ * 1 magenta dark
+ * 2 cyan dark
+ * 3 white
+ * 4 black
+ * 5 magenta
+ * 6 cyan
+ * 7 white
+ * 8 black
+ * 9 magenta light
+ * 10 cyan light
+ * 11 white
+ * */
         auto image = stbi_load_from_memory((const stbi_uc *) buffer.data(), buffer.size(), &xSize, &ySize, &components,
                                            1);
         auto rawData = new int[xSize * ySize];
@@ -108,23 +121,37 @@ namespace odb {
                 int pixel = image[(y * xSize) + x];
 //                std::cout << pixel << ", ";
                 switch (pixel) {
-                    case 155:
+                    case 154:
+                        pixel = 10;
+                        break;
+                    case 103:
                         pixel = 6;
                         break;
-                    case 77:
+                    case 51:
                         pixel = 2;
                         break;
-                    case 51:
+                    case 34:
                         pixel = 1;
                         break;
-                    case 104:
+                    case 108:
+                        pixel = 9;
+                        break;
+                    case 68:
                         pixel = 5;
                         break;
                     case 0:
+                    case 102:
+                    case 101:
                         pixel = 0;
                         break;
+                    case 85:
+                        pixel = 3;
+                        break;
+                    case 255:
+                        pixel = 11;
+                        break;
                     default:
-                        std::cout << "wtf is " << pixel << "?" << std::endl;
+                        std::cout << "wtf is " << pixel << " at " << x << ", " << y << "?" << std::endl;
                         exit(0);
                         pixel = 0;
                         break;
