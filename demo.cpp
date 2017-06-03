@@ -1,3 +1,5 @@
+#include <go32.h>
+#include <sys/farptr.h>
 #include <conio.h>
 #include <dpmi.h>
 #include <go32.h>
@@ -34,6 +36,62 @@ void initMode13h() {
     regs.h.ah = 0x00;
     regs.h.al = 0x4;
     int86(0x10, &regs, &regs);
+}
+
+void plot(int x, int y, int color) {
+    int b, m; /* bits and mask */
+    unsigned char *p;
+    unsigned char c;
+    _farsetsel( _dos_ds );
+    /* address section differs depending on odd/even scanline */
+    if (1 == (y & 0x1)) {
+        p = (unsigned char *)(0xB800 * 16) + 0x2000;
+    } else {
+        p = (unsigned char *)(0xB800 * 16);
+    }
+
+    /* divide by 2 (each address section is 100 pixels) */
+    y >>= 1;
+
+    /* start bit (b) and mask (m) for 2-bit pixels */
+    switch (x & 0x3) {
+        case 0:
+            b = 6;
+            m = 0xC0;
+            break;
+        case 1:
+            b = 4;
+            m = 0x30;
+            break;
+        case 2:
+            b = 2;
+            m = 0x0C;
+            break;
+        case 3:
+            b = 0;
+            m = 0x03;
+            break;
+    }
+
+    /* divide X by 4 (2 bits for each pixel) */
+    x >>= 2;
+
+    unsigned int offset = ((80 * y) + x);
+
+    /* 80 bytes per line (80 * 4 = 320), 4 pixels per byte */
+    p += offset;
+
+    /* read current pixel */
+    c = _farnspeekb( p );
+
+    /* remove bits at new position */
+    c = c & ~m;
+
+    /* set bits at new position */
+    c = c | (color << b);
+
+    /* write new pixel */
+    _farnspokeb( p, c );
 }
 
 void copyImageBufferToVideoMemory() {
@@ -79,13 +137,7 @@ void copyImageBufferToVideoMemory() {
             }
 
             if (buffer[offset] != origin ) {
-                union REGS regs;
-                regs.h.ah = 0x0C;
-                regs.h.al = value;
-                regs.h.bh = 0;
-                regs.x.cx = x;
-                regs.x.dx = y;
-                int86(0x10, &regs, &regs);
+                plot( x, y, value );
             }
 
             buffer[offset] = origin;
@@ -134,9 +186,6 @@ void render() {
 
         }
     }
-
-
-
 
     y0 = (py );
     y1 = 32 + y0;
