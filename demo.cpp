@@ -58,12 +58,16 @@ void copyImageBufferToVideoMemory() {
 
             value = origin;
 
-            if (origin < 4) {
+            if (0 < origin && origin < 4) {
                 if (((x + y) % 2) == 0) {
                     value = 0;
                 } else {
-                    value = origin - 4;
+                    value = origin;
                 }
+            }
+
+            if (4 <= origin && origin < 8) {
+                value = origin - 4;
             }
 
             if (origin >= 8) {
@@ -74,7 +78,7 @@ void copyImageBufferToVideoMemory() {
                 }
             }
 
-            if (buffer[offset] != origin) {
+            if (buffer[offset] != origin ) {
                 union REGS regs;
                 regs.h.ah = 0x0C;
                 regs.h.al = value;
@@ -90,7 +94,7 @@ void copyImageBufferToVideoMemory() {
 }
 
 void render() {
-    std::fill(std::begin(imageBuffer), std::end(imageBuffer), 0);
+    std::fill(std::begin(imageBuffer), std::end(imageBuffer), 4);
 
     int y0 = 0;
     int y1 = 0;
@@ -102,26 +106,22 @@ void render() {
         for (int tx = 0; tx < 10; ++tx) {
             std::shared_ptr<odb::NativeBitmap> tile = tiles[tilesRoom[ty][tx]];
 
+            if ( tile == nullptr ) {
+                std::cout <<  "null tile at " << tx << ", " << ty << std::endl;
+                exit(0);
+            }
 
             y0 = (ty * 32);
             y1 = 32 + (ty * 32);
             x0 = (tx * 32);
             x1 = 32 + (tx * 32);
-            int *pixelData = nullptr;
+            int *pixelData = tile->getPixelData();
 
-            if (tile != nullptr) {
-                pixelData = tile->getPixelData();
-            }
-
-            tile = tiles[1];
-
-            int pixel = 0;
+            int pixel = 4;
             for (int y = y0; y < y1; ++y) {
                 for (int x = x0; x < x1; ++x) {
 
-                    if (pixelData != nullptr) {
-                        pixel = (pixelData[(32 * (y - y0)) + (x - x0)]);
-                    }
+                    pixel = (pixelData[(32 * (y - y0)) + (x - x0)]);
 
                     if ( pixel == 0 ) {
                         continue;

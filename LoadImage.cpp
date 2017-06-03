@@ -99,7 +99,7 @@ namespace odb {
         int ySize;
         int components;
 /*
- * 0 black
+ * 0 transparent
  * 1 magenta dark
  * 2 cyan dark
  * 3 white
