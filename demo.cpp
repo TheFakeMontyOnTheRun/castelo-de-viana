@@ -114,6 +114,10 @@ void copyImageBufferToVideoMemory() {
             offset = (y * 320) + x;
             origin = imageBuffer[offset];
 
+            if (buffer[offset] == origin ) {
+                continue;
+            }
+
             value = origin;
 
             if (0 < origin && origin < 4) {
@@ -136,10 +140,7 @@ void copyImageBufferToVideoMemory() {
                 }
             }
 
-            if (buffer[offset] != origin ) {
-                plot( x, y, value );
-            }
-
+            plot( x, y, value );
             buffer[offset] = origin;
         }
     }
