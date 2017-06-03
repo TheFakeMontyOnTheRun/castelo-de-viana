@@ -29,6 +29,8 @@ int vy = 0;
 int counter = 0;
 std::array<unsigned int, 320 * 200> imageBuffer;
 std::array<unsigned char, 320 * 200> buffer;
+std::array<unsigned char, 320 * 100 / 4> evenBuffer;
+std::array<unsigned char, 320 * 100 / 4> oddBuffer;
 
 void initMode13h() {
     union REGS regs;
@@ -40,15 +42,9 @@ void initMode13h() {
 
 void plot(int x, int y, int color) {
     int b, m; /* bits and mask */
-    unsigned char *p;
     unsigned char c;
-    _farsetsel( _dos_ds );
     /* address section differs depending on odd/even scanline */
-    if (1 == (y & 0x1)) {
-        p = (unsigned char *)(0xB800 * 16) + 0x2000;
-    } else {
-        p = (unsigned char *)(0xB800 * 16);
-    }
+    bool odd = (1 == (y & 0x1));
 
     /* divide by 2 (each address section is 100 pixels) */
     y >>= 1;
@@ -78,11 +74,12 @@ void plot(int x, int y, int color) {
 
     unsigned int offset = ((80 * y) + x);
 
-    /* 80 bytes per line (80 * 4 = 320), 4 pixels per byte */
-    p += offset;
-
     /* read current pixel */
-    c = _farnspeekb( p );
+    if (odd) {
+        c = oddBuffer[ offset ];
+    } else {
+        c = evenBuffer[ offset ];
+    }
 
     /* remove bits at new position */
     c = c & ~m;
@@ -90,8 +87,11 @@ void plot(int x, int y, int color) {
     /* set bits at new position */
     c = c | (color << b);
 
-    /* write new pixel */
-    _farnspokeb( p, c );
+    if (odd) {
+        oddBuffer[ offset ] = c;
+    } else {
+        evenBuffer[ offset ] = c;
+    }
 }
 
 void copyImageBufferToVideoMemory() {
@@ -143,6 +143,9 @@ void copyImageBufferToVideoMemory() {
             buffer[offset] = origin;
         }
     }
+
+    dosmemput( evenBuffer.data(), 320 * 100 / 4, 0xB800 * 16 );
+    dosmemput( oddBuffer.data(), 320 * 100 / 4, (0xB800 * 16) + 0x2000 );
 }
 
 void render() {
