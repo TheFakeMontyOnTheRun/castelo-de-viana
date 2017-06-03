@@ -97,8 +97,11 @@ void plot(int x, int y, int color) {
 void copyImageBufferToVideoMemory() {
 
     int origin = 0;
-    int offset = 0;
     int value = 0;
+    int last = 0;
+    auto currentImageBufferPos = std::begin( imageBuffer );
+    auto currentBufferPos = std::begin( buffer );
+
     for (int y = 0; y < 200; ++y) {
 
         if (y < 0 || y >= 200) {
@@ -111,10 +114,12 @@ void copyImageBufferToVideoMemory() {
                 continue;
             }
 
-            offset = (y * 320) + x;
-            origin = imageBuffer[offset];
+            origin = *currentImageBufferPos;
+            last = *currentBufferPos;
 
-            if (buffer[offset] == origin ) {
+            if (last == origin ) {
+                currentBufferPos = std::next( currentBufferPos );
+                currentImageBufferPos = std::next( currentImageBufferPos );
                 continue;
             }
 
@@ -141,7 +146,10 @@ void copyImageBufferToVideoMemory() {
             }
 
             plot( x, y, value );
-            buffer[offset] = origin;
+            *currentBufferPos = origin;
+
+            currentBufferPos = std::next( currentBufferPos );
+            currentImageBufferPos = std::next( currentImageBufferPos );
         }
     }
 
