@@ -13,6 +13,7 @@
 #include <unistd.h>
 #include <memory>
 #include <fstream>
+#include <sstream>
 #include "NativeBitmap.h"
 #include "LoadImage.h"
 
@@ -31,6 +32,7 @@ int py = 0;
 int vx = 0;
 int vy = 0;
 int counter = 0;
+int room = 0;
 std::array<unsigned int, 320 * 200> imageBuffer;
 std::array<unsigned char, 320 * 200> buffer;
 std::array<unsigned char, 320 * 100 / 4> evenBuffer;
@@ -253,10 +255,20 @@ void render() {
     usleep(20000);
 }
 
-int main(int argc, char **argv) {
+void prepareRoom( int room ) {
 
-    std::ifstream bgmap("bgmap");
-    std::ifstream fgmap("fgmap");
+    std::stringstream roomName;
+
+    roomName = std::stringstream("");
+    roomName << room;
+    roomName << ".bg";
+    std::ifstream bgmap(roomName.str());
+
+    roomName = std::stringstream("");
+    roomName << room;
+    roomName << ".fg";
+
+    std::ifstream fgmap(roomName.str());
 
     for (int y = 0; y < 6; ++y) {
         for (int x = 0; x < 10; ++x) {
@@ -271,14 +283,68 @@ int main(int argc, char **argv) {
         }
     }
 
-    std::ifstream tileList("tilelist");
-    std::string buffer;
+    roomName = std::stringstream("");
+    roomName << room;
+    roomName << ".lst";
 
+    std::ifstream tileList(roomName.str());
+    std::string buffer;
+    tiles.clear();
     while ( tileList.good() ) {
         std::getline( tileList, buffer );
-        std::cout << "tile: " << buffer << std::endl;
         tiles.push_back(odb::loadBitmap(buffer));
     }
+}
+
+void enforceScreenLimits() {
+    if (px < 0) {
+
+
+        if ( (room % 10) > 0 ) {
+            px = 320 - 32 - 1;
+            prepareRoom(--room);
+        } else {
+            px = 0;
+        }
+    }
+
+    if (py < 0) {
+
+        if ( (room / 10) < 9 ) {
+            py = 200 - 32 - 1;
+            room += 10;
+            prepareRoom(room);
+        } else {
+            py = 0;
+        }
+    }
+
+    if ((px + 32) >= 320) {
+
+        if ( (room % 10) < 9 ) {
+            px = 1;
+            prepareRoom(++room);
+        } else {
+            px = 320 - 32;
+        }
+    }
+
+    if ((py - 32) >= 200 - 1) {
+
+        if ( (room / 10) > 0 ) {
+            py = 1;
+            room -= 10;
+            prepareRoom(room);
+        } else {
+            py = 200 - 32;
+        }
+
+    }
+}
+
+int main(int argc, char **argv) {
+
+    prepareRoom(0);
 
     bool done = false;
 
@@ -291,25 +357,50 @@ int main(int argc, char **argv) {
         px += vx;
         py += vy;
 
-        vx = vy = 0;
         if ( vx != 0 ) {
             heroFrame = ( heroFrame + 1) % 2;
         }
 
-        if (px < 0) {
-            px = 0;
+        vx = vx / 2;
+        vy = vy + 2;
+
+
+        if ( vx == 1 ) {
+            vx = 0;
         }
 
-        if (py < 0) {
-            py = 0;
+        if ( vy == 1 ) {
+            vy = 0;
         }
 
-        if (px >= 315) {
-            px = 315;
+
+        bool isOnGround = false;
+        int ground = ( (py + 32) / 32 );
+        int front = ( (px ) / 32 );
+
+        if ( vx > 0 ) {
+            front++;
         }
 
-        if (py >= 195) {
-            py = 195;
+        if ( vx < 0 ) {
+            front--;
+        }
+
+
+
+        if ( ground > 5 ) {
+            ground = 5;
+        }
+
+        if ( foregroundTiles[ ground ][ (px + 16) / 32 ] != 0 ) {
+            vy = 0;
+            isOnGround = true;
+            py = ( py / 32 ) * 32;
+        }
+
+        if ( foregroundTiles[ (py/32) ][ front ] != 0 ) {
+            vx = 0;
+            px = ( px / 32 ) * 32;
         }
 
         int level = 0;
@@ -323,16 +414,17 @@ int main(int argc, char **argv) {
                     done = true;
                     break;
                 case 'w':
-                    vy = -5;
+                    if (isOnGround) {
+                        vy = -12;
+                    }
                     break;
                 case 's':
-                    vy = +5;
                     break;
                 case 'a':
-                    vx = -5;
+                    vx = -8;
                     break;
                 case 'd':
-                    vx = +5;
+                    vx = +8;
                     break;
             }
         }

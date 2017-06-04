@@ -92,7 +92,7 @@ namespace odb {
 
     std::shared_ptr<NativeBitmap> loadBitmap(std::string path) {
 
-        std::cout << "loading " << path << std::endl;
+        //std::cout << "loading " << path << std::endl;
 
         auto buffer = loadBinaryFileFromPath(path);
         int xSize;
@@ -164,7 +164,7 @@ namespace odb {
             }
             //std::cout << std::endl;
         }
-        std::cout << components << std::endl;
+        //std::cout << components << std::endl;
         stbi_image_free(image);
 //exit(0);
         return (std::make_shared<odb::NativeBitmap>(path, xSize, ySize, rawData));
