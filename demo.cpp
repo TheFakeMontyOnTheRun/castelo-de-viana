@@ -18,10 +18,13 @@
 
 std::vector<std::shared_ptr<odb::NativeBitmap>> tiles;
 
-std::shared_ptr<odb::NativeBitmap> hero = odb::loadBitmap("hero.png");
-
 int tilesRoom[6][10];
+std::shared_ptr<odb::NativeBitmap> hero[] ={
+        odb::loadBitmap("hero0.png"),
+        odb::loadBitmap("hero1.png")
+};
 
+int heroFrame = 0;
 int px = 0;
 int py = 0;
 int vx = 0;
@@ -203,7 +206,7 @@ void render() {
     y1 = 32 + y0;
     x0 = (px);
     x1 = 32 + x0;
-    int *pixelData = hero->getPixelData();
+    int *pixelData = hero[heroFrame]->getPixelData();
 
     int pixel = 0;
     for (int y = y0; y < y1; ++y) {
@@ -254,6 +257,9 @@ int main(int argc, char **argv) {
         py += vy;
 
         vx = vy = 0;
+        if ( vx != 0 ) {
+            heroFrame = ( heroFrame + 1) % 2;
+        }
 
         if (px < 0) {
             px = 0;
