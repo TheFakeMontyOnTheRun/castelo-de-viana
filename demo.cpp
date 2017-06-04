@@ -20,13 +20,17 @@
 std::vector<std::shared_ptr<odb::NativeBitmap>> tiles;
 
 
-std::array<std::array<int, 10>,6> backgroundTiles;
-std::array<std::array<int, 10>,6> foregroundTiles;
+std::array<std::array<int, 10>, 6> backgroundTiles;
+std::array<std::array<int, 10>, 6> foregroundTiles;
 
-enum EDirection { kLeft, kRight };
-enum EStance { kUp, kStanding, kClimbing };
+enum EDirection {
+    kLeft, kRight
+};
+enum EStance {
+    kUp, kStanding, kClimbing
+};
 
-std::shared_ptr<odb::NativeBitmap> hero[3][2] ={
+std::shared_ptr<odb::NativeBitmap> hero[3][2] = {
         {
                 odb::loadBitmap("up0.png"),
                 odb::loadBitmap("up1.png"),
@@ -101,9 +105,9 @@ void plot(int x, int y, int color) {
 
     /* read current pixel */
     if (odd) {
-        c = oddBuffer[ offset ];
+        c = oddBuffer[offset];
     } else {
-        c = evenBuffer[ offset ];
+        c = evenBuffer[offset];
     }
 
     /* remove bits at new position */
@@ -113,9 +117,9 @@ void plot(int x, int y, int color) {
     c = c | (color << b);
 
     if (odd) {
-        oddBuffer[ offset ] = c;
+        oddBuffer[offset] = c;
     } else {
-        evenBuffer[ offset ] = c;
+        evenBuffer[offset] = c;
     }
 }
 
@@ -124,8 +128,8 @@ void copyImageBufferToVideoMemory() {
     int origin = 0;
     int value = 0;
     int last = 0;
-    auto currentImageBufferPos = std::begin( imageBuffer );
-    auto currentBufferPos = std::begin( buffer );
+    auto currentImageBufferPos = std::begin(imageBuffer);
+    auto currentBufferPos = std::begin(buffer);
 
     for (int y = 0; y < 200; ++y) {
 
@@ -142,9 +146,9 @@ void copyImageBufferToVideoMemory() {
             origin = *currentImageBufferPos;
             last = *currentBufferPos;
 
-            if (last == origin ) {
-                currentBufferPos = std::next( currentBufferPos );
-                currentImageBufferPos = std::next( currentImageBufferPos );
+            if (last == origin) {
+                currentBufferPos = std::next(currentBufferPos);
+                currentImageBufferPos = std::next(currentImageBufferPos);
                 continue;
             }
 
@@ -170,18 +174,18 @@ void copyImageBufferToVideoMemory() {
                 }
             }
 
-            plot( x, y, value );
+            plot(x, y, value);
             *currentBufferPos = origin;
 
-            currentBufferPos = std::next( currentBufferPos );
-            currentImageBufferPos = std::next( currentImageBufferPos );
+            currentBufferPos = std::next(currentBufferPos);
+            currentImageBufferPos = std::next(currentImageBufferPos);
         }
     }
 
-    dosmemput( evenBuffer.data(), 320 * 100 / 4, 0xB800 * 16 );
-    dosmemput( oddBuffer.data(), 320 * 100 / 4, (0xB800 * 16) + 0x2000 );
+    dosmemput(evenBuffer.data(), 320 * 100 / 4, 0xB800 * 16);
+    dosmemput(oddBuffer.data(), 320 * 100 / 4, (0xB800 * 16) + 0x2000);
 
-    gotoxy(1,1);
+    gotoxy(1, 1);
     std::cout << "room " << room << std::endl;
 }
 
@@ -204,7 +208,7 @@ void render() {
             x1 = 32 + (tx * 32);
             int pixel = 4;
 
-            if (backgroundTiles[ty][tx] != 0 ) {
+            if (backgroundTiles[ty][tx] != 0) {
                 tile = tiles[backgroundTiles[ty][tx]];
 
                 if (tile == nullptr) {
@@ -216,13 +220,13 @@ void render() {
 
                 pixel = 4;
                 for (int y = y0; y < y1; ++y) {
-                    if ( y  < 0 || y >= 200 ) {
+                    if (y < 0 || y >= 200) {
                         continue;
                     }
 
                     for (int x = x0; x < x1; ++x) {
 
-                        if ( x  < 0 || x >= 320 ) {
+                        if (x < 0 || x >= 320) {
                             continue;
                         }
 
@@ -237,7 +241,7 @@ void render() {
                 }
             }
 
-            if (foregroundTiles[ty][tx] != 0 ) {
+            if (foregroundTiles[ty][tx] != 0) {
                 tile = tiles[foregroundTiles[ty][tx]];
 
                 if (tile == nullptr) {
@@ -250,13 +254,13 @@ void render() {
                 pixel = 4;
                 for (int y = y0; y < y1; ++y) {
 
-                    if ( y  < 0 || y >= 200 ) {
+                    if (y < 0 || y >= 200) {
                         continue;
                     }
 
                     for (int x = x0; x < x1; ++x) {
 
-                        if ( x  < 0 || x >= 320 ) {
+                        if (x < 0 || x >= 320) {
                             continue;
                         }
 
@@ -273,7 +277,7 @@ void render() {
         }
     }
 
-    y0 = (py );
+    y0 = (py);
     y1 = 32 + y0;
     x0 = (px);
     x1 = 32 + x0;
@@ -282,22 +286,22 @@ void render() {
     int pixel = 0;
     for (int y = y0; y < y1; ++y) {
 
-        if ( y  < 0 || y >= 200 ) {
+        if (y < 0 || y >= 200) {
             continue;
         }
 
         for (int x = x0; x < x1; ++x) {
-            if ( playerDireciton == EDirection::kRight ) {
+            if (playerDireciton == EDirection::kRight) {
                 pixel = (pixelData[(32 * (y - y0)) + ((x - x0))]);
             } else {
-                pixel = (pixelData[(32 * (y - y0)) + ( 31 - (x - x0))]);
+                pixel = (pixelData[(32 * (y - y0)) + (31 - (x - x0))]);
             }
 
-            if ( pixel == 0 ) {
+            if (pixel == 0) {
                 continue;
             }
 
-            if ( x  < 0 || x >= 320 ) {
+            if (x < 0 || x >= 320) {
                 continue;
             }
 
@@ -309,9 +313,9 @@ void render() {
     usleep(20000);
 }
 
-void prepareRoom( int room ) {
+void prepareRoom(int room) {
 
-    if ( room < 0 ) {
+    if (room < 0) {
         std::cout << "room " << room << " is invalid " << std::endl;
         exit(0);
     }
@@ -350,8 +354,8 @@ void prepareRoom( int room ) {
     std::string buffer;
     tiles.clear();
 
-    while ( tileList.good() ) {
-        std::getline( tileList, buffer );
+    while (tileList.good()) {
+        std::getline(tileList, buffer);
         tiles.push_back(odb::loadBitmap(buffer));
     }
 
@@ -361,7 +365,7 @@ void prepareRoom( int room ) {
 
 void enforceScreenLimits() {
     if (px < 0) {
-     if ( (room % 10) > 0 ) {
+        if ((room % 10) > 0) {
             px = 320 - 32 - 1;
             prepareRoom(--room);
         } else {
@@ -370,7 +374,7 @@ void enforceScreenLimits() {
     }
 
     if (py < 0) {
-        if ( (room / 10) <= 9 ) {
+        if ((room / 10) <= 9) {
             py = 200 - 32 - 1;
             room += 10;
             prepareRoom(room);
@@ -380,7 +384,7 @@ void enforceScreenLimits() {
     }
 
     if ((px + 32) >= 320) {
-        if ( (room % 10) < 9 ) {
+        if ((room % 10) < 9) {
             px = 1;
             prepareRoom(++room);
         } else {
@@ -388,8 +392,8 @@ void enforceScreenLimits() {
         }
     }
 
-    if ((py + 32 ) >= 200 ) {
-        if ( (room / 10) >= 1 ) {
+    if ((py + 32) >= 200) {
+        if ((room / 10) >= 1) {
             py = 1;
             room -= 10;
             prepareRoom(room);
@@ -414,17 +418,17 @@ int main(int argc, char **argv) {
         px += vx;
         py += vy;
 
-        if ( vx == 1 ) {
+        if (vx == 1) {
             vx = 0;
         }
 
-        if ( vy == 1 ) {
+        if (vy == 1) {
             vy = 0;
         }
 
         enforceScreenLimits();
         bool isOnGround = false;
-        bool isOnStairs = ( foregroundTiles[ (py + 16 ) / 32 ][ ( px + 16 ) / 32 ] == 3 );
+        bool isOnStairs = (foregroundTiles[(py + 16) / 32][(px + 16) / 32] == 3);
         bool isJumping = false;
         bool isUpPressed = false;
         bool isDownPressed = false;
@@ -432,44 +436,43 @@ int main(int argc, char **argv) {
         bool isRightPressed = false;
         bool isAttacking = false;
 
-        int ground = ( (py + 32) / 32 );
-        int front = ( (px ) / 32 );
+        int ground = ((py + 32) / 32);
+        int front = ((px) / 32);
 
-        if ( vx > 0 ) {
+        if (vx > 0) {
             front++;
         }
 
-        if ( vx < 0 ) {
+        if (vx < 0) {
             front--;
         }
 
 
-
-        if ( ground > 5 ) {
+        if (ground > 5) {
             ground = 5;
         }
 
-        if ( foregroundTiles[ ground ][ (px + 16) / 32 ] == 1 ) {
+        if (foregroundTiles[ground][(px + 16) / 32] == 1) {
             isOnGround = true;
         }
 
-        if ( foregroundTiles[ (py/32) ][ front ] == 1 ) {
+        if (foregroundTiles[(py / 32)][front] == 1) {
             vx = 0;
         }
 
-        if ( (vx != 0 && isOnGround) || (vy != 0 && isOnStairs) ) {
-            heroFrame = ( heroFrame + 1) % 2;
+        if ((vx != 0 && isOnGround) || (vy != 0 && isOnStairs)) {
+            heroFrame = (heroFrame + 1) % 2;
         }
 
         vx = vx / 2;
 
-        if ( isOnGround ) {
+        if (isOnGround) {
             vy = 0;
-            py = ( py / 32 ) * 32;
+            py = (py / 32) * 32;
         }
 
 
-        if ( !isOnStairs) {
+        if (!isOnStairs) {
             vy = vy + 2;
             playerStance = EStance::kStanding;
         } else {
@@ -484,58 +487,54 @@ int main(int argc, char **argv) {
         lastKey = bioskey(0x11);
         auto extendedKeys = bioskey(0x12);
 
-        if ( extendedKeys & ( 0b0000000000000100) ||
-             extendedKeys & ( 0b0000000100000000)
+        if (extendedKeys & (0b0000000000000100) ||
+            extendedKeys & (0b0000000100000000)
                 ) {
             isJumping = true;
         }
 
-        if ( extendedKeys & ( 0b0000000000001000) ||
-             extendedKeys & ( 0b0000001000000000)
+        if (extendedKeys & (0b0000000000001000) ||
+            extendedKeys & (0b0000001000000000)
                 ) {
             isAttacking = true;
         }
 
 
-        bdos (0xC, 0, 0) ;
+        bdos(0xC, 0, 0);
 
-        gotoxy( 1,2);
-            std::cout << "key: " << lastKey << std::endl;
+        gotoxy(1, 2);
+        std::cout << "key: " << lastKey << std::endl;
 
-            switch (lastKey) {
-                case 27:
-                    done = true;
-                    break;
-                case 'q':
-                    isJumping = true;
-                    break;
-                case 'w':
-                    isUpPressed = true;
-                    break;
-                case 's':
-                    isDownPressed = true;
-                    break;
-                case 'a':
-                    isLeftPressed = true;
-                    break;
-                case 'd':
-                    isRightPressed = true;
-                    break;
-            }
-
-
+        switch (lastKey) {
+            case 27:
+                done = true;
+                break;
+            case 'q':
+                isJumping = true;
+                break;
+            case 'w':
+                isUpPressed = true;
+                break;
+            case 's':
+                isDownPressed = true;
+                break;
+            case 'a':
+                isLeftPressed = true;
+                break;
+            case 'd':
+                isRightPressed = true;
+                break;
+        }
 
 
-
-
-        if ( isJumping ) {
+        if (isJumping) {
             if (isOnGround) {
                 vy = -12;
             }
             playerStance = EStance::kStanding;
         }
 
-        if ( isUpPressed ) {
+        if (isUpPressed) {
             if (isOnStairs) {
                 vy = -8;
                 playerStance = EStance::kClimbing;
@@ -544,7 +543,7 @@ int main(int argc, char **argv) {
             }
         }
 
-        if ( isDownPressed ) {
+        if (isDownPressed) {
             if (isOnStairs) {
                 vy = +8;
                 playerStance = EStance::kClimbing;
@@ -553,7 +552,7 @@ int main(int argc, char **argv) {
             }
         }
 
-        if ( isLeftPressed ) {
+        if (isLeftPressed) {
             vx = -8;
             playerDireciton = EDirection::kLeft;
             if (isOnGround) {
@@ -561,7 +560,7 @@ int main(int argc, char **argv) {
             }
         }
 
-        if (isRightPressed ) {
+        if (isRightPressed) {
             vx = +8;
             playerDireciton = EDirection::kRight;
             if (isOnGround) {
@@ -570,9 +569,7 @@ int main(int argc, char **argv) {
         }
 
 
-
-
-        }
+    }
 
     return 0;
 }
