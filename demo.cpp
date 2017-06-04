@@ -24,8 +24,9 @@ std::shared_ptr<odb::NativeBitmap> hero[] ={
         odb::loadBitmap("hero1.png")
 };
 
-int backgroundTiles[6][10];
-int foregroundTiles[6][10];
+std::array<std::array<int, 10>,6> backgroundTiles;
+std::array<std::array<int, 10>,6> foregroundTiles;
+
 int heroFrame = 0;
 int px = 0;
 int py = 0;
@@ -194,7 +195,15 @@ void render() {
 
                 pixel = 4;
                 for (int y = y0; y < y1; ++y) {
+                    if ( y  < 0 || y >= 200 ) {
+                        continue;
+                    }
+
                     for (int x = x0; x < x1; ++x) {
+
+                        if ( x  < 0 || x >= 320 ) {
+                            continue;
+                        }
 
                         pixel = (pixelData[(32 * (y - y0)) + (x - x0)]);
 
@@ -219,7 +228,16 @@ void render() {
 
                 pixel = 4;
                 for (int y = y0; y < y1; ++y) {
+
+                    if ( y  < 0 || y >= 200 ) {
+                        continue;
+                    }
+
                     for (int x = x0; x < x1; ++x) {
+
+                        if ( x  < 0 || x >= 320 ) {
+                            continue;
+                        }
 
                         pixel = (pixelData[(32 * (y - y0)) + (x - x0)]);
 
@@ -242,11 +260,21 @@ void render() {
 
     int pixel = 0;
     for (int y = y0; y < y1; ++y) {
+
+        if ( y  < 0 || y >= 200 ) {
+            continue;
+        }
+
         for (int x = x0; x < x1; ++x) {
             pixel = (pixelData[(32 * (y - y0)) + (x - x0)]);
             if ( pixel == 0 ) {
                 continue;
             }
+
+            if ( x  < 0 || x >= 320 ) {
+                continue;
+            }
+
             imageBuffer[(320 * y) + x] = pixel;
         }
     }
@@ -290,17 +318,19 @@ void prepareRoom( int room ) {
     std::ifstream tileList(roomName.str());
     std::string buffer;
     tiles.clear();
+
     while ( tileList.good() ) {
         std::getline( tileList, buffer );
         tiles.push_back(odb::loadBitmap(buffer));
     }
+
+    std::fill(std::begin(imageBuffer), std::end(imageBuffer), 4);
+    std::fill(std::begin(buffer), std::end(buffer), 4);
 }
 
 void enforceScreenLimits() {
     if (px < 0) {
-
-
-        if ( (room % 10) > 0 ) {
+     if ( (room % 10) > 0 ) {
             px = 320 - 32 - 1;
             prepareRoom(--room);
         } else {
@@ -309,8 +339,7 @@ void enforceScreenLimits() {
     }
 
     if (py < 0) {
-
-        if ( (room / 10) < 9 ) {
+        if ( (room / 10) <= 9 ) {
             py = 200 - 32 - 1;
             room += 10;
             prepareRoom(room);
@@ -320,7 +349,6 @@ void enforceScreenLimits() {
     }
 
     if ((px + 32) >= 320) {
-
         if ( (room % 10) < 9 ) {
             px = 1;
             prepareRoom(++room);
@@ -329,16 +357,14 @@ void enforceScreenLimits() {
         }
     }
 
-    if ((py - 32) >= 200 - 1) {
-
-        if ( (room / 10) > 0 ) {
+    if ((py + 32 ) >= 200 ) {
+        if ( (room / 10) >= 1 ) {
             py = 1;
             room -= 10;
             prepareRoom(room);
         } else {
-            py = 200 - 32;
+            py = 200 - 32 - 1;
         }
-
     }
 }
 
@@ -373,7 +399,7 @@ int main(int argc, char **argv) {
             vy = 0;
         }
 
-
+        enforceScreenLimits();
         bool isOnGround = false;
         int ground = ( (py + 32) / 32 );
         int front = ( (px ) / 32 );
