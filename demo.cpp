@@ -18,12 +18,13 @@
 
 std::vector<std::shared_ptr<odb::NativeBitmap>> tiles;
 
-int tilesRoom[6][10];
 std::shared_ptr<odb::NativeBitmap> hero[] ={
         odb::loadBitmap("hero0.png"),
         odb::loadBitmap("hero1.png")
 };
 
+int backgroundTiles[6][10];
+int foregroundTiles[6][10];
 int heroFrame = 0;
 int px = 0;
 int py = 0;
@@ -171,34 +172,63 @@ void render() {
 
     for (int ty = 0; ty < 6; ++ty) {
         for (int tx = 0; tx < 10; ++tx) {
-            std::shared_ptr<odb::NativeBitmap> tile = tiles[tilesRoom[ty][tx]];
-
-            if ( tile == nullptr ) {
-                std::cout <<  "null tile at " << tx << ", " << ty << std::endl;
-                exit(0);
-            }
-
+            std::shared_ptr<odb::NativeBitmap> tile;
+            int *pixelData;
             y0 = (ty * 32);
             y1 = 32 + (ty * 32);
             x0 = (tx * 32);
             x1 = 32 + (tx * 32);
-            int *pixelData = tile->getPixelData();
-
             int pixel = 4;
-            for (int y = y0; y < y1; ++y) {
-                for (int x = x0; x < x1; ++x) {
 
-                    pixel = (pixelData[(32 * (y - y0)) + (x - x0)]);
+            if (backgroundTiles[ty][tx] != 0 ) {
+                tile = tiles[backgroundTiles[ty][tx]];
 
-                    if ( pixel == 0 ) {
-                        continue;
+                if (tile == nullptr) {
+                    std::cout << "null tile at " << tx << ", " << ty << std::endl;
+                    exit(0);
+                }
+
+                pixelData = tile->getPixelData();
+
+                pixel = 4;
+                for (int y = y0; y < y1; ++y) {
+                    for (int x = x0; x < x1; ++x) {
+
+                        pixel = (pixelData[(32 * (y - y0)) + (x - x0)]);
+
+                        if (pixel == 0) {
+                            continue;
+                        }
+
+                        imageBuffer[(320 * y) + x] = pixel;
                     }
-
-                    imageBuffer[(320 * y) + x] = pixel;
                 }
             }
 
+            if (foregroundTiles[ty][tx] != 0 ) {
+                tile = tiles[foregroundTiles[ty][tx]];
 
+                if (tile == nullptr) {
+                    std::cout << "null tile at " << tx << ", " << ty << std::endl;
+                    exit(0);
+                }
+
+                pixelData = tile->getPixelData();
+
+                pixel = 4;
+                for (int y = y0; y < y1; ++y) {
+                    for (int x = x0; x < x1; ++x) {
+
+                        pixel = (pixelData[(32 * (y - y0)) + (x - x0)]);
+
+                        if (pixel == 0) {
+                            continue;
+                        }
+
+                        imageBuffer[(320 * y) + x] = pixel;
+                    }
+                }
+            }
         }
     }
 
@@ -225,14 +255,19 @@ void render() {
 
 int main(int argc, char **argv) {
 
-    std::ifstream tilemap("tilemap");
+    std::ifstream bgmap("bgmap");
+    std::ifstream fgmap("fgmap");
 
     for (int y = 0; y < 6; ++y) {
         for (int x = 0; x < 10; ++x) {
             char ch = '0';
 
-            tilemap >> ch;
-            tilesRoom[y][x] = ch - '0';
+            bgmap >> ch;
+            backgroundTiles[y][x] = ch - '0';
+
+            fgmap >> ch;
+            foregroundTiles[y][x] = ch - '0';
+
         }
     }
 
