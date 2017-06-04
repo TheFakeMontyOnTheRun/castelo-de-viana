@@ -383,14 +383,6 @@ int main(int argc, char **argv) {
         px += vx;
         py += vy;
 
-        if ( vx != 0 ) {
-            heroFrame = ( heroFrame + 1) % 2;
-        }
-
-        vx = vx / 2;
-        vy = vy + 2;
-
-
         if ( vx == 1 ) {
             vx = 0;
         }
@@ -401,6 +393,9 @@ int main(int argc, char **argv) {
 
         enforceScreenLimits();
         bool isOnGround = false;
+        bool isOnStairs = ( foregroundTiles[ (py + 16 ) / 32 ][ ( px + 16 ) / 32 ] == 3 );
+
+
         int ground = ( (py + 32) / 32 );
         int front = ( (px ) / 32 );
 
@@ -418,16 +413,33 @@ int main(int argc, char **argv) {
             ground = 5;
         }
 
-        if ( foregroundTiles[ ground ][ (px + 16) / 32 ] != 0 ) {
-            vy = 0;
+        if ( foregroundTiles[ ground ][ (px + 16) / 32 ] == 1 ) {
             isOnGround = true;
+        }
+
+        if ( foregroundTiles[ (py/32) ][ front ] == 1 ) {
+            vx = 0;
+//            px = ( px / 32 ) * 32;
+        }
+
+        if ( vx != 0 && isOnGround ) {
+            heroFrame = ( heroFrame + 1) % 2;
+        }
+
+        vx = vx / 2;
+
+        if ( isOnGround ) {
+            vy = 0;
             py = ( py / 32 ) * 32;
         }
 
-        if ( foregroundTiles[ (py/32) ][ front ] != 0 ) {
-            vx = 0;
-            px = ( px / 32 ) * 32;
+
+        if ( !isOnStairs) {
+            vy = vy + 2;
+        } else {
+            vy = 0;
         }
+
 
         int level = 0;
         ++counter;
@@ -443,8 +455,15 @@ int main(int argc, char **argv) {
                     if (isOnGround) {
                         vy = -12;
                     }
+
+                    if ( isOnStairs ) {
+                        vy = -8;
+                    }
                     break;
                 case 's':
+                    if ( isOnStairs ) {
+                        vy = +8;
+                    }
                     break;
                 case 'a':
                     vx = -8;
