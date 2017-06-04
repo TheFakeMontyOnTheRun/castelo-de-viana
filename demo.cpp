@@ -32,7 +32,7 @@ std::array<unsigned char, 320 * 200> buffer;
 std::array<unsigned char, 320 * 100 / 4> evenBuffer;
 std::array<unsigned char, 320 * 100 / 4> oddBuffer;
 
-void initMode13h() {
+void initMode4h() {
     union REGS regs;
 
     regs.h.ah = 0x00;
