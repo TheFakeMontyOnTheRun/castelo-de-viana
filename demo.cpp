@@ -19,13 +19,28 @@
 
 std::vector<std::shared_ptr<odb::NativeBitmap>> tiles;
 
-std::shared_ptr<odb::NativeBitmap> hero[] ={
-        odb::loadBitmap("hero0.png"),
-        odb::loadBitmap("hero1.png")
-};
 
 std::array<std::array<int, 10>,6> backgroundTiles;
 std::array<std::array<int, 10>,6> foregroundTiles;
+
+enum EDirection { kLeft, kRight };
+enum EStance { kUp, kStanding, kClimbing };
+
+std::shared_ptr<odb::NativeBitmap> hero[3][2] ={
+        {
+                odb::loadBitmap("up0.png"),
+                odb::loadBitmap("up1.png"),
+        },
+        {
+                odb::loadBitmap("hero0.png"),
+                odb::loadBitmap("hero1.png"),
+        },
+        {
+                odb::loadBitmap("down0.png"),
+                odb::loadBitmap("down1.png"),
+        },
+};
+
 
 int heroFrame = 0;
 int px = 0;
@@ -34,6 +49,9 @@ int vx = 0;
 int vy = 0;
 int counter = 0;
 int room = 0;
+EDirection playerDireciton = EDirection::kRight;
+EStance playerStance = EStance::kStanding;
+
 std::array<unsigned int, 320 * 200> imageBuffer;
 std::array<unsigned char, 320 * 200> buffer;
 std::array<unsigned char, 320 * 100 / 4> evenBuffer;
@@ -162,6 +180,9 @@ void copyImageBufferToVideoMemory() {
 
     dosmemput( evenBuffer.data(), 320 * 100 / 4, 0xB800 * 16 );
     dosmemput( oddBuffer.data(), 320 * 100 / 4, (0xB800 * 16) + 0x2000 );
+
+    gotoxy(1,1);
+    std::cout << "room " << room << std::endl;
 }
 
 void render() {
@@ -256,7 +277,7 @@ void render() {
     y1 = 32 + y0;
     x0 = (px);
     x1 = 32 + x0;
-    int *pixelData = hero[heroFrame]->getPixelData();
+    int *pixelData = hero[playerStance][heroFrame]->getPixelData();
 
     int pixel = 0;
     for (int y = y0; y < y1; ++y) {
@@ -266,7 +287,12 @@ void render() {
         }
 
         for (int x = x0; x < x1; ++x) {
-            pixel = (pixelData[(32 * (y - y0)) + (x - x0)]);
+            if ( playerDireciton == EDirection::kRight ) {
+                pixel = (pixelData[(32 * (y - y0)) + ((x - x0))]);
+            } else {
+                pixel = (pixelData[(32 * (y - y0)) + ( 31 - (x - x0))]);
+            }
+
             if ( pixel == 0 ) {
                 continue;
             }
@@ -275,7 +301,7 @@ void render() {
                 continue;
             }
 
-            imageBuffer[(320 * y) + x] = pixel;
+            imageBuffer[(320 * y) + (x)] = pixel;
         }
     }
 
@@ -284,6 +310,11 @@ void render() {
 }
 
 void prepareRoom( int room ) {
+
+    if ( room < 0 ) {
+        std::cout << "room " << room << " is invalid " << std::endl;
+        exit(0);
+    }
 
     std::stringstream roomName;
 
@@ -394,7 +425,12 @@ int main(int argc, char **argv) {
         enforceScreenLimits();
         bool isOnGround = false;
         bool isOnStairs = ( foregroundTiles[ (py + 16 ) / 32 ][ ( px + 16 ) / 32 ] == 3 );
-
+        bool isJumping = false;
+        bool isUpPressed = false;
+        bool isDownPressed = false;
+        bool isLeftPressed = false;
+        bool isRightPressed = false;
+        bool isAttacking = false;
 
         int ground = ( (py + 32) / 32 );
         int front = ( (px ) / 32 );
@@ -419,10 +455,9 @@ int main(int argc, char **argv) {
 
         if ( foregroundTiles[ (py/32) ][ front ] == 1 ) {
             vx = 0;
-//            px = ( px / 32 ) * 32;
         }
 
-        if ( vx != 0 && isOnGround ) {
+        if ( (vx != 0 && isOnGround) || (vy != 0 && isOnStairs) ) {
             heroFrame = ( heroFrame + 1) % 2;
         }
 
@@ -436,6 +471,7 @@ int main(int argc, char **argv) {
 
         if ( !isOnStairs) {
             vy = vy + 2;
+            playerStance = EStance::kStanding;
         } else {
             vy = 0;
         }
@@ -445,35 +481,98 @@ int main(int argc, char **argv) {
         ++counter;
         render();
 
-        while (kbhit()) {
-            lastKey = getch();
+        lastKey = bioskey(0x11);
+        auto extendedKeys = bioskey(0x12);
+
+        if ( extendedKeys & ( 0b0000000000000100) ||
+             extendedKeys & ( 0b0000000100000000)
+                ) {
+            isJumping = true;
+        }
+
+        if ( extendedKeys & ( 0b0000000000001000) ||
+             extendedKeys & ( 0b0000001000000000)
+                ) {
+            isAttacking = true;
+        }
+
+
+        bdos (0xC, 0, 0) ;
+
+        gotoxy( 1,2);
+            std::cout << "key: " << lastKey << std::endl;
+
             switch (lastKey) {
-                case 'q':
+                case 27:
                     done = true;
                     break;
+                case 'q':
+                    isJumping = true;
+                    break;
                 case 'w':
-                    if (isOnGround) {
-                        vy = -12;
-                    }
-
-                    if ( isOnStairs ) {
-                        vy = -8;
-                    }
+                    isUpPressed = true;
                     break;
                 case 's':
-                    if ( isOnStairs ) {
-                        vy = +8;
-                    }
+                    isDownPressed = true;
                     break;
                 case 'a':
-                    vx = -8;
+                    isLeftPressed = true;
                     break;
                 case 'd':
-                    vx = +8;
+                    isRightPressed = true;
                     break;
             }
+
+
+
+
+
+
+        if ( isJumping ) {
+            if (isOnGround) {
+                vy = -12;
+            }
+            playerStance = EStance::kStanding;
         }
-    }
+
+        if ( isUpPressed ) {
+            if (isOnStairs) {
+                vy = -8;
+                playerStance = EStance::kClimbing;
+            } else if (isOnGround) {
+                playerStance = EStance::kUp;
+            }
+        }
+
+        if ( isDownPressed ) {
+            if (isOnStairs) {
+                vy = +8;
+                playerStance = EStance::kClimbing;
+            } else {
+                playerStance = EStance::kStanding;
+            }
+        }
+
+        if ( isLeftPressed ) {
+            vx = -8;
+            playerDireciton = EDirection::kLeft;
+            if (isOnGround) {
+                playerStance = EStance::kStanding;
+            }
+        }
+
+        if (isRightPressed ) {
+            vx = +8;
+            playerDireciton = EDirection::kRight;
+            if (isOnGround) {
+                playerStance = EStance::kStanding;
+            }
+        }
+
+
+
+
+        }
 
     return 0;
 }
