@@ -284,7 +284,7 @@ int main(int argc, char **argv) {
 
     char lastKey = 0;
 
-    initMode13h();
+    initMode4h();
 
     while (!done) {
 
