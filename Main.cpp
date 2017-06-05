@@ -14,21 +14,14 @@
 #include <memory>
 #include <fstream>
 #include <sstream>
+
+#include "Game.h"
+
 #include "NativeBitmap.h"
 #include "LoadImage.h"
 
 std::vector<std::shared_ptr<odb::NativeBitmap>> tiles;
 
-
-std::array<std::array<int, 10>, 6> backgroundTiles;
-std::array<std::array<int, 10>, 6> foregroundTiles;
-
-enum EDirection {
-    kLeft, kRight
-};
-enum EStance {
-    kUp, kStanding, kClimbing
-};
 
 std::shared_ptr<odb::NativeBitmap> hero[3][2] = {
         {
@@ -47,14 +40,6 @@ std::shared_ptr<odb::NativeBitmap> hero[3][2] = {
 
 
 int heroFrame = 0;
-int px = 0;
-int py = 0;
-int vx = 0;
-int vy = 0;
-int counter = 0;
-int room = 0;
-EDirection playerDireciton = EDirection::kRight;
-EStance playerStance = EStance::kStanding;
 
 std::array<unsigned int, 320 * 200> imageBuffer;
 std::array<unsigned char, 320 * 200> buffer;
@@ -404,7 +389,7 @@ void enforceScreenLimits() {
 }
 
 int main(int argc, char **argv) {
-
+    init();
     prepareRoom(0);
 
     bool done = false;
