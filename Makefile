@@ -2,9 +2,9 @@ CXXFLAGS = -g -c -Istb -O6 -Ofast  -funroll-loops -funroll-all-loops -fomit-fram
 
 CXX = i586-pc-msdosdjgpp-g++
 
-OBJS = demo.o LoadImage.o NativeBitmap.o
+OBJS = Main.o LoadImage.o NativeBitmap.o
 
-TARGET = demo.exe
+TARGET = viana.exe
 
 $(TARGET):	$(OBJS)
 	$(CXX) -o $(TARGET) $(OBJS) $(LDFLAGS)

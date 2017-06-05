@@ -185,8 +185,8 @@ void copyImageBufferToVideoMemory() {
     dosmemput(evenBuffer.data(), 320 * 100 / 4, 0xB800 * 16);
     dosmemput(oddBuffer.data(), 320 * 100 / 4, (0xB800 * 16) + 0x2000);
 
-    gotoxy(1, 1);
-    std::cout << "room " << room << std::endl;
+    //gotoxy(1, 1);
+    //std::cout << "room " << room << std::endl;
 }
 
 void render() {
@@ -409,7 +409,7 @@ int main(int argc, char **argv) {
 
     bool done = false;
 
-    char lastKey = 0;
+    int lastKey = 0;
 
     initMode4h();
 
@@ -435,6 +435,7 @@ int main(int argc, char **argv) {
         bool isLeftPressed = false;
         bool isRightPressed = false;
         bool isAttacking = false;
+        bool isAltAttackPressed = false;
 
         int ground = ((py + 32) / 32);
         int front = ((px) / 32);
@@ -474,11 +475,11 @@ int main(int argc, char **argv) {
 
         if (!isOnStairs) {
             vy = vy + 2;
-            playerStance = EStance::kStanding;
+            //this prevents from jumping while keeping the climbing animation state. Unfortunately, prevents looking up.
+            //playerStance = EStance::kStanding;
         } else {
             vy = 0;
         }
-
 
         int level = 0;
         ++counter;
@@ -490,40 +491,53 @@ int main(int argc, char **argv) {
         if (extendedKeys & (0b0000000000000100) ||
             extendedKeys & (0b0000000100000000)
                 ) {
-            isJumping = true;
-        }
-
-        if (extendedKeys & (0b0000000000001000) ||
-            extendedKeys & (0b0000001000000000)
-                ) {
             isAttacking = true;
         }
 
+        if (extendedKeys & (0b0000000000000001) ||
+            extendedKeys & (0b0000000000000010)
+                ) {
+            isJumping = true;
+        }
 
         bdos(0xC, 0, 0);
+        //gotoxy(1, 2);
 
-        gotoxy(1, 2);
-        std::cout << "key: " << lastKey << std::endl;
+        //std::cout << "key: " << lastKey << std::endl;
 
         switch (lastKey) {
             case 27:
+            case 283:
                 done = true;
                 break;
             case 'q':
                 isJumping = true;
                 break;
             case 'w':
+            case 4471:
+            case 18656:
                 isUpPressed = true;
                 break;
             case 's':
+            case 8051:
+            case 20704:
                 isDownPressed = true;
                 break;
             case 'a':
+            case 7777:
+            case 19424:
                 isLeftPressed = true;
                 break;
             case 'd':
+            case 8292:
+            case 19936:
                 isRightPressed = true;
                 break;
+            case ' ':
+            case 14624:
+                isAltAttackPressed = true;
+                gotoxy( 1,3 );
+                std::cout << "SPECIAL!" << std::endl;
         }
 
 
