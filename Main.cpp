@@ -55,6 +55,16 @@ void initMode4h() {
 void clearBuffers() {
     std::fill(std::begin(imageBuffer), std::end(imageBuffer), 4);
     std::fill(std::begin(buffer), std::end(buffer), 4);
+    std::fill(std::begin(evenBuffer), std::end(evenBuffer), 0);
+    std::fill(std::begin(oddBuffer), std::end(oddBuffer), 0);
+}
+
+void loadTiles( std::vector<std::string> tilesToLoad ) {
+    tiles.clear();
+
+    for (const auto& tile : tilesToLoad ) {
+        tiles.push_back(odb::loadBitmap(tile));
+    }
 }
 
 void plot(int x, int y, int color) {

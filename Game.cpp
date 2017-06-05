@@ -14,8 +14,6 @@
 #include <memory>
 #include <fstream>
 #include <sstream>
-#include "NativeBitmap.h"
-#include "LoadImage.h"
 
 #include "Game.h"
 
@@ -188,12 +186,15 @@ void prepareRoom(int room) {
 
     std::ifstream tileList(roomName.str());
     std::string buffer;
-    tiles.clear();
+
+    std::vector<std::string> tilesToLoad;
 
     while (tileList.good()) {
         std::getline(tileList, buffer);
-        tiles.push_back(odb::loadBitmap(buffer));
+        tilesToLoad.push_back(buffer);
     }
+
+    loadTiles( tilesToLoad );
 
     clearBuffers();
 }
