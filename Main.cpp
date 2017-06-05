@@ -281,7 +281,7 @@ void render() {
         }
 
         for (int x = x0; x < x1; ++x) {
-            if (playerDireciton == EDirection::kRight) {
+            if (playerDirection == EDirection::kRight) {
                 pixel = (pixelData[(32 * (y - y0)) + ((x - x0))]);
             } else {
                 pixel = (pixelData[(32 * (y - y0)) + (31 - (x - x0))]);
@@ -510,7 +510,7 @@ void updateHero(bool isOnGround, bool isJumping, bool isUpPressed, bool isDownPr
 
     if (isLeftPressed) {
             vx = -8;
-            playerDireciton = kLeft;
+            playerDirection = kLeft;
             if (isOnGround) {
                 playerStance = kStanding;
             }
@@ -518,7 +518,7 @@ void updateHero(bool isOnGround, bool isJumping, bool isUpPressed, bool isDownPr
 
     if (isRightPressed) {
             vx = +8;
-            playerDireciton = kRight;
+            playerDirection = kRight;
             if (isOnGround) {
                 playerStance = kStanding;
             }

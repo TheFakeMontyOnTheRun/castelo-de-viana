@@ -23,7 +23,7 @@ int vx = 0;
 int vy = 0;
 int counter = 0;
 int room = 0;
-EDirection playerDireciton = EDirection::kRight;
+EDirection playerDirection = EDirection::kRight;
 EStance playerStance = EStance::kStanding;
 
 std::array<std::array<int, 10>, 6> backgroundTiles;
@@ -36,6 +36,6 @@ void init() {
     vy = 0;
     counter = 0;
     room = 0;
-    playerDireciton = EDirection::kRight;
+    playerDirection = EDirection::kRight;
     playerStance = EStance::kStanding;
 }

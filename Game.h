@@ -15,7 +15,7 @@ extern int vx;
 extern int vy;
 extern int counter;
 extern int room;
-extern EDirection playerDireciton;
+extern EDirection playerDirection;
 extern EStance playerStance;
 
 extern std::array<std::array<int, 10>, 6> backgroundTiles;
