@@ -46,6 +46,11 @@ std::array<unsigned char, 320 * 200> buffer;
 std::array<unsigned char, 320 * 100 / 4> evenBuffer;
 std::array<unsigned char, 320 * 100 / 4> oddBuffer;
 
+void gameTick(bool &isOnGround, bool &isOnStairs);
+
+void updateHero(bool isOnGround, bool isJumping, bool isUpPressed, bool isDownPressed, bool isLeftPressed,
+                bool isRightPressed, bool isOnStairs);
+
 void initMode4h() {
     union REGS regs;
 
@@ -400,20 +405,7 @@ int main(int argc, char **argv) {
 
     while (!done) {
 
-        px += vx;
-        py += vy;
-
-        if (vx == 1) {
-            vx = 0;
-        }
-
-        if (vy == 1) {
-            vy = 0;
-        }
-
-        enforceScreenLimits();
         bool isOnGround = false;
-        bool isOnStairs = (foregroundTiles[(py + 16) / 32][(px + 16) / 32] == 3);
         bool isJumping = false;
         bool isUpPressed = false;
         bool isDownPressed = false;
@@ -422,53 +414,9 @@ int main(int argc, char **argv) {
         bool isAttacking = false;
         bool isAltAttackPressed = false;
 
-        int ground = ((py + 32) / 32);
-        int front = ((px) / 32);
+        bool isOnStairs;
+        gameTick(isOnGround, isOnStairs);
 
-        if (vx > 0) {
-            front++;
-        }
-
-        if (vx < 0) {
-            front--;
-        }
-
-
-        if (ground > 5) {
-            ground = 5;
-        }
-
-        if (foregroundTiles[ground][(px + 16) / 32] == 1) {
-            isOnGround = true;
-        }
-
-        if (foregroundTiles[(py / 32)][front] == 1) {
-            vx = 0;
-        }
-
-        if ((vx != 0 && isOnGround) || (vy != 0 && isOnStairs)) {
-            heroFrame = (heroFrame + 1) % 2;
-        }
-
-        vx = vx / 2;
-
-        if (isOnGround) {
-            vy = 0;
-            py = (py / 32) * 32;
-        }
-
-
-        if (!isOnStairs) {
-            vy = vy + 2;
-            //this prevents from jumping while keeping the climbing animation state. Unfortunately, prevents looking up.
-            //playerStance = EStance::kStanding;
-        } else {
-            vy = 0;
-        }
-
-        int level = 0;
-        ++counter;
-        render();
 
         lastKey = bioskey(0x11);
         auto extendedKeys = bioskey(0x12);
@@ -526,49 +474,116 @@ int main(int argc, char **argv) {
         }
 
 
-        if (isJumping) {
-            if (isOnGround) {
-                vy = -12;
-            }
-            playerStance = EStance::kStanding;
-        }
-
-        if (isUpPressed) {
-            if (isOnStairs) {
-                vy = -8;
-                playerStance = EStance::kClimbing;
-            } else if (isOnGround) {
-                playerStance = EStance::kUp;
-            }
-        }
-
-        if (isDownPressed) {
-            if (isOnStairs) {
-                vy = +8;
-                playerStance = EStance::kClimbing;
-            } else {
-                playerStance = EStance::kStanding;
-            }
-        }
-
-        if (isLeftPressed) {
-            vx = -8;
-            playerDireciton = EDirection::kLeft;
-            if (isOnGround) {
-                playerStance = EStance::kStanding;
-            }
-        }
-
-        if (isRightPressed) {
-            vx = +8;
-            playerDireciton = EDirection::kRight;
-            if (isOnGround) {
-                playerStance = EStance::kStanding;
-            }
-        }
-
+        updateHero(isOnGround, isJumping, isUpPressed, isDownPressed, isLeftPressed, isRightPressed, isOnStairs);
 
     }
 
     return 0;
+}
+
+void updateHero(bool isOnGround, bool isJumping, bool isUpPressed, bool isDownPressed, bool isLeftPressed,
+                bool isRightPressed, bool isOnStairs) {
+    if (isJumping) {
+            if (isOnGround) {
+                vy = -12;
+            }
+            playerStance = kStanding;
+        }
+
+    if (isUpPressed) {
+            if (isOnStairs) {
+                vy = -8;
+                playerStance = kClimbing;
+            } else if (isOnGround) {
+                playerStance = kUp;
+            }
+        }
+
+    if (isDownPressed) {
+            if (isOnStairs) {
+                vy = +8;
+                playerStance = kClimbing;
+            } else {
+                playerStance = kStanding;
+            }
+        }
+
+    if (isLeftPressed) {
+            vx = -8;
+            playerDireciton = kLeft;
+            if (isOnGround) {
+                playerStance = kStanding;
+            }
+        }
+
+    if (isRightPressed) {
+            vx = +8;
+            playerDireciton = kRight;
+            if (isOnGround) {
+                playerStance = kStanding;
+            }
+        }
+}
+
+void gameTick(bool &isOnGround, bool &isOnStairs) {
+    isOnStairs= (foregroundTiles[(py + 16) / 32][(px + 16) / 32] == 3);
+    px += vx;
+    py += vy;
+
+    if (vx == 1) {
+            vx = 0;
+        }
+
+    if (vy == 1) {
+            vy = 0;
+        }
+
+    enforceScreenLimits();
+    int ground = ((py + 32) / 32);
+    int front = ((px) / 32);
+
+    if (vx > 0) {
+            front++;
+        }
+
+    if (vx < 0) {
+            front--;
+        }
+
+
+    if (ground > 5) {
+            ground = 5;
+        }
+
+    if (foregroundTiles[ground][(px + 16) / 32] == 1) {
+            isOnGround = true;
+        }
+
+    if (foregroundTiles[(py / 32)][front] == 1) {
+            vx = 0;
+        }
+
+    if ((vx != 0 && isOnGround) || (vy != 0 && isOnStairs)) {
+            heroFrame = (heroFrame + 1) % 2;
+        }
+
+    vx = vx / 2;
+
+    if (isOnGround) {
+            vy = 0;
+            py = (py / 32) * 32;
+        }
+
+
+    if (!isOnStairs) {
+            vy = vy + 2;
+            //this prevents from jumping while keeping the climbing animation state. Unfortunately, prevents looking up.
+            //playerStance = EStance::kStanding;
+        } else {
+            vy = 0;
+        }
+
+    int level = 0;
+    ++counter;
+    render();
 }
