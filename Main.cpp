@@ -57,6 +57,7 @@ void clearBuffers() {
     std::fill(std::begin(buffer), std::end(buffer), 4);
     std::fill(std::begin(evenBuffer), std::end(evenBuffer), 0);
     std::fill(std::begin(oddBuffer), std::end(oddBuffer), 0);
+}
 
 std::vector<std::shared_ptr<odb::NativeBitmap>> loadSpriteList(std::string listName ) {
     std::ifstream tileList(listName);
