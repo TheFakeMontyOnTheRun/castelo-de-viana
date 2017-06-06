@@ -87,6 +87,19 @@ void updateHero(bool isOnGround, bool isJumping, bool isUpPressed, bool isDownPr
 
 void gameTick(bool &isOnGround, bool &isOnStairs) {
     isOnStairs= (foregroundTiles[(py + 16) / 32][(px + 16) / 32] == 3);
+
+    if (playerDirection == EDirection::kRight) {
+        if (foregroundTiles[((py + 16) / 32)][ ( px + 32 ) / 32 ] == 1) {
+            vx = 0;
+        }
+    }
+
+    if (playerDirection == EDirection::kLeft) {
+        if (foregroundTiles[((py + 16) / 32)][ ( px ) / 32 ] == 1) {
+            vx = 0;
+        }
+    }
+
     px += vx;
     py += vy;
 
@@ -100,16 +113,6 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
 
     enforceScreenLimits();
     int ground = ((py + 32) / 32);
-    int front = ((px) / 32);
-
-    if (vx > 0) {
-        front++;
-    }
-
-    if (vx < 0) {
-        front--;
-    }
-
 
     if (ground > 5) {
         ground = 5;
@@ -119,9 +122,6 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
         isOnGround = true;
     }
 
-    if (foregroundTiles[(py / 32)][front] == 1) {
-        vx = 0;
-    }
 
     if ((vx != 0 && isOnGround) || (vy != 0 && isOnStairs)) {
         heroFrame = (heroFrame + 1) % 2;
