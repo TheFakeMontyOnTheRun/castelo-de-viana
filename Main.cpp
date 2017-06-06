@@ -20,7 +20,7 @@
 #include "Game.h"
 
 
-std::vector<std::shared_ptr<odb::NativeBitmap>> tiles;
+std::vector<std::vector<std::shared_ptr<odb::NativeBitmap>>> tiles;
 
 
 std::shared_ptr<odb::NativeBitmap> hero[3][2] = {
@@ -57,13 +57,30 @@ void clearBuffers() {
     std::fill(std::begin(buffer), std::end(buffer), 4);
     std::fill(std::begin(evenBuffer), std::end(evenBuffer), 0);
     std::fill(std::begin(oddBuffer), std::end(oddBuffer), 0);
+
+std::vector<std::shared_ptr<odb::NativeBitmap>> loadSpriteList(std::string listName ) {
+    std::ifstream tileList(listName);
+    std::string buffer;
+
+    std::vector<std::shared_ptr<odb::NativeBitmap>> tilesToLoad;
+
+    while (tileList.good()) {
+        std::getline(tileList, buffer);
+        tilesToLoad.push_back(odb::loadBitmap(buffer));
+    }
+    return tilesToLoad;
 }
 
 void loadTiles( std::vector<std::string> tilesToLoad ) {
     tiles.clear();
 
     for (const auto& tile : tilesToLoad ) {
-        tiles.push_back(odb::loadBitmap(tile));
+
+        if ( tile.substr( tile.length() - 4 ) == ".png" ) {
+            tiles.push_back({odb::loadBitmap(tile)});
+        } else {
+            tiles.push_back(loadSpriteList(tile));
+        }
     }
 }
 
@@ -207,7 +224,8 @@ void render() {
             int pixel = 4;
 
             if (backgroundTiles[ty][tx] != 0) {
-                tile = tiles[backgroundTiles[ty][tx]];
+                auto tileset = tiles[backgroundTiles[ty][tx]];
+                tile = tileset[ counter % tileset.size() ];
 
                 if (tile == nullptr) {
                     std::cout << "null tile at " << tx << ", " << ty << std::endl;
@@ -240,7 +258,9 @@ void render() {
             }
 
             if (foregroundTiles[ty][tx] != 0) {
-                tile = tiles[foregroundTiles[ty][tx]];
+                auto tileset = tiles[foregroundTiles[ty][tx]];
+                tile = tileset[ counter % tileset.size() ];
+
 
                 if (tile == nullptr) {
                     std::cout << "null tile at " << tx << ", " << ty << std::endl;
