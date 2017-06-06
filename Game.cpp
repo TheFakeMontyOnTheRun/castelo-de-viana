@@ -112,6 +112,11 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
     }
 
     enforceScreenLimits();
+
+    if ( vx == 0 ) {
+        heroFrame = 0;
+    }
+
     int ground = ((py + 32) / 32);
 
     if (ground > 5) {
