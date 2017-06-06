@@ -118,10 +118,16 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
     }
 
     int ground = ((py + 32) / 32);
+    int ceiling = ( py) / 32;
 
     if (ground > 5) {
         ground = 5;
     }
+
+    if (ceiling < 0) {
+        ceiling = 0;
+    }
+
 
     if (foregroundTiles[ground][(px + 16) / 32] == 1) {
         isOnGround = true;
@@ -138,6 +144,16 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
         vy = 0;
         py = (py / 32) * 32;
     }
+
+    if ( vy < 0 && foregroundTiles[ceiling][(px + 16) / 32] == 1) {
+        vy = -vy;
+    }
+
+    if ( vy < 0 && foregroundTiles[py / 32][(px + 16) / 32] == 1) {
+        vy = -vy;
+    }
+
+
 
 
     if (!isOnStairs) {
