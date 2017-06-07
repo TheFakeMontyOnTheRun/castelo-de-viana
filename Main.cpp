@@ -300,9 +300,9 @@ void render() {
         }
     }
 
-    y0 = (py);
+    y0 = (player.mPosition.mY);
     y1 = 32 + y0;
-    x0 = (px);
+    x0 = (player.mPosition.mX);
     x1 = 32 + x0;
     int *pixelData = hero[playerStance][heroFrame]->getPixelData();
 
@@ -335,9 +335,9 @@ void render() {
     pixelData = foeSprites[counter % 2 ]->getPixelData();
 
     for ( const auto& foe : foes ) {
-        y0 = (foe.mY);
+        y0 = (foe.mPosition.mY);
         y1 = 32 + y0;
-        x0 = (foe.mX);
+        x0 = (foe.mPosition.mX);
         x1 = 32 + x0;
 
         int pixel = 0;

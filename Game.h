@@ -15,10 +15,13 @@ public:
     int mY = 0;
 };
 
-extern int px;
-extern int py;
-extern int vx;
-extern int vy;
+class Actor {
+public:
+    Vec2i mPosition;
+    Vec2i mSpeed;
+};
+
+extern Actor player;
 extern int counter;
 extern int room;
 extern EDirection playerDirection;
@@ -26,7 +29,7 @@ extern EStance playerStance;
 extern int heroFrame;
 extern std::array<std::array<int, 10>, 6> backgroundTiles;
 extern std::array<std::array<int, 10>, 6> foregroundTiles;
-extern std::vector<Vec2i> foes;
+extern std::vector<Actor> foes;
 
 extern void clearBuffers();
 void init();

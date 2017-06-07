@@ -18,10 +18,7 @@
 #include "Game.h"
 
 int heroFrame = 0;
-int px = 0;
-int py = 0;
-int vx = 0;
-int vy = 0;
+Actor player;
 int counter = 0;
 int room = 0;
 EDirection playerDirection = EDirection::kRight;
@@ -29,13 +26,13 @@ EStance playerStance = EStance::kStanding;
 
 std::array<std::array<int, 10>, 6> backgroundTiles;
 std::array<std::array<int, 10>, 6> foregroundTiles;
-std::vector<Vec2i> foes;
+std::vector<Actor> foes;
 
 void init() {
-    px = 0;
-    py = 0;
-    vx = 0;
-    vy = 0;
+    player.mPosition.mX = 0;
+    player.mPosition.mY = 0;
+    player.mSpeed.mX = 0;
+    player.mSpeed.mY = 0;
     counter = 0;
     room = 0;
     playerDirection = EDirection::kRight;
@@ -46,14 +43,14 @@ void updateHero(bool isOnGround, bool isJumping, bool isUpPressed, bool isDownPr
                 bool isRightPressed, bool isOnStairs) {
     if (isJumping) {
         if (isOnGround) {
-            vy = -12;
+            player.mSpeed.mY = -12;
         }
         playerStance = kStanding;
     }
 
     if (isUpPressed) {
         if (isOnStairs) {
-            vy = -8;
+            player.mSpeed.mY = -8;
             playerStance = kClimbing;
         } else if (isOnGround) {
             playerStance = kUp;
@@ -62,7 +59,7 @@ void updateHero(bool isOnGround, bool isJumping, bool isUpPressed, bool isDownPr
 
     if (isDownPressed) {
         if (isOnStairs) {
-            vy = +8;
+            player.mSpeed.mY = +8;
             playerStance = kClimbing;
         } else {
             playerStance = kStanding;
@@ -70,7 +67,7 @@ void updateHero(bool isOnGround, bool isJumping, bool isUpPressed, bool isDownPr
     }
 
     if (isLeftPressed) {
-        vx = -8;
+        player.mSpeed.mX = -8;
         playerDirection = kLeft;
         if (isOnGround) {
             playerStance = kStanding;
@@ -78,7 +75,7 @@ void updateHero(bool isOnGround, bool isJumping, bool isUpPressed, bool isDownPr
     }
 
     if (isRightPressed) {
-        vx = +8;
+        player.mSpeed.mX = +8;
         playerDirection = kRight;
         if (isOnGround) {
             playerStance = kStanding;
@@ -87,39 +84,39 @@ void updateHero(bool isOnGround, bool isJumping, bool isUpPressed, bool isDownPr
 }
 
 void gameTick(bool &isOnGround, bool &isOnStairs) {
-    isOnStairs= (foregroundTiles[(py + 16) / 32][(px + 16) / 32] == 3);
+    isOnStairs= (foregroundTiles[(player.mPosition.mY + 16) / 32][(player.mPosition.mX + 16) / 32] == 3);
 
     if (playerDirection == EDirection::kRight) {
-        if (foregroundTiles[((py + 16) / 32)][ ( px + 32 ) / 32 ] == 1) {
-            vx = 0;
+        if (foregroundTiles[((player.mPosition.mY + 16) / 32)][ ( player.mPosition.mX + 32 ) / 32 ] == 1) {
+            player.mSpeed.mX = 0;
         }
     }
 
     if (playerDirection == EDirection::kLeft) {
-        if (foregroundTiles[((py + 16) / 32)][ ( px ) / 32 ] == 1) {
-            vx = 0;
+        if (foregroundTiles[((player.mPosition.mY + 16) / 32)][ ( player.mPosition.mX ) / 32 ] == 1) {
+            player.mSpeed.mX = 0;
         }
     }
 
-    px += vx;
-    py += vy;
+    player.mPosition.mX += player.mSpeed.mX;
+    player.mPosition.mY += player.mSpeed.mY;
 
-    if (vx == 1) {
-        vx = 0;
+    if (player.mSpeed.mX == 1) {
+        player.mSpeed.mX = 0;
     }
 
-    if (vy == 1) {
-        vy = 0;
+    if (player.mSpeed.mY == 1) {
+        player.mSpeed.mY = 0;
     }
 
     enforceScreenLimits();
 
-    if ( vx == 0 ) {
+    if ( player.mSpeed.mX == 0 ) {
         heroFrame = 0;
     }
 
-    int ground = ((py + 32) / 32);
-    int ceiling = ( py) / 32;
+    int ground = ((player.mPosition.mY + 32) / 32);
+    int ceiling = ( player.mPosition.mY) / 32;
 
     if (ground > 5) {
         ground = 5;
@@ -130,7 +127,7 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
     }
 
 
-    if (foregroundTiles[ground][(px + 16) / 32] == 1) {
+    if (foregroundTiles[ground][(player.mPosition.mX + 16) / 32] == 1) {
         isOnGround = true;
     }
 
@@ -139,34 +136,36 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
         heroFrame = (heroFrame + 1) % 2;
     }
 
-    vx = vx / 2;
+    player.mSpeed.mX = player.mSpeed.mX / 2;
 
-    if (isOnGround) {
-        vy = 0;
-        py = (py / 32) * 32;
+    if ((isOnGround || foregroundTiles[ground][(player.mPosition.mX + 16) / 32] == 3) && !isOnStairs ) {
+        player.mSpeed.mY = std::min( 0, player.mSpeed.mY );
+        player.mPosition.mY = std::min( player.mPosition.mY, (player.mPosition.mY / 32) * 32 );
     }
 
-    if ( vy < 0 && foregroundTiles[ceiling][(px + 16) / 32] == 1) {
-        vy = -vy;
+    if ( player.mSpeed.mY < 0 && foregroundTiles[ceiling][(player.mPosition.mX + 16) / 32] == 1) {
+        player.mSpeed.mY = -player.mSpeed.mY;
     }
 
-    if ( vy < 0 && foregroundTiles[py / 32][(px + 16) / 32] == 1) {
-        vy = -vy;
+    if ( player.mSpeed.mY < 0 && foregroundTiles[player.mPosition.mY / 32][(player.mPosition.mX + 16) / 32] == 1) {
+        player.mSpeed.mY = -player.mSpeed.mY;
     }
 
 
 
 
     if (!isOnStairs) {
-        vy = vy + 2;
+        player.mSpeed.mY = player.mSpeed.mY + 2;
         //this prevents from jumping while keeping the climbing animation state. Unfortunately, prevents looking up.
         //playerStance = EStance::kStanding;
     } else {
-        vy = 0;
+        player.mSpeed.mY = 0;
     }
 
     int level = 0;
     ++counter;
+
+
 }
 
 void prepareRoom(int room) {
@@ -201,7 +200,9 @@ void prepareRoom(int room) {
 
             if ( ch == 'a' ) {
                 foregroundTiles[y][x] = 0;
-                foes.emplace_back(Vec2i{ x * 32, y * 32 });
+                Actor a;
+                a.mPosition = Vec2i{ x * 32, y * 32 };
+                foes.push_back(a);
             } else {
                 foregroundTiles[y][x] = ch - '0';
             }
@@ -231,41 +232,41 @@ void prepareRoom(int room) {
 }
 
 void enforceScreenLimits() {
-    if (px < 0) {
+    if (player.mPosition.mX < 0) {
         if ((room % 10) > 0) {
-            px = 320 - 32 - 1;
+            player.mPosition.mX = 320 - 32 - 1;
             prepareRoom(--room);
         } else {
-            px = 0;
+            player.mPosition.mX = 0;
         }
     }
 
-    if (py < 0) {
+    if (player.mPosition.mY < 0) {
         if ((room / 10) <= 9) {
-            py = 200 - 32 - 1;
+            player.mPosition.mY = 200 - 32 - 1;
             room += 10;
             prepareRoom(room);
         } else {
-            py = 0;
+            player.mPosition.mY = 0;
         }
     }
 
-    if ((px + 32) >= 320) {
+    if ((player.mPosition.mX + 32) >= 320) {
         if ((room % 10) < 9) {
-            px = 1;
+            player.mPosition.mX = 1;
             prepareRoom(++room);
         } else {
-            px = 320 - 32;
+            player.mPosition.mX = 320 - 32;
         }
     }
 
-    if ((py + 32) >= 200) {
+    if ((player.mPosition.mY + 32) >= 200) {
         if ((room / 10) >= 1) {
-            py = 1;
+            player.mPosition.mY = 1;
             room -= 10;
             prepareRoom(room);
         } else {
-            py = 200 - 32 - 1;
+            player.mPosition.mY = 200 - 32 - 1;
         }
     }
 }
