@@ -165,7 +165,7 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
     for ( auto& foe : foes ) {
 
         foe.mPosition.mX += foe.mSpeed.mX;
-        foe.mPosition.mX += foe.mSpeed.mY;
+        foe.mPosition.mY += foe.mSpeed.mY;
 
         if ( foe.mPosition.mX >= ( 320 - 32 ) ) {
             foe.mSpeed.mX = -8;
