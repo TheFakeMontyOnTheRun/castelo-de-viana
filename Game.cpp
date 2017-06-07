@@ -162,6 +162,21 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
     ++counter;
 
 
+    for ( auto& foe : foes ) {
+
+        foe.mPosition.mX += foe.mSpeed.mX;
+        foe.mPosition.mX += foe.mSpeed.mY;
+
+        if ( foe.mPosition.mX >= ( 320 - 32 ) ) {
+            foe.mSpeed.mX = -8;
+            foe.mDirection = EDirection::kLeft;
+        }
+
+        if ( foe.mPosition.mX < 0 ) {
+            foe.mSpeed.mX = 8;
+            foe.mDirection = EDirection::kRight;
+        }
+    }
 }
 
 void prepareRoom(int room) {
@@ -198,6 +213,7 @@ void prepareRoom(int room) {
                 foregroundTiles[y][x] = 0;
                 Actor a;
                 a.mPosition = Vec2i{ x * 32, y * 32 };
+                a.mSpeed.mX = 8;
                 foes.push_back(a);
             } else {
                 foregroundTiles[y][x] = ch - '0';

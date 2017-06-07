@@ -348,7 +348,12 @@ void render() {
             }
 
             for (int x = x0; x < x1; ++x) {
-                pixel = (pixelData[(32 * (y - y0)) + (31 - (x - x0))]);
+                if (foe.mDirection == EDirection::kRight) {
+                    pixel = (pixelData[(32 * (y - y0)) + ((x - x0))]);
+                } else {
+                    pixel = (pixelData[(32 * (y - y0)) + (31 - (x - x0))]);
+                }
+
 
                 if (pixel == 0) {
                     continue;
