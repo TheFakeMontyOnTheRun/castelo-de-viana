@@ -176,6 +176,38 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
             foe.mSpeed.mX = 8;
             foe.mDirection = EDirection::kRight;
         }
+
+        int front = ((foe.mPosition.mX ) / 32);
+
+        if ( foe.mDirection == EDirection::kRight ) {
+            front++;
+        }
+
+        if ( foregroundTiles[ ( foe.mPosition.mY + 16  ) / 32 ][ front ] == 1 ) {
+            foe.mSpeed.mX *= -1;
+
+            if ( foe.mDirection == EDirection::kLeft ) {
+                foe.mDirection = EDirection::kRight;
+            } else {
+                foe.mDirection = EDirection::kLeft;
+            }
+        }
+
+        foe.mSpeed.mY += 2;
+        int ground = ( foe.mPosition.mY / 32) + 1;
+        bool isOnGround = false;
+        if ( ground < 6 ) {
+            if ( foregroundTiles[ground][ ( (foe.mPosition.mX + 16)  / 32 ) ] != 0  ) {
+                isOnGround = true;
+            }
+        } else {
+            isOnGround = true;
+        }
+
+        if ( isOnGround ) {
+            foe.mSpeed.mY = 0;
+            foe.mPosition.mY = (foe.mPosition.mY / 32) * 32;
+        }
     }
 }
 
