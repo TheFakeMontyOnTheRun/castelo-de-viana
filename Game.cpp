@@ -116,18 +116,16 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
 
     if (ground > 5) {
         ground = 5;
+        isOnGround = true;
+    } else {
+        if (foregroundTiles[ground][(player.mPosition.mX + 16) / 32] == 1) {
+            isOnGround = true;
+        }
     }
 
     if (ceiling < 0) {
         ceiling = 0;
     }
-
-
-    if (foregroundTiles[ground][(player.mPosition.mX + 16) / 32] == 1) {
-        isOnGround = true;
-    }
-
-
     if ((vx != 0 && isOnGround) || (vy != 0 && isOnStairs)) {
         heroFrame = (heroFrame + 1) % 2;
     }
