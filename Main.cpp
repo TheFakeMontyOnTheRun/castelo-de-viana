@@ -304,7 +304,7 @@ void render() {
     y1 = 32 + y0;
     x0 = (player.mPosition.mX);
     x1 = 32 + x0;
-    int *pixelData = hero[playerStance][heroFrame]->getPixelData();
+    int *pixelData = hero[player.mStance][heroFrame]->getPixelData();
 
     int pixel = 0;
     for (int y = y0; y < y1; ++y) {
@@ -314,7 +314,7 @@ void render() {
         }
 
         for (int x = x0; x < x1; ++x) {
-            if (playerDirection == EDirection::kRight) {
+            if (player.mDirection == EDirection::kRight) {
                 pixel = (pixelData[(32 * (y - y0)) + ((x - x0))]);
             } else {
                 pixel = (pixelData[(32 * (y - y0)) + (31 - (x - x0))]);

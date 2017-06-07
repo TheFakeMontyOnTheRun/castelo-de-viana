@@ -19,13 +19,13 @@ class Actor {
 public:
     Vec2i mPosition;
     Vec2i mSpeed;
+    EDirection mDirection = EDirection::kRight;
+    EStance mStance = EStance::kStanding;;
 };
 
 extern Actor player;
 extern int counter;
 extern int room;
-extern EDirection playerDirection;
-extern EStance playerStance;
 extern int heroFrame;
 extern std::array<std::array<int, 10>, 6> backgroundTiles;
 extern std::array<std::array<int, 10>, 6> foregroundTiles;

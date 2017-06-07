@@ -21,8 +21,6 @@ int heroFrame = 0;
 Actor player;
 int counter = 0;
 int room = 0;
-EDirection playerDirection = EDirection::kRight;
-EStance playerStance = EStance::kStanding;
 
 std::array<std::array<int, 10>, 6> backgroundTiles;
 std::array<std::array<int, 10>, 6> foregroundTiles;
@@ -35,8 +33,6 @@ void init() {
     player.mSpeed.mY = 0;
     counter = 0;
     room = 0;
-    playerDirection = EDirection::kRight;
-    playerStance = EStance::kStanding;
 }
 
 void updateHero(bool isOnGround, bool isJumping, bool isUpPressed, bool isDownPressed, bool isLeftPressed,
@@ -45,40 +41,40 @@ void updateHero(bool isOnGround, bool isJumping, bool isUpPressed, bool isDownPr
         if (isOnGround) {
             player.mSpeed.mY = -12;
         }
-        playerStance = kStanding;
+        player.mStance = kStanding;
     }
 
     if (isUpPressed) {
         if (isOnStairs) {
             player.mSpeed.mY = -8;
-            playerStance = kClimbing;
+            player.mStance = kClimbing;
         } else if (isOnGround) {
-            playerStance = kUp;
+            player.mStance = kUp;
         }
     }
 
     if (isDownPressed) {
         if (isOnStairs) {
             player.mSpeed.mY = +8;
-            playerStance = kClimbing;
+            player.mStance = kClimbing;
         } else {
-            playerStance = kStanding;
+            player.mStance = kStanding;
         }
     }
 
     if (isLeftPressed) {
         player.mSpeed.mX = -8;
-        playerDirection = kLeft;
+        player.mDirection = kLeft;
         if (isOnGround) {
-            playerStance = kStanding;
+            player.mStance = kStanding;
         }
     }
 
     if (isRightPressed) {
         player.mSpeed.mX = +8;
-        playerDirection = kRight;
+        player.mDirection = kRight;
         if (isOnGround) {
-            playerStance = kStanding;
+            player.mStance = kStanding;
         }
     }
 }
@@ -86,13 +82,13 @@ void updateHero(bool isOnGround, bool isJumping, bool isUpPressed, bool isDownPr
 void gameTick(bool &isOnGround, bool &isOnStairs) {
     isOnStairs= (foregroundTiles[(player.mPosition.mY + 16) / 32][(player.mPosition.mX + 16) / 32] == 3);
 
-    if (playerDirection == EDirection::kRight) {
+    if (player.mDirection == EDirection::kRight) {
         if (foregroundTiles[((player.mPosition.mY + 16) / 32)][ ( player.mPosition.mX + 32 ) / 32 ] == 1) {
             player.mSpeed.mX = 0;
         }
     }
 
-    if (playerDirection == EDirection::kLeft) {
+    if (player.mDirection == EDirection::kLeft) {
         if (foregroundTiles[((player.mPosition.mY + 16) / 32)][ ( player.mPosition.mX ) / 32 ] == 1) {
             player.mSpeed.mX = 0;
         }
