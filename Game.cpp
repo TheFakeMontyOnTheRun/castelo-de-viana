@@ -35,8 +35,9 @@ void init() {
     room = 0;
 }
 
-void updateHero(bool isOnGround, bool isJumping, bool isUpPressed, bool isDownPressed, bool isLeftPressed,
+void updateHero(bool isOnGround, bool isJumping, bool isUpPressed, bool isDownPressed, bool isLeftPressed, bool isAttacking, bool isUsingSpecial,
                 bool isRightPressed, bool isOnStairs) {
+
     if (isJumping) {
         if (isOnGround) {
             player.mSpeed.mY = -12;
@@ -76,6 +77,10 @@ void updateHero(bool isOnGround, bool isJumping, bool isUpPressed, bool isDownPr
         if (isOnGround) {
             player.mStance = kStanding;
         }
+    }
+
+    if ( isAttacking ) {
+        player.mStance = kAttacking;
     }
 }
 
@@ -156,7 +161,29 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
         player.mSpeed.mY = 0;
     }
 
-    int level = 0;
+
+    if ( player.mStance == EStance::kAttacking ) {
+
+        for ( auto& foe : foes ) {
+            if ( std::abs(foe.mPosition.mY - player.mPosition.mY) < 32 ) {
+
+                if (player.mDirection == EDirection::kRight) {
+                    int diff = foe.mPosition.mX - player.mPosition.mX;
+                    if (diff < (32) && diff > 0) {
+                        foe.mSpeed.mX = 0;
+                    }
+                } else {
+                    int diff = player.mPosition.mX - foe.mPosition.mX;
+                    if (diff < (32) && diff > 0) {
+                        foe.mSpeed.mX = 0;
+                    }
+                }
+            }
+        }
+
+
+        player.mStance = EStance::kStanding;
+    }
     ++counter;
 
 

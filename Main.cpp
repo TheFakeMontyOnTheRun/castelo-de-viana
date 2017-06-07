@@ -27,7 +27,7 @@ std::shared_ptr<odb::NativeBitmap> foeSprites[2] = {
         odb::loadBitmap("foe1.png"),
 };
 
-std::shared_ptr<odb::NativeBitmap> hero[3][2] = {
+std::shared_ptr<odb::NativeBitmap> hero[4][2] = {
         {
                 odb::loadBitmap("up0.png"),
                 odb::loadBitmap("up1.png"),
@@ -39,6 +39,10 @@ std::shared_ptr<odb::NativeBitmap> hero[3][2] = {
         {
                 odb::loadBitmap("down0.png"),
                 odb::loadBitmap("down1.png"),
+        },
+        {
+                odb::loadBitmap("attack0.png"),
+                odb::loadBitmap("attack0.png"),
         },
 };
 
@@ -395,8 +399,8 @@ int main(int argc, char **argv) {
         bool isAltAttackPressed = false;
 
         bool isOnStairs;
-        gameTick(isOnGround, isOnStairs);
         render();
+        gameTick(isOnGround, isOnStairs);
 
         lastKey = bioskey(0x11);
         auto extendedKeys = bioskey(0x12);
@@ -454,7 +458,7 @@ int main(int argc, char **argv) {
         }
 
 
-        updateHero(isOnGround, isJumping, isUpPressed, isDownPressed, isLeftPressed, isRightPressed, isOnStairs);
+        updateHero(isOnGround, isJumping, isUpPressed, isDownPressed, isLeftPressed, isAttacking, isAltAttackPressed, isRightPressed, isOnStairs);
 
     }
 

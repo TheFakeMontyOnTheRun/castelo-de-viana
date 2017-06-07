@@ -6,7 +6,7 @@ enum EDirection {
     kLeft, kRight
 };
 enum EStance {
-    kUp, kStanding, kClimbing
+    kUp, kStanding, kClimbing, kAttacking
 };
 
 class Vec2i {
@@ -35,7 +35,7 @@ extern void clearBuffers();
 void init();
 void gameTick(bool &isOnGround, bool &isOnStairs);
 void loadTiles( std::vector<std::string> tilesToLoad );
-void updateHero(bool isOnGround, bool isJumping, bool isUpPressed, bool isDownPressed, bool isLeftPressed,
+void updateHero(bool isOnGround, bool isJumping, bool isUpPressed, bool isDownPressed, bool isLeftPressed, bool isAttacking, bool isUsingSpecial,
                 bool isRightPressed, bool isOnStairs);
 void prepareRoom(int room);
 void enforceScreenLimits();
