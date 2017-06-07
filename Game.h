@@ -9,6 +9,12 @@ enum EStance {
     kUp, kStanding, kClimbing
 };
 
+class Vec2i {
+public:
+    int mX = 0;
+    int mY = 0;
+};
+
 extern int px;
 extern int py;
 extern int vx;
@@ -20,6 +26,7 @@ extern EStance playerStance;
 extern int heroFrame;
 extern std::array<std::array<int, 10>, 6> backgroundTiles;
 extern std::array<std::array<int, 10>, 6> foregroundTiles;
+extern std::vector<Vec2i> foes;
 
 extern void clearBuffers();
 void init();

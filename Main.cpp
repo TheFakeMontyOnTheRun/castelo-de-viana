@@ -22,6 +22,10 @@
 
 std::vector<std::vector<std::shared_ptr<odb::NativeBitmap>>> tiles;
 
+std::shared_ptr<odb::NativeBitmap> foeSprites[2] = {
+        odb::loadBitmap("foe0.png"),
+        odb::loadBitmap("foe1.png"),
+};
 
 std::shared_ptr<odb::NativeBitmap> hero[3][2] = {
         {
@@ -325,6 +329,37 @@ void render() {
             }
 
             imageBuffer[(320 * y) + (x)] = pixel;
+        }
+    }
+
+    pixelData = foeSprites[counter % 2 ]->getPixelData();
+
+    for ( const auto& foe : foes ) {
+        y0 = (foe.mY);
+        y1 = 32 + y0;
+        x0 = (foe.mX);
+        x1 = 32 + x0;
+
+        int pixel = 0;
+        for (int y = y0; y < y1; ++y) {
+
+            if (y < 0 || y >= 200) {
+                continue;
+            }
+
+            for (int x = x0; x < x1; ++x) {
+                pixel = (pixelData[(32 * (y - y0)) + (31 - (x - x0))]);
+
+                if (pixel == 0) {
+                    continue;
+                }
+
+                if (x < 0 || x >= 320) {
+                    continue;
+                }
+
+                imageBuffer[(320 * y) + (x)] = pixel;
+            }
         }
     }
 

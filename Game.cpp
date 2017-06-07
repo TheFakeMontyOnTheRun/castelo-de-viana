@@ -29,6 +29,7 @@ EStance playerStance = EStance::kStanding;
 
 std::array<std::array<int, 10>, 6> backgroundTiles;
 std::array<std::array<int, 10>, 6> foregroundTiles;
+std::vector<Vec2i> foes;
 
 void init() {
     px = 0;
@@ -196,7 +197,16 @@ void prepareRoom(int room) {
             backgroundTiles[y][x] = ch - '0';
 
             fgmap >> ch;
-            foregroundTiles[y][x] = ch - '0';
+
+
+            if ( ch == 'a' ) {
+                foregroundTiles[y][x] = 0;
+                foes.emplace_back(Vec2i{ x * 32, y * 32 });
+            } else {
+                foregroundTiles[y][x] = ch - '0';
+            }
+
+
 
         }
     }
