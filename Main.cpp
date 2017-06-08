@@ -27,7 +27,7 @@ std::shared_ptr<odb::NativeBitmap> foeSprites[2] = {
         odb::loadBitmap("foe1.png"),
 };
 
-std::shared_ptr<odb::NativeBitmap> hero[4][2] = {
+std::shared_ptr<odb::NativeBitmap> hero[5][2] = {
         {
                 odb::loadBitmap("up0.png"),
                 odb::loadBitmap("up1.png"),
@@ -43,6 +43,10 @@ std::shared_ptr<odb::NativeBitmap> hero[4][2] = {
         {
                 odb::loadBitmap("attack0.png"),
                 odb::loadBitmap("attack0.png"),
+        },
+        {
+                odb::loadBitmap("jump0.png"),
+                odb::loadBitmap("jump0.png"),
         },
 };
 

@@ -6,7 +6,7 @@ enum EDirection {
     kLeft, kRight
 };
 enum EStance {
-    kUp, kStanding, kClimbing, kAttacking
+    kUp, kStanding, kClimbing, kAttacking, kJumping
 };
 
 class Vec2i {

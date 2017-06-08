@@ -42,7 +42,7 @@ void updateHero(bool isOnGround, bool isJumping, bool isUpPressed, bool isDownPr
         if (isOnGround) {
             player.mSpeed.mY = -12;
         }
-        player.mStance = kStanding;
+        player.mStance = kJumping;
     }
 
     if (isUpPressed) {
@@ -128,10 +128,15 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
         }
     }
 
+    if (isOnGround ) {
+        player.mStance = kStanding;
+    }
+
     if (ceiling < 0) {
         ceiling = 0;
     }
-    if ((vx != 0 && isOnGround) || (vy != 0 && isOnStairs)) {
+
+    if ((player.mSpeed.mX != 0 && isOnGround) || (player.mSpeed.mY != 0 && isOnStairs)) {
         heroFrame = (heroFrame + 1) % 2;
     }
 
