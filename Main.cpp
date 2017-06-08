@@ -22,6 +22,8 @@
 
 std::vector<std::vector<std::shared_ptr<odb::NativeBitmap>>> tiles;
 
+std::shared_ptr<odb::NativeBitmap> arrowSprite = odb::loadBitmap("arrow.png");
+
 std::shared_ptr<odb::NativeBitmap> doorStates[2] = {
         odb::loadBitmap("door0.png"),
         odb::loadBitmap("door1.png"),
@@ -37,7 +39,7 @@ std::shared_ptr<odb::NativeBitmap> itemSprites[2] = {
         odb::loadBitmap("key.png"),
 };
 
-std::shared_ptr<odb::NativeBitmap> hero[5][2] = {
+std::shared_ptr<odb::NativeBitmap> hero[6][2] = {
         {
                 odb::loadBitmap("up0.png"),
                 odb::loadBitmap("up1.png"),
@@ -57,6 +59,10 @@ std::shared_ptr<odb::NativeBitmap> hero[5][2] = {
         {
                 odb::loadBitmap("jump0.png"),
                 odb::loadBitmap("jump0.png"),
+        },
+        {
+                odb::loadBitmap("up0.png"),
+                odb::loadBitmap("up1.png"),
         },
 };
 
@@ -387,6 +393,43 @@ void render() {
 
             imageBuffer[(320 * y) + (x)] = pixel;
         }
+    }
+
+    pixelData = arrowSprite->getPixelData();
+
+    for ( const auto& arrow : arrows ) {
+        y0 = (arrow.mPosition.mY);
+        y1 = 32 + y0;
+        x0 = (arrow.mPosition.mX);
+        x1 = 32 + x0;
+
+        int pixel = 0;
+        for (int y = y0; y < y1; ++y) {
+
+            if (y < 0 || y >= 200) {
+                continue;
+            }
+
+            for (int x = x0; x < x1; ++x) {
+                if (arrow.mDirection == EDirection::kRight) {
+                    pixel = (pixelData[(32 * (y - y0)) + ((x - x0))]);
+                } else {
+                    pixel = (pixelData[(32 * (y - y0)) + (31 - (x - x0))]);
+                }
+
+
+                if (pixel == 0) {
+                    continue;
+                }
+
+                if (x < 0 || x >= 320) {
+                    continue;
+                }
+
+                imageBuffer[(320 * y) + (x)] = pixel;
+            }
+        }
+
     }
 
     pixelData = foeSprites[counter % 2 ]->getPixelData();

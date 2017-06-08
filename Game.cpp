@@ -28,6 +28,7 @@ std::array<std::array<int, 10>, 6> foregroundTiles;
 std::vector<Actor> foes;
 std::vector<Actor> doors;
 std::vector<Item> items;
+std::vector<Actor> arrows;
 
 void init() {
     player.mPosition.mX = 0;
@@ -85,6 +86,16 @@ void updateHero(bool isOnGround, bool isJumping, bool isUpPressed, bool isDownPr
 
     if ( isAttacking ) {
         player.mStance = kAttacking;
+    }
+
+    if ( isUsingSpecial  ){
+        Actor a;
+        a.mType = kArrow;
+        a.mPosition = player.mPosition;
+        a.mSpeed = { player.mDirection == kRight ? 8 : -8, 0 };
+        a.mDirection = player.mDirection;
+        arrows.push_back(a);
+        player.mStance = kAltAttacking;
     }
 }
 
@@ -173,6 +184,12 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
     int px = ( (player.mPosition.mX / 32 ) * 32 );
     int py = ( (player.mPosition.mY / 32 ) * 32 );
 
+    std::vector<Actor> actorsToRemove;
+
+    for ( auto& arrow : arrows ) {
+        arrow.mPosition.mX += arrow.mSpeed.mX;
+        arrow.mPosition.mY += arrow.mSpeed.mY;
+    }
 
     std::vector<Item> itemsToRemove;
 

@@ -6,7 +6,7 @@ enum EDirection {
     kLeft, kRight
 };
 enum EStance {
-    kUp, kStanding, kClimbing, kAttacking, kJumping
+    kUp, kStanding, kClimbing, kAttacking, kJumping, kAltAttacking
 };
 
 enum EItemType {
@@ -14,7 +14,7 @@ enum EItemType {
 };
 
 enum EActorType {
-    kPlayer, kSkeleton, kClosedDoor, kOpenDoor
+    kPlayer, kSkeleton, kClosedDoor, kOpenDoor, kArrow
 };
 
 class Vec2i {
@@ -51,6 +51,7 @@ extern std::array<std::array<int, 10>, 6> foregroundTiles;
 extern std::vector<Actor> foes;
 extern std::vector<Item> items;
 extern std::vector<Actor> doors;
+extern std::vector<Actor> arrows;
 
 extern void clearBuffers();
 void init();
