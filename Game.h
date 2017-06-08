@@ -9,6 +9,10 @@ enum EStance {
     kUp, kStanding, kClimbing, kAttacking, kJumping
 };
 
+enum EItemType {
+    kMeat, kKey
+};
+
 class Vec2i {
 public:
     int mX = 0;
@@ -23,13 +27,24 @@ public:
     EStance mStance = EStance::kStanding;;
 };
 
+class Item {
+public:
+    Vec2i mPosition;
+    EItemType mType;
+};
+
+bool operator==( const Vec2i& a, const Vec2i& b );
+bool operator==( const Item& a, const Item& b );
+
 extern Actor player;
+extern bool hasKey;
 extern int counter;
 extern int room;
 extern int heroFrame;
 extern std::array<std::array<int, 10>, 6> backgroundTiles;
 extern std::array<std::array<int, 10>, 6> foregroundTiles;
 extern std::vector<Actor> foes;
+extern std::vector<Item> items;
 
 extern void clearBuffers();
 void init();

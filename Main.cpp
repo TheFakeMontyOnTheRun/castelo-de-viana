@@ -27,6 +27,11 @@ std::shared_ptr<odb::NativeBitmap> foeSprites[2] = {
         odb::loadBitmap("foe1.png"),
 };
 
+std::shared_ptr<odb::NativeBitmap> itemSprites[2] = {
+        odb::loadBitmap("meat.png"),
+        odb::loadBitmap("key.png"),
+};
+
 std::shared_ptr<odb::NativeBitmap> hero[5][2] = {
         {
                 odb::loadBitmap("up0.png"),
@@ -369,6 +374,64 @@ void render() {
                     pixel = (pixelData[(32 * (y - y0)) + (31 - (x - x0))]);
                 }
 
+
+                if (pixel == 0) {
+                    continue;
+                }
+
+                if (x < 0 || x >= 320) {
+                    continue;
+                }
+
+                imageBuffer[(320 * y) + (x)] = pixel;
+            }
+        }
+    }
+
+    for ( const auto& item : items) {
+        y0 = (item.mPosition.mY);
+        y1 = 32 + y0;
+        x0 = (item.mPosition.mX);
+        x1 = 32 + x0;
+        pixelData = itemSprites[ item.mType ]->getPixelData();
+        int pixel = 0;
+        for (int y = y0; y < y1; ++y) {
+
+            if (y < 0 || y >= 200) {
+                continue;
+            }
+
+            for (int x = x0; x < x1; ++x) {
+                pixel = (pixelData[(32 * (y - y0)) + ((x - x0))]);
+
+                if (pixel == 0) {
+                    continue;
+                }
+
+                if (x < 0 || x >= 320) {
+                    continue;
+                }
+
+                imageBuffer[(320 * y) + (x)] = pixel;
+            }
+        }
+    }
+
+    if ( hasKey && (( counter % 2) == 0) ) {
+        y0 = 2;
+        y1 = 32 + y0;
+        x0 = 2;
+        x1 = 32 + x0;
+        pixelData = itemSprites[ kKey ]->getPixelData();
+        int pixel = 0;
+        for (int y = y0; y < y1; ++y) {
+
+            if (y < 0 || y >= 200) {
+                continue;
+            }
+
+            for (int x = x0; x < x1; ++x) {
+                pixel = (pixelData[(32 * (y - y0)) + ((x - x0))]);
 
                 if (pixel == 0) {
                     continue;

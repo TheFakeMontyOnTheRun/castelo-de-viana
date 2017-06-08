@@ -21,10 +21,12 @@ int heroFrame = 0;
 Actor player;
 int counter = 0;
 int room = 0;
+bool hasKey = false;
 
 std::array<std::array<int, 10>, 6> backgroundTiles;
 std::array<std::array<int, 10>, 6> foregroundTiles;
 std::vector<Actor> foes;
+std::vector<Item> items;
 
 void init() {
     player.mPosition.mX = 0;
@@ -166,6 +168,37 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
         player.mSpeed.mY = 0;
     }
 
+    int px = ( (player.mPosition.mX / 32 ) * 32 );
+    int py = ( (player.mPosition.mY / 32 ) * 32 );
+
+
+    std::vector<Item> itemsToRemove;
+
+    for (const auto& item : items ) {
+        int ix = (item.mPosition.mX / 32) * 32;
+        int iy = (item.mPosition.mY / 32) * 32;
+
+        if ( ix == px && iy == py) {
+
+            if ( item.mType == kKey  ) {
+                hasKey = true;
+                itemsToRemove.push_back( item );
+            } else if ( item.mType == kMeat ) {
+                itemsToRemove.push_back( item );
+            }
+        }
+    }
+
+    items.erase( std::remove_if( std::begin(items),std::end(items),
+                        [&](Item x){
+                            return std::find(std::begin(itemsToRemove),std::end(itemsToRemove),x)!=std::end(itemsToRemove);
+                        }
+    ), std::end(items) );
+
+    for ( auto& item : itemsToRemove ) {
+        std::remove( std::begin(items), std::end( items ), item );
+    }
+
 
     if ( player.mStance == EStance::kAttacking ) {
 
@@ -263,6 +296,7 @@ void prepareRoom(int room) {
 
     std::ifstream fgmap(roomName.str());
     foes.clear();
+    items.clear();
     for (int y = 0; y < 6; ++y) {
         for (int x = 0; x < 10; ++x) {
             char ch = '0';
@@ -273,7 +307,20 @@ void prepareRoom(int room) {
             fgmap >> ch;
 
 
-            if ( ch == 'a' ) {
+            if ( ch == 'm' ) {
+                foregroundTiles[y][x] = 0;
+                Item item;
+                item.mType = kMeat;
+                item.mPosition = Vec2i{x * 32, y * 32};
+                items.push_back(item);
+            } else if ( ch == 'k' ) {
+                    foregroundTiles[y][x] = 0;
+                    Item item;
+                    item.mType = kKey;
+                    item.mPosition = Vec2i{ x * 32, y * 32 };
+                    items.push_back( item );
+
+            } else if ( ch == 'a' ) {
                 foregroundTiles[y][x] = 0;
                 Actor a;
                 a.mPosition = Vec2i{ x * 32, y * 32 };
@@ -345,4 +392,12 @@ void enforceScreenLimits() {
             player.mPosition.mY = 200 - 32 - 1;
         }
     }
+}
+
+bool operator==( const Vec2i& a, const Vec2i& b ) {
+    return a.mX == b.mX && a.mY == b.mY;
+}
+
+bool operator==( const Item& a, const Item& b ) {
+    return a.mType == b.mType && a.mPosition == b.mPosition;
 }
