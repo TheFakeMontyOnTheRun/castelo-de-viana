@@ -170,16 +170,16 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
     if ( player.mStance == EStance::kAttacking ) {
 
         for ( auto& foe : foes ) {
-            if ( std::abs(foe.mPosition.mY - player.mPosition.mY) < 32 ) {
+            if ( std::abs(foe.mPosition.mY - player.mPosition.mY) < 64 ) {
 
                 if (player.mDirection == EDirection::kRight) {
                     int diff = foe.mPosition.mX - player.mPosition.mX;
-                    if (diff < (32) && diff > 0) {
+                    if (diff < (64) && diff > 0) {
                         foe.mSpeed.mX = 0;
                     }
                 } else {
                     int diff = player.mPosition.mX - foe.mPosition.mX;
-                    if (diff < (32) && diff > 0) {
+                    if (diff < (64) && diff > 0) {
                         foe.mSpeed.mX = 0;
                     }
                 }
