@@ -184,6 +184,8 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
 
         player.mStance = EStance::kStanding;
     }
+
+
     ++counter;
 
 
@@ -255,7 +257,7 @@ void prepareRoom(int room) {
     roomName << ".fg";
 
     std::ifstream fgmap(roomName.str());
-
+    foes.clear();
     for (int y = 0; y < 6; ++y) {
         for (int x = 0; x < 10; ++x) {
             char ch = '0';
