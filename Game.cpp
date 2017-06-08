@@ -355,7 +355,7 @@ void prepareRoom(int room) {
             } else if ( ch == 'd' ) {
                 foregroundTiles[y][x] = 0;
                 Actor a;
-                a.mType = EActorType::kClosedDoor;
+                a.mType = hasKey ? EActorType::kOpenDoor : EActorType::kClosedDoor;
                 a.mPosition = Vec2i{ x * 32, y * 32 };
                 a.mSpeed.mX = 8;
                 doors.push_back(a);
