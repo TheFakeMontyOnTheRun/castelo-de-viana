@@ -304,11 +304,18 @@ void render() {
         }
     }
 
+    auto sprite = hero[player.mStance][heroFrame];
     y0 = (player.mPosition.mY);
-    y1 = 32 + y0;
+    int spriteWidth = sprite->getWidth();
+    y1 = sprite->getHeight() + y0;
     x0 = (player.mPosition.mX);
-    x1 = 32 + x0;
-    int *pixelData = hero[player.mStance][heroFrame]->getPixelData();
+
+    if (player.mDirection == EDirection::kLeft) {
+        x0 -= (spriteWidth - 32);
+    }
+
+    x1 = spriteWidth + x0;
+    int *pixelData = sprite->getPixelData();
 
     int pixel = 0;
     for (int y = y0; y < y1; ++y) {
@@ -319,9 +326,9 @@ void render() {
 
         for (int x = x0; x < x1; ++x) {
             if (player.mDirection == EDirection::kRight) {
-                pixel = (pixelData[(32 * (y - y0)) + ((x - x0))]);
+                pixel = (pixelData[(spriteWidth* (y - y0)) + ((x - x0))]);
             } else {
-                pixel = (pixelData[(32 * (y - y0)) + (31 - (x - x0))]);
+                pixel = (pixelData[(spriteWidth * (y - y0)) + ( ( spriteWidth - 1 ) - (x - x0))]);
             }
 
             if (pixel == 0) {
