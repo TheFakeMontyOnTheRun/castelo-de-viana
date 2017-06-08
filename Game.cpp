@@ -199,7 +199,7 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
 
         if ( ix == px && iy == py) {
 
-            if ( item.mType == kKey  ) {
+            if ( item.mType == kKey && !hasKey ) {
                 hasKey = true;
                 itemsToRemove.push_back( item );
 
