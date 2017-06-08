@@ -314,12 +314,13 @@ void prepareRoom(int room) {
                 item.mPosition = Vec2i{x * 32, y * 32};
                 items.push_back(item);
             } else if ( ch == 'k' ) {
+                if ( !hasKey ) {
                     foregroundTiles[y][x] = 0;
                     Item item;
                     item.mType = kKey;
-                    item.mPosition = Vec2i{ x * 32, y * 32 };
-                    items.push_back( item );
-
+                    item.mPosition = Vec2i{x * 32, y * 32};
+                    items.push_back(item);
+                }
             } else if ( ch == 'a' ) {
                 foregroundTiles[y][x] = 0;
                 Actor a;
