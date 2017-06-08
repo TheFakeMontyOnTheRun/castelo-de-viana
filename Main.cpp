@@ -22,6 +22,11 @@
 
 std::vector<std::vector<std::shared_ptr<odb::NativeBitmap>>> tiles;
 
+std::shared_ptr<odb::NativeBitmap> doorStates[2] = {
+        odb::loadBitmap("door0.png"),
+        odb::loadBitmap("door1.png"),
+};
+
 std::shared_ptr<odb::NativeBitmap> foeSprites[2] = {
         odb::loadBitmap("foe0.png"),
         odb::loadBitmap("foe1.png"),
@@ -313,6 +318,38 @@ void render() {
         }
     }
 
+    int *pixelData;
+
+    for ( const auto& door : doors ) {
+        pixelData = doorStates[ door.mType - EActorType::kClosedDoor ]->getPixelData();
+        y0 = (door.mPosition.mY);
+        y1 = 32 + y0;
+        x0 = (door.mPosition.mX);
+        x1 = 32 + x0;
+
+        int pixel = 0;
+        for (int y = y0; y < y1; ++y) {
+
+            if (y < 0 || y >= 200) {
+                continue;
+            }
+
+            for (int x = x0; x < x1; ++x) {
+                pixel = (pixelData[(32 * (y - y0)) + ((x - x0))]);
+
+                if (pixel == 0) {
+                    continue;
+                }
+
+                if (x < 0 || x >= 320) {
+                    continue;
+                }
+
+                imageBuffer[(320 * y) + (x)] = pixel;
+            }
+        }
+    }
+
     auto sprite = hero[player.mStance][heroFrame];
     y0 = (player.mPosition.mY);
     int spriteWidth = sprite->getWidth();
@@ -324,7 +361,7 @@ void render() {
     }
 
     x1 = spriteWidth + x0;
-    int *pixelData = sprite->getPixelData();
+    pixelData = sprite->getPixelData();
 
     int pixel = 0;
     for (int y = y0; y < y1; ++y) {
@@ -355,6 +392,11 @@ void render() {
     pixelData = foeSprites[counter % 2 ]->getPixelData();
 
     for ( const auto& foe : foes ) {
+
+        if ( foe.mType != EActorType::kSkeleton ) {
+            continue;
+        }
+
         y0 = (foe.mPosition.mY);
         y1 = 32 + y0;
         x0 = (foe.mPosition.mX);

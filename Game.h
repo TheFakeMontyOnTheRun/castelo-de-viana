@@ -13,6 +13,10 @@ enum EItemType {
     kMeat, kKey
 };
 
+enum EActorType {
+    kPlayer, kSkeleton, kClosedDoor, kOpenDoor
+};
+
 class Vec2i {
 public:
     int mX = 0;
@@ -23,6 +27,7 @@ class Actor {
 public:
     Vec2i mPosition;
     Vec2i mSpeed;
+    EActorType mType;
     EDirection mDirection = EDirection::kRight;
     EStance mStance = EStance::kStanding;;
 };
@@ -45,6 +50,7 @@ extern std::array<std::array<int, 10>, 6> backgroundTiles;
 extern std::array<std::array<int, 10>, 6> foregroundTiles;
 extern std::vector<Actor> foes;
 extern std::vector<Item> items;
+extern std::vector<Actor> doors;
 
 extern void clearBuffers();
 void init();

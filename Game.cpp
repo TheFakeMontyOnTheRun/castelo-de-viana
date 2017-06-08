@@ -26,6 +26,7 @@ bool hasKey = false;
 std::array<std::array<int, 10>, 6> backgroundTiles;
 std::array<std::array<int, 10>, 6> foregroundTiles;
 std::vector<Actor> foes;
+std::vector<Actor> doors;
 std::vector<Item> items;
 
 void init() {
@@ -33,6 +34,7 @@ void init() {
     player.mPosition.mY = 0;
     player.mSpeed.mX = 0;
     player.mSpeed.mY = 0;
+    player.mType = EActorType::kPlayer;
     counter = 0;
     room = 0;
 }
@@ -183,6 +185,10 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
             if ( item.mType == kKey  ) {
                 hasKey = true;
                 itemsToRemove.push_back( item );
+
+                for (auto& door : doors ) {
+                    door.mType = EActorType::kOpenDoor;
+                }
             } else if ( item.mType == kMeat ) {
                 itemsToRemove.push_back( item );
             }
@@ -297,6 +303,7 @@ void prepareRoom(int room) {
     std::ifstream fgmap(roomName.str());
     foes.clear();
     items.clear();
+    doors.clear();
     for (int y = 0; y < 6; ++y) {
         for (int x = 0; x < 10; ++x) {
             char ch = '0';
@@ -324,9 +331,17 @@ void prepareRoom(int room) {
             } else if ( ch == 'a' ) {
                 foregroundTiles[y][x] = 0;
                 Actor a;
+                a.mType = EActorType::kSkeleton;
                 a.mPosition = Vec2i{ x * 32, y * 32 };
                 a.mSpeed.mX = 8;
                 foes.push_back(a);
+            } else if ( ch == 'd' ) {
+                foregroundTiles[y][x] = 0;
+                Actor a;
+                a.mType = EActorType::kClosedDoor;
+                a.mPosition = Vec2i{ x * 32, y * 32 };
+                a.mSpeed.mX = 8;
+                doors.push_back(a);
             } else {
                 foregroundTiles[y][x] = ch - '0';
             }
