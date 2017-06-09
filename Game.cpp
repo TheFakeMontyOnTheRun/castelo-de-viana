@@ -144,6 +144,24 @@ bool collide( const Actor& a, const Actor& b, int tolerance = 32 ) {
     return false;
 }
 
+void removeFrom( std::vector<Actor>& mainCollection, std::vector<Actor>& removeList ) {
+    mainCollection.erase( std::remove_if( std::begin(mainCollection),std::end(mainCollection),
+                                  [&](Actor x){
+                                      return std::find(std::begin(removeList),std::end(removeList),x)!=std::end(removeList);
+                                  }
+    ), std::end(mainCollection) );
+}
+
+
+void removeFrom( std::vector<Item>& mainCollection, std::vector<Item>& removeList ) {
+    mainCollection.erase( std::remove_if( std::begin(mainCollection),std::end(mainCollection),
+                                          [&](Item x){
+                                              return std::find(std::begin(removeList),std::end(removeList),x)!=std::end(removeList);
+                                          }
+    ), std::end(mainCollection) );
+}
+
+
 void gameTick(bool &isOnGround, bool &isOnStairs) {
 
     if ( ticksUntilVulnerable > 0 ) {
@@ -242,11 +260,7 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
         }
     }
 
-    arrows.erase( std::remove_if( std::begin(arrows),std::end(arrows),
-                                 [&](Actor x){
-                                     return std::find(std::begin(actorsToRemove),std::end(actorsToRemove),x)!=std::end(actorsToRemove);
-                                 }
-    ), std::end(arrows) );
+    removeFrom( arrows, actorsToRemove );
 
     std::vector<Item> itemsToRemove;
 
@@ -269,20 +283,9 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
         }
     }
 
-    items.erase( std::remove_if( std::begin(items),std::end(items),
-                        [&](Item x){
-                            return std::find(std::begin(itemsToRemove),std::end(itemsToRemove),x)!=std::end(itemsToRemove);
-                        }
-    ), std::end(items) );
-
-    for ( auto& item : itemsToRemove ) {
-        std::remove( std::begin(items), std::end( items ), item );
-    }
-
-    actorsToRemove.clear();
+    removeFrom( items, itemsToRemove );
 
     if ( player.mStance == EStance::kAttacking ) {
-
         for ( auto& foe : foes ) {
             if ( std::abs(foe.mPosition.mY - player.mPosition.mY) < 64 ) {
 
@@ -303,20 +306,14 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
                 actorsToRemove.push_back( foe );
             }
 
-            foes.erase( std::remove_if( std::begin(foes),std::end(foes),
-                                          [&](Actor x){
-                                              return std::find(std::begin(actorsToRemove),std::end(actorsToRemove),x)!=std::end(actorsToRemove);
-                                          }
-            ), std::end(foes) );
         }
-
-
         player.mStance = EStance::kStanding;
     }
 
 
     ++counter;
 
+    actorsToRemove.clear();
 
     for ( auto& foe : foes ) {
 
@@ -356,6 +353,7 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
             foe.mPosition.mY = (foe.mPosition.mY / 32) * 32;
         }
     }
+    removeFrom( foes, actorsToRemove );
 }
 
 void prepareRoom(int room) {
