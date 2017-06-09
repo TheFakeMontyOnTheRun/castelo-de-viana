@@ -295,7 +295,7 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
         }
 
         for ( auto& foe : foes ) {
-            if ( collide( foe, arrow, 16 ) ) {
+            if ( collide( foe, arrow, 24 ) ) {
                 foe.mHealth--;
                 actorsToRemove.push_back( arrow );
             }
