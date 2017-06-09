@@ -357,41 +357,44 @@ void render() {
     }
 
     auto sprite = hero[player.mStance][heroFrame];
-    y0 = (player.mPosition.mY);
-    int spriteWidth = sprite->getWidth();
-    y1 = sprite->getHeight() + y0;
-    x0 = (player.mPosition.mX);
 
-    if (player.mDirection == EDirection::kLeft) {
-        x0 -= (spriteWidth - 32);
-    }
+    if ( (ticksUntilVulnerable <= 0 ) || (( counter % 2) == 0) ) {
+        y0 = (player.mPosition.mY);
+        int spriteWidth = sprite->getWidth();
+        y1 = sprite->getHeight() + y0;
+        x0 = (player.mPosition.mX);
 
-    x1 = spriteWidth + x0;
-    pixelData = sprite->getPixelData();
-
-    int pixel = 0;
-    for (int y = y0; y < y1; ++y) {
-
-        if (y < 0 || y >= 200) {
-            continue;
+        if (player.mDirection == EDirection::kLeft) {
+            x0 -= (spriteWidth - 32);
         }
 
-        for (int x = x0; x < x1; ++x) {
-            if (player.mDirection == EDirection::kRight) {
-                pixel = (pixelData[(spriteWidth* (y - y0)) + ((x - x0))]);
-            } else {
-                pixel = (pixelData[(spriteWidth * (y - y0)) + ( ( spriteWidth - 1 ) - (x - x0))]);
-            }
+        x1 = spriteWidth + x0;
+        pixelData = sprite->getPixelData();
 
-            if (pixel == 0) {
+        int pixel = 0;
+        for (int y = y0; y < y1; ++y) {
+
+            if (y < 0 || y >= 200) {
                 continue;
             }
 
-            if (x < 0 || x >= 320) {
-                continue;
-            }
+            for (int x = x0; x < x1; ++x) {
+                if (player.mDirection == EDirection::kRight) {
+                    pixel = (pixelData[(spriteWidth* (y - y0)) + ((x - x0))]);
+                } else {
+                    pixel = (pixelData[(spriteWidth * (y - y0)) + ( ( spriteWidth - 1 ) - (x - x0))]);
+                }
 
-            imageBuffer[(320 * y) + (x)] = pixel;
+                if (pixel == 0) {
+                    continue;
+                }
+
+                if (x < 0 || x >= 320) {
+                    continue;
+                }
+
+                imageBuffer[(320 * y) + (x)] = pixel;
+            }
         }
     }
 
@@ -532,6 +535,22 @@ void render() {
     }
 
     copyImageBufferToVideoMemory();
+    gotoxy( 1, 24 );
+    std::cout << "PLAYER: ";
+
+    for ( int c = 0; c < 10; ++c ) {
+        char ch;
+        if ( c >= player.mHealth ) {
+            ch = 176;
+        } else {
+            ch = 219;
+        }
+
+        std::cout << ch;
+    }
+
+    std::cout << std::endl;
+
     usleep(20000);
 }
 

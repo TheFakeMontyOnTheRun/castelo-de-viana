@@ -22,6 +22,7 @@ Actor player;
 int counter = 0;
 int room = 0;
 bool hasKey = false;
+int ticksUntilVulnerable = 0;
 
 std::array<std::array<int, 10>, 6> backgroundTiles;
 std::array<std::array<int, 10>, 6> foregroundTiles;
@@ -35,6 +36,7 @@ void init() {
     player.mPosition.mY = 0;
     player.mSpeed.mX = 0;
     player.mSpeed.mY = 0;
+    player.mHealth = 10;
     player.mType = EActorType::kPlayer;
     counter = 0;
     room = 0;
@@ -143,6 +145,11 @@ bool collide( const Actor& a, const Actor& b, int tolerance = 32 ) {
 }
 
 void gameTick(bool &isOnGround, bool &isOnStairs) {
+
+    if ( ticksUntilVulnerable > 0 ) {
+        --ticksUntilVulnerable;
+    }
+
     isOnStairs= (foregroundTiles[(player.mPosition.mY + 16) / 32][(player.mPosition.mX + 16) / 32] == 3);
 
     if (player.mDirection == EDirection::kRight) {
@@ -272,6 +279,7 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
         std::remove( std::begin(items), std::end( items ), item );
     }
 
+    actorsToRemove.clear();
 
     if ( player.mStance == EStance::kAttacking ) {
 
@@ -281,15 +289,25 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
                 if (player.mDirection == EDirection::kRight) {
                     int diff = foe.mPosition.mX - player.mPosition.mX;
                     if (diff < (64) && diff > 0) {
-                        foe.mSpeed.mX = 0;
+                        foe.mHealth--;
                     }
                 } else {
                     int diff = player.mPosition.mX - foe.mPosition.mX;
                     if (diff < (64) && diff > 0) {
-                        foe.mSpeed.mX = 0;
+                        foe.mHealth--;
                     }
                 }
             }
+
+            if ( foe.mHealth <= 0 ) {
+                actorsToRemove.push_back( foe );
+            }
+
+            foes.erase( std::remove_if( std::begin(foes),std::end(foes),
+                                          [&](Actor x){
+                                              return std::find(std::begin(actorsToRemove),std::end(actorsToRemove),x)!=std::end(actorsToRemove);
+                                          }
+            ), std::end(foes) );
         }
 
 
@@ -323,6 +341,11 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
             } else {
                 foe.mDirection = EDirection::kLeft;
             }
+        }
+
+        if ( (ticksUntilVulnerable <= 0 ) && collide( foe, player, 16 ) ) {
+            player.mHealth--;
+            ticksUntilVulnerable = 14;
         }
 
         foe.mSpeed.mY += 2;
@@ -387,6 +410,7 @@ void prepareRoom(int room) {
                 a.mType = EActorType::kSkeleton;
                 a.mPosition = Vec2i{ x * 32, y * 32 };
                 a.mSpeed.mX = 8;
+                a.mHealth = 2;
                 foes.push_back(a);
             } else if ( ch == 'd' ) {
                 foregroundTiles[y][x] = 0;

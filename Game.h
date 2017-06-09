@@ -29,7 +29,8 @@ public:
     Vec2i mSpeed;
     EActorType mType;
     EDirection mDirection = EDirection::kRight;
-    EStance mStance = EStance::kStanding;;
+    EStance mStance = EStance::kStanding;
+    int mHealth = 0;
 };
 
 class Item {
@@ -47,6 +48,7 @@ extern bool hasKey;
 extern int counter;
 extern int room;
 extern int heroFrame;
+extern int ticksUntilVulnerable;
 extern std::array<std::array<int, 10>, 6> backgroundTiles;
 extern std::array<std::array<int, 10>, 6> foregroundTiles;
 extern std::vector<Actor> foes;
