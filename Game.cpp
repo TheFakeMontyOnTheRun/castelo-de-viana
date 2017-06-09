@@ -195,6 +195,7 @@ void hurtPlayer( int ammount ) {
 }
 
 void gameTick(bool &isOnGround, bool &isOnStairs) {
+    ++counter;
 
     if ( ticksUntilVulnerable > 0 ) {
         --ticksUntilVulnerable;
@@ -280,9 +281,6 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
         player.mSpeed.mY = 0;
     }
 
-    int px = ( (player.mPosition.mX / 32 ) * 32 );
-    int py = ( (player.mPosition.mY / 32 ) * 32 );
-
     std::vector<Actor> actorsToRemove;
 
     for ( auto& arrow : arrows ) {
@@ -326,9 +324,6 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
     }
 
     removeFrom( items, itemsToRemove );
-
-
-    ++counter;
 
     actorsToRemove.clear();
 
