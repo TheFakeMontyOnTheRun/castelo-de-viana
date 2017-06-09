@@ -204,6 +204,15 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
         --ticksToShowHealth;
     }
 
+    if ( player.mStance == EStance::kAttacking ) {
+        for ( auto& foe : foes ) {
+            if ( collide( foe, player, 64 ) ) {
+                foe.mHealth--;
+            }
+        }
+
+        player.mStance = EStance::kStanding;
+    }
 
     isOnStairs= (foregroundTiles[(player.mPosition.mY + 16) / 32][(player.mPosition.mX + 16) / 32] == 3);
 
@@ -317,16 +326,6 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
     }
 
     removeFrom( items, itemsToRemove );
-
-    if ( player.mStance == EStance::kAttacking ) {
-        for ( auto& foe : foes ) {
-            if ( collide( foe, player, 64 ) ) {
-                foe.mHealth--;
-            }
-        }
-
-        player.mStance = EStance::kStanding;
-    }
 
 
     ++counter;
