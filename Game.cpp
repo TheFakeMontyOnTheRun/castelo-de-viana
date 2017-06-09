@@ -92,7 +92,7 @@ void updateHero(bool isOnGround, bool isJumping, bool isUpPressed, bool isDownPr
         Actor a;
         a.mType = kArrow;
         a.mPosition = player.mPosition;
-        a.mSpeed = { player.mDirection == kRight ? 8 : -8, 0 };
+        a.mSpeed = { player.mDirection == kRight ? 16 : -16, 0 };
         a.mDirection = player.mDirection;
         arrows.push_back(a);
         player.mStance = kAltAttacking;
