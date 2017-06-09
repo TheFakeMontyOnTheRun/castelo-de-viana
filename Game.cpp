@@ -113,6 +113,35 @@ bool isOnFloor( const Actor& actor ) {
     return false;
 }
 
+bool isBlockedByWall( const Actor& actor ) {
+    int front = ((actor.mPosition.mX ) / 32);
+
+    if ( actor.mDirection == EDirection::kRight ) {
+        front++;
+    }
+
+    return ( foregroundTiles[ ( actor.mPosition.mY + 16  ) / 32 ][ front ] == 1 );
+}
+
+bool collide( const Actor& a, const Actor& b, int tolerance = 32 ) {
+    if (std::abs(a.mPosition.mY - b.mPosition.mY) < tolerance) {
+
+        if (b.mDirection == EDirection::kRight) {
+            int diff = a.mPosition.mX - b.mPosition.mX;
+            if (diff < (tolerance) && diff > 0) {
+                return true;
+            }
+        } else {
+            int diff = b.mPosition.mX - a.mPosition.mX;
+            if (diff < (tolerance) && diff > 0) {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
 void gameTick(bool &isOnGround, bool &isOnStairs) {
     isOnStairs= (foregroundTiles[(player.mPosition.mY + 16) / 32][(player.mPosition.mX + 16) / 32] == 3);
 
@@ -428,4 +457,8 @@ bool operator==( const Vec2i& a, const Vec2i& b ) {
 
 bool operator==( const Item& a, const Item& b ) {
     return a.mType == b.mType && a.mPosition == b.mPosition;
+}
+
+bool operator==( const Actor& a, const Actor& b ) {
+    return a.mType == b.mType && a.mStance == b.mStance && a.mDirection == b.mDirection && a.mPosition == b.mPosition && a.mSpeed == b.mSpeed;
 }

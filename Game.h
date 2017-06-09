@@ -40,6 +40,7 @@ public:
 
 bool operator==( const Vec2i& a, const Vec2i& b );
 bool operator==( const Item& a, const Item& b );
+bool operator==( const Actor& a, const Actor& b );
 
 extern Actor player;
 extern bool hasKey;
