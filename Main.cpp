@@ -612,8 +612,6 @@ int main(int argc, char **argv) {
             case ' ':
             case 14624:
                 isAltAttackPressed = true;
-                gotoxy( 1,3 );
-                std::cout << "SPECIAL!" << std::endl;
         }
 
 
