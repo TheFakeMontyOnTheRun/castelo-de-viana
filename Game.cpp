@@ -22,7 +22,7 @@ Actor player;
 int counter = 0;
 int room = 0;
 bool hasKey = false;
-int ticksUntilVulnerable = 0;
+int ticksUntilVulnerable = 14;
 int ticksToShowHealth = 14;
 
 std::array<std::array<int, 10>, 6> backgroundTiles;
@@ -39,6 +39,7 @@ void init() {
     player.mSpeed.mY = 0;
     player.mHealth = 10;
     player.mType = EActorType::kPlayer;
+    player.mStance = kJumping;
     counter = 0;
     room = 0;
 }
