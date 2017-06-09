@@ -127,6 +127,25 @@ bool isBlockedByWall( const Actor& actor ) {
     return ( foregroundTiles[ ( actor.mPosition.mY + 16  ) / 32 ][ front ] == 1 );
 }
 
+bool collide( const Actor& a, const Item& b, int tolerance = 32 ) {
+    if (std::abs(a.mPosition.mY - b.mPosition.mY) < tolerance) {
+
+        if (a.mDirection == EDirection::kRight) {
+            int diff = a.mPosition.mX - b.mPosition.mX;
+            if (diff < (tolerance) && diff > 0) {
+                return true;
+            }
+        } else {
+            int diff = b.mPosition.mX - a.mPosition.mX;
+            if (diff < (tolerance) && diff > 0) {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
 bool collide( const Actor& a, const Actor& b, int tolerance = 32 ) {
     if (std::abs(a.mPosition.mY - b.mPosition.mY) < tolerance) {
 
@@ -272,10 +291,8 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
     std::vector<Item> itemsToRemove;
 
     for (const auto& item : items ) {
-        int ix = (item.mPosition.mX / 32) * 32;
-        int iy = (item.mPosition.mY / 32) * 32;
 
-        if ( ix == px && iy == py) {
+        if ( collide( player, item ) ) {
 
             if ( item.mType == kKey && !hasKey ) {
                 hasKey = true;
