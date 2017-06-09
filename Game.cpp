@@ -183,6 +183,17 @@ void removeFrom( std::vector<Item>& mainCollection, std::vector<Item>& removeLis
 }
 
 
+bool isOnHarmfulBlock( const Actor& actor ) {
+    int block = foregroundTiles[((actor.mPosition.mY + 16) / 32)][ ( actor.mPosition.mX + 16 ) / 32 ];
+    return (block == 5);
+}
+
+void hurtPlayer( int ammount ) {
+    player.mHealth -= ammount;
+    ticksUntilVulnerable = 14;
+    ticksToShowHealth = 14;
+}
+
 void gameTick(bool &isOnGround, bool &isOnStairs) {
 
     if ( ticksUntilVulnerable > 0 ) {
@@ -208,6 +219,10 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
         }
     }
 
+    if ( isOnHarmfulBlock( player ) && ticksUntilVulnerable <= 0 ) {
+        hurtPlayer(1);
+    }
+    
     player.mPosition.mX += player.mSpeed.mX;
     player.mPosition.mY += player.mSpeed.mY;
 
@@ -357,9 +372,7 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
         }
 
         if ( (ticksUntilVulnerable <= 0 ) && collide( foe, player, 16 ) ) {
-            player.mHealth--;
-            ticksUntilVulnerable = 14;
-            ticksToShowHealth = 14;
+            hurtPlayer(1);
         }
 
         foe.mSpeed.mY += 2;
