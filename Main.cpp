@@ -535,22 +535,23 @@ void render() {
     }
 
     copyImageBufferToVideoMemory();
-    gotoxy( 1, 24 );
-    std::cout << "PLAYER: ";
+    if ( ticksToShowHealth > 0 ) {
+        gotoxy(1, 24);
+        std::cout << "PLAYER: ";
 
-    for ( int c = 0; c < 10; ++c ) {
-        char ch;
-        if ( c >= player.mHealth ) {
-            ch = 176;
-        } else {
-            ch = 219;
+        for (int c = 0; c < 10; ++c) {
+            char ch;
+            if (c >= player.mHealth) {
+                ch = 176;
+            } else {
+                ch = 219;
+            }
+
+            std::cout << ch;
         }
 
-        std::cout << ch;
+        std::cout << std::endl;
     }
-
-    std::cout << std::endl;
-
     usleep(20000);
 }
 

@@ -23,6 +23,7 @@ int counter = 0;
 int room = 0;
 bool hasKey = false;
 int ticksUntilVulnerable = 0;
+int ticksToShowHealth = 14;
 
 std::array<std::array<int, 10>, 6> backgroundTiles;
 std::array<std::array<int, 10>, 6> foregroundTiles;
@@ -168,6 +169,11 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
         --ticksUntilVulnerable;
     }
 
+    if ( ticksToShowHealth > 0 ) {
+        --ticksToShowHealth;
+    }
+
+
     isOnStairs= (foregroundTiles[(player.mPosition.mY + 16) / 32][(player.mPosition.mX + 16) / 32] == 3);
 
     if (player.mDirection == EDirection::kRight) {
@@ -279,6 +285,7 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
                 }
             } else if ( item.mType == kMeat ) {
                 itemsToRemove.push_back( item );
+                ticksToShowHealth = 14;
             }
         }
     }
@@ -333,6 +340,7 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
         if ( (ticksUntilVulnerable <= 0 ) && collide( foe, player, 16 ) ) {
             player.mHealth--;
             ticksUntilVulnerable = 14;
+            ticksToShowHealth = 14;
         }
 
         foe.mSpeed.mY += 2;

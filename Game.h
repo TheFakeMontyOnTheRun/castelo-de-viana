@@ -49,6 +49,7 @@ extern int counter;
 extern int room;
 extern int heroFrame;
 extern int ticksUntilVulnerable;
+extern int ticksToShowHealth;
 extern std::array<std::array<int, 10>, 6> backgroundTiles;
 extern std::array<std::array<int, 10>, 6> foregroundTiles;
 extern std::vector<Actor> foes;
