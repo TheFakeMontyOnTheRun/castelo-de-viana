@@ -254,7 +254,7 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
 
         for ( auto& foe : foes ) {
             if ( collide( foe, arrow, 16 ) ) {
-                foe.mSpeed.mX = 0;
+                foe.mHealth--;
                 actorsToRemove.push_back( arrow );
             }
         }
@@ -301,11 +301,6 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
                     }
                 }
             }
-
-            if ( foe.mHealth <= 0 ) {
-                actorsToRemove.push_back( foe );
-            }
-
         }
         player.mStance = EStance::kStanding;
     }
@@ -316,6 +311,11 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
     actorsToRemove.clear();
 
     for ( auto& foe : foes ) {
+
+        if ( foe.mHealth <= 0 ) {
+            actorsToRemove.push_back( foe );
+            continue;
+        }
 
         foe.mPosition.mX += foe.mSpeed.mX;
         foe.mPosition.mY += foe.mSpeed.mY;
