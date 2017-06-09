@@ -283,8 +283,9 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
                 for (auto& door : doors ) {
                     door.mType = EActorType::kOpenDoor;
                 }
-            } else if ( item.mType == kMeat ) {
+            } else if ( item.mType == kMeat && player.mHealth < 10 ) {
                 itemsToRemove.push_back( item );
+                player.mHealth++;
                 ticksToShowHealth = 14;
             }
         }
