@@ -99,6 +99,20 @@ void updateHero(bool isOnGround, bool isJumping, bool isUpPressed, bool isDownPr
     }
 }
 
+bool isOnFloor( const Actor& actor ) {
+    int ground = ((actor.mPosition.mY + 32) / 32);
+
+    if (ground > 5) {
+        return true;
+    } else {
+        if (foregroundTiles[ground][(actor.mPosition.mX + 16) / 32] == 1 || foregroundTiles[ground][(actor.mPosition.mX + 16) / 32] == 3) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 void gameTick(bool &isOnGround, bool &isOnStairs) {
     isOnStairs= (foregroundTiles[(player.mPosition.mY + 16) / 32][(player.mPosition.mX + 16) / 32] == 3);
 
@@ -131,17 +145,9 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
         heroFrame = 0;
     }
 
-    int ground = ((player.mPosition.mY + 32) / 32);
     int ceiling = ( player.mPosition.mY) / 32;
 
-    if (ground > 5) {
-        ground = 5;
-        isOnGround = true;
-    } else {
-        if (foregroundTiles[ground][(player.mPosition.mX + 16) / 32] == 1) {
-            isOnGround = true;
-        }
-    }
+    isOnGround = isOnFloor(player);
 
     if (isOnGround ) {
         player.mStance = kStanding;
@@ -157,7 +163,7 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
 
     player.mSpeed.mX = player.mSpeed.mX / 2;
 
-    if ((isOnGround || foregroundTiles[ground][(player.mPosition.mX + 16) / 32] == 3) && !isOnStairs ) {
+    if (isOnGround && !isOnStairs ) {
         player.mSpeed.mY = std::min( 0, player.mSpeed.mY );
         player.mPosition.mY = std::min( player.mPosition.mY, (player.mPosition.mY / 32) * 32 );
     }
@@ -169,9 +175,6 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
     if ( player.mSpeed.mY < 0 && foregroundTiles[player.mPosition.mY / 32][(player.mPosition.mX + 16) / 32] == 1) {
         player.mSpeed.mY = -player.mSpeed.mY;
     }
-
-
-
 
     if (!isOnStairs) {
         player.mSpeed.mY = player.mSpeed.mY + 2;
@@ -282,15 +285,7 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
         }
 
         foe.mSpeed.mY += 2;
-        int ground = ( foe.mPosition.mY / 32) + 1;
-        bool isOnGround = false;
-        if ( ground < 6 ) {
-            if ( foregroundTiles[ground][ ( (foe.mPosition.mX + 16)  / 32 ) ] != 0  ) {
-                isOnGround = true;
-            }
-        } else {
-            isOnGround = true;
-        }
+        bool isOnGround = isOnFloor(foe);
 
         if ( isOnGround ) {
             foe.mSpeed.mY = 0;
