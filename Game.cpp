@@ -221,7 +221,25 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
     for ( auto& arrow : arrows ) {
         arrow.mPosition.mX += arrow.mSpeed.mX;
         arrow.mPosition.mY += arrow.mSpeed.mY;
+
+        if ( isBlockedByWall( arrow ) ) {
+            actorsToRemove.push_back( arrow );
+            continue;
+        }
+
+        for ( auto& foe : foes ) {
+            if ( collide( foe, arrow, 16 ) ) {
+                foe.mSpeed.mX = 0;
+                actorsToRemove.push_back( arrow );
+            }
+        }
     }
+
+    arrows.erase( std::remove_if( std::begin(arrows),std::end(arrows),
+                                 [&](Actor x){
+                                     return std::find(std::begin(actorsToRemove),std::end(actorsToRemove),x)!=std::end(actorsToRemove);
+                                 }
+    ), std::end(arrows) );
 
     std::vector<Item> itemsToRemove;
 
@@ -297,13 +315,7 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
             foe.mDirection = EDirection::kRight;
         }
 
-        int front = ((foe.mPosition.mX ) / 32);
-
-        if ( foe.mDirection == EDirection::kRight ) {
-            front++;
-        }
-
-        if ( foregroundTiles[ ( foe.mPosition.mY + 16  ) / 32 ][ front ] == 1 ) {
+        if ( isBlockedByWall( foe )  ) {
             foe.mSpeed.mX *= -1;
 
             if ( foe.mDirection == EDirection::kLeft ) {
