@@ -207,16 +207,8 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
 
     isOnStairs= (foregroundTiles[(player.mPosition.mY + 16) / 32][(player.mPosition.mX + 16) / 32] == 3);
 
-    if (player.mDirection == EDirection::kRight) {
-        if (foregroundTiles[((player.mPosition.mY + 16) / 32)][ ( player.mPosition.mX + 32 ) / 32 ] == 1) {
-            player.mSpeed.mX = 0;
-        }
-    }
-
-    if (player.mDirection == EDirection::kLeft) {
-        if (foregroundTiles[((player.mPosition.mY + 16) / 32)][ ( player.mPosition.mX ) / 32 ] == 1) {
-            player.mSpeed.mX = 0;
-        }
+    if ( isBlockedByWall(player ) ) {
+        player.mSpeed.mX = 0;
     }
 
     if ( isOnHarmfulBlock( player ) && ticksUntilVulnerable <= 0 ) {
