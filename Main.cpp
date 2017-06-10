@@ -565,7 +565,6 @@ void render() {
 
 int main(int argc, char **argv) {
     init();
-    prepareRoom(0);
 
     bool done = false;
 
