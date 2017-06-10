@@ -383,19 +383,19 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
     for (const auto& item : items ) {
 
         if ( collide( player, item ) ) {
-
-            playSound(pickSound);
-
             if ( item.mType == kKey && !hasKey ) {
                 hasKey = true;
                 itemsToRemove.push_back( item );
-
+                playSound(pickSound);
                 for (auto& door : doors ) {
                     door.mType = EActorType::kOpenDoor;
                 }
-            } else if ( item.mType == kMeat && player.mHealth < 10 ) {
-                itemsToRemove.push_back( item );
-                player.mHealth++;
+            } else if ( item.mType == kMeat ) {
+                if ( player.mHealth < 10 ) {
+                    playSound(pickSound);
+                    itemsToRemove.push_back( item );
+                    player.mHealth++;
+                }
                 ticksToShowHealth = 14;
             }
         }
