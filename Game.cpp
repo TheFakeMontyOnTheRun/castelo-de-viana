@@ -24,6 +24,7 @@ int room = 0;
 bool hasKey = false;
 int ticksUntilVulnerable = 14;
 int ticksToShowHealth = 14;
+int arrowCooldown = 0;
 
 std::array<std::array<int, 10>, 6> backgroundTiles;
 std::array<std::array<int, 10>, 6> foregroundTiles;
@@ -115,7 +116,7 @@ void updateHero(bool isOnGround, bool isJumping, bool isUpPressed, bool isDownPr
         playSound(swordSound);
     }
 
-    if ( isUsingSpecial  ){
+    if ( isUsingSpecial && arrowCooldown <= 0  ){
         Actor a;
         a.mType = kArrow;
         a.mPosition = player.mPosition;
@@ -123,6 +124,7 @@ void updateHero(bool isOnGround, bool isJumping, bool isUpPressed, bool isDownPr
         a.mDirection = player.mDirection;
         arrows.push_back(a);
         player.mStance = kAltAttacking;
+        arrowCooldown = 4;
         playSound(arrowSound);
     }
 }
@@ -254,6 +256,11 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
     if ( ticksToShowHealth > 0 ) {
         --ticksToShowHealth;
     }
+
+    if ( arrowCooldown > 0 ) {
+        --arrowCooldown;
+    }
+
 
     if ( player.mStance == EStance::kAttacking ) {
         for ( auto& foe : foes ) {
