@@ -44,6 +44,10 @@ std::shared_ptr<odb::NativeBitmap> gargoyleSprites[2] = {
         odb::loadBitmap("garg1.png"),
 };
 
+std::shared_ptr<odb::NativeBitmap> capirotoSprites[2] = {
+        odb::loadBitmap("capi0.png"),
+        odb::loadBitmap("capi1.png"),
+};
 
 std::shared_ptr<odb::NativeBitmap> hero[6][2] = {
         {
@@ -445,13 +449,15 @@ void render() {
 
     for ( const auto& foe : foes ) {
 
-        if ( foe.mType != EActorType::kSkeleton && foe.mType != EActorType::kGargoyle ) {
+        if ( foe.mType != EActorType::kSkeleton && foe.mType != EActorType::kGargoyle && foe.mType != EActorType::kCapiroto ) {
             continue;
         }
 
         if ( foe.mType == kSkeleton ) {
-            pixelData = foeSprites[counter % 2 ]->getPixelData();
-        } if ( foe.mType == kGargoyle ) {
+            pixelData = foeSprites[counter % 2]->getPixelData();
+        } else if ( foe.mType == kCapiroto ) {
+            pixelData = capirotoSprites[counter % 2 ]->getPixelData();
+        } else if ( foe.mType == kGargoyle ) {
             if ( foe.mHealth > 0 ) {
                 pixelData = gargoyleSprites[0 ]->getPixelData();
             } else {
@@ -576,6 +582,31 @@ void render() {
         std::cout << std::endl;
     }
 
+    if ( hasBossOnScreen ) {
+        gotoxy(1, 23);
+        std::cout << "CAPIROTO: ";
+
+        int bossHealth = 0;
+
+        for ( auto const& foe : foes ) {
+            if ( foe.mType == kCapiroto ) {
+                bossHealth = foe.mHealth;
+            }
+        }
+
+        for (int c = 0; c < 20; ++c) {
+            char ch;
+            if (c >= bossHealth) {
+                ch = 176;
+            } else {
+                ch = 219;
+            }
+
+            std::cout << ch;
+        }
+        std::cout << std::endl;
+    }
+
     usleep(20000);
 }
 
@@ -659,6 +690,7 @@ int main(int argc, char **argv) {
                 isRightPressed = true;
                 break;
             case ' ':
+            case 3849:
             case 14624:
                 isAltAttackPressed = true;
                 break;

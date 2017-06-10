@@ -26,6 +26,7 @@ int ticksUntilVulnerable = 14;
 int ticksToShowHealth = 14;
 int arrowCooldown = 0;
 bool paused = false;
+bool hasBossOnScreen = false;
 
 std::array<std::array<int, 10>, 6> backgroundTiles;
 std::array<std::array<int, 10>, 6> foregroundTiles;
@@ -407,12 +408,17 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
 
     for ( auto& foe : foes ) {
 
-        if ( foe.mType != kSkeleton ) {
+        if ( foe.mType != kSkeleton && foe.mType != kCapiroto ) {
             continue;
         }
 
         if ( foe.mHealth <= 0 ) {
             actorsToRemove.push_back( foe );
+
+            if (foe.mType == kCapiroto) {
+                exit(0);
+            }
+
             continue;
         }
 
@@ -476,6 +482,7 @@ void prepareRoom(int room) {
     foes.clear();
     items.clear();
     doors.clear();
+    hasBossOnScreen = false;
     for (int y = 0; y < 6; ++y) {
         for (int x = 0; x < 10; ++x) {
             char ch = '0';
@@ -507,6 +514,14 @@ void prepareRoom(int room) {
                 a.mPosition = Vec2i{ x * 32, y * 32 };
                 a.mSpeed.mX = 8;
                 a.mHealth = 2;
+                foes.push_back(a);
+            } else if ( ch == 'c' ) {
+                foregroundTiles[y][x] = 0;
+                Actor a;
+                a.mType = EActorType::kCapiroto;
+                a.mPosition = Vec2i{ x * 32, y * 32 };
+                a.mHealth = 20;
+                hasBossOnScreen = true;
                 foes.push_back(a);
             } else if ( ch == 'g' ) {
                 foregroundTiles[y][x] = 0;

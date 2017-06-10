@@ -14,7 +14,7 @@ enum EItemType {
 };
 
 enum EActorType {
-    kPlayer, kSkeleton, kClosedDoor, kOpenDoor, kArrow, kGargoyle
+    kPlayer, kSkeleton, kClosedDoor, kOpenDoor, kArrow, kGargoyle, kCapiroto
 };
 
 class Vec2i {
@@ -45,6 +45,7 @@ bool operator==( const Actor& a, const Actor& b );
 
 extern Actor player;
 extern bool hasKey;
+extern bool hasBossOnScreen;
 extern int counter;
 extern int room;
 extern bool paused;
