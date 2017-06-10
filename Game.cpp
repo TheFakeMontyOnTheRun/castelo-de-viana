@@ -194,6 +194,22 @@ void hurtPlayer( int ammount ) {
     ticksToShowHealth = 14;
 }
 
+bool isOnDoor( const Actor& actor ) {
+    for (auto& door : doors ) {
+        if ( collide( door, actor ) ) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+void advanceFloor() {
+    room += 10;
+    hasKey = false;
+    prepareRoom(room);
+}
+
 void gameTick(bool &isOnGround, bool &isOnStairs) {
     ++counter;
 
@@ -223,6 +239,10 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
 
     if ( isOnHarmfulBlock( player ) && ticksUntilVulnerable <= 0 ) {
         hurtPlayer(1);
+    }
+
+    if ( isOnDoor(player ) && hasKey ) {
+        advanceFloor();
     }
     
     player.mPosition.mX += player.mSpeed.mX;
