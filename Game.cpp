@@ -32,6 +32,24 @@ std::vector<Actor> doors;
 std::vector<Item> items;
 std::vector<Actor> arrows;
 
+std::vector<int> bgSound{};
+std::vector<int> stepSound{ 50, 30 };
+std::vector<int> hurtSound{ 400, 300 };
+std::vector<int> swordSound{ 150, 200 };
+std::vector<int> arrowSound{ 500, 600 };
+std::vector<int> jumpSound{ 1000, 2000, 3000, 1500, 500 };
+
+std::vector<int> currentSound = bgSound;
+std::vector<int>::const_iterator currentSoundPosition = std::begin( bgSound );
+
+void playSound( const std::vector<int>& sound ) {
+    if (currentSoundPosition != std::end( currentSound ) && currentSound == sound ) {
+        return;
+    }
+    currentSound = sound;
+    currentSoundPosition = std::begin( currentSound );
+}
+
 void init() {
     player.mPosition.mX = 0;
     player.mPosition.mY = 0;
@@ -42,6 +60,7 @@ void init() {
     player.mStance = kJumping;
     counter = 0;
     room = 0;
+    playSound(bgSound);
 }
 
 void updateHero(bool isOnGround, bool isJumping, bool isUpPressed, bool isDownPressed, bool isLeftPressed, bool isAttacking, bool isUsingSpecial,
@@ -50,6 +69,7 @@ void updateHero(bool isOnGround, bool isJumping, bool isUpPressed, bool isDownPr
     if (isJumping) {
         if (isOnGround) {
             player.mSpeed.mY = -12;
+            playSound(jumpSound);
         }
         player.mStance = kJumping;
     }
@@ -77,6 +97,7 @@ void updateHero(bool isOnGround, bool isJumping, bool isUpPressed, bool isDownPr
         player.mDirection = kLeft;
         if (isOnGround) {
             player.mStance = kStanding;
+            playSound(stepSound);
         }
     }
 
@@ -85,11 +106,13 @@ void updateHero(bool isOnGround, bool isJumping, bool isUpPressed, bool isDownPr
         player.mDirection = kRight;
         if (isOnGround) {
             player.mStance = kStanding;
+            playSound(stepSound);
         }
     }
 
     if ( isAttacking ) {
         player.mStance = kAttacking;
+        playSound(swordSound);
     }
 
     if ( isUsingSpecial  ){
@@ -100,6 +123,7 @@ void updateHero(bool isOnGround, bool isJumping, bool isUpPressed, bool isDownPr
         a.mDirection = player.mDirection;
         arrows.push_back(a);
         player.mStance = kAltAttacking;
+        playSound(arrowSound);
     }
 }
 
@@ -192,6 +216,7 @@ void hurtPlayer( int ammount ) {
     player.mHealth -= ammount;
     ticksUntilVulnerable = 14;
     ticksToShowHealth = 14;
+    playSound( hurtSound );
 }
 
 bool isOnDoor( const Actor& actor ) {
@@ -212,6 +237,15 @@ void advanceFloor() {
 
 void gameTick(bool &isOnGround, bool &isOnStairs) {
     ++counter;
+
+    if ( currentSoundPosition != std::end( currentSound ) ) {
+        sound( *currentSoundPosition );
+        currentSoundPosition = std::next( currentSoundPosition );
+    } else {
+        nosound();
+        currentSound = bgSound;
+        currentSoundPosition = std::begin( currentSound );
+    }
 
     if ( ticksUntilVulnerable > 0 ) {
         --ticksUntilVulnerable;
