@@ -358,7 +358,7 @@ void render() {
 
     auto sprite = hero[player.mStance][heroFrame];
 
-    if ( (ticksUntilVulnerable <= 0 ) || (( counter % 2) == 0) ) {
+    if ( ((ticksUntilVulnerable <= 0 ) || (( counter % 2) == 0) ) || paused ) {
         y0 = (player.mPosition.mY);
         int spriteWidth = sprite->getWidth();
         y1 = sprite->getHeight() + y0;
@@ -505,7 +505,7 @@ void render() {
         }
     }
 
-    if ( hasKey && (( counter % 2) == 0) ) {
+    if ( (hasKey && (( counter % 2) == 0 || paused) ) ) {
         y0 = 2;
         y1 = 32 + y0;
         x0 = 2;
@@ -535,6 +535,12 @@ void render() {
     }
 
     copyImageBufferToVideoMemory();
+
+    if ( paused ) {
+        gotoxy(17, 12);
+        std::cout << "PAUSED" << std::endl;
+    }
+
     if ( ticksToShowHealth > 0 ) {
         gotoxy(1, 24);
         std::cout << "PLAYER: ";
@@ -552,6 +558,7 @@ void render() {
 
         std::cout << std::endl;
     }
+
     usleep(20000);
 }
 
@@ -576,10 +583,16 @@ int main(int argc, char **argv) {
         bool isRightPressed = false;
         bool isAttacking = false;
         bool isAltAttackPressed = false;
-
+        bool isPausePressed = false;
         bool isOnStairs;
         render();
-        gameTick(isOnGround, isOnStairs);
+
+        if ( !paused ) {
+            gameTick(isOnGround, isOnStairs);
+        } else {
+            nosound();
+        }
+
 
         lastKey = bioskey(0x11);
         auto extendedKeys = bioskey(0x12);
@@ -632,10 +645,14 @@ int main(int argc, char **argv) {
             case ' ':
             case 14624:
                 isAltAttackPressed = true;
+                break;
+            case 7181:
+                isPausePressed = true;
+                break;
         }
 
 
-        updateHero(isOnGround, isJumping, isUpPressed, isDownPressed, isLeftPressed, isAttacking, isAltAttackPressed, isRightPressed, isOnStairs);
+        updateHero(isOnGround, isJumping, isUpPressed, isDownPressed, isLeftPressed, isAttacking, isAltAttackPressed, isRightPressed, isOnStairs, isPausePressed);
 
     }
 

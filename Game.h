@@ -47,6 +47,7 @@ extern Actor player;
 extern bool hasKey;
 extern int counter;
 extern int room;
+extern bool paused;
 extern int heroFrame;
 extern int ticksUntilVulnerable;
 extern int ticksToShowHealth;
@@ -62,7 +63,7 @@ void init();
 void gameTick(bool &isOnGround, bool &isOnStairs);
 void loadTiles( std::vector<std::string> tilesToLoad );
 void updateHero(bool isOnGround, bool isJumping, bool isUpPressed, bool isDownPressed, bool isLeftPressed, bool isAttacking, bool isUsingSpecial,
-                bool isRightPressed, bool isOnStairs);
+                bool isRightPressed, bool isOnStairs, bool isPausePressed );
 void prepareRoom(int room);
 void enforceScreenLimits();
 #endif

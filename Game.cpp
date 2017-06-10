@@ -25,6 +25,7 @@ bool hasKey = false;
 int ticksUntilVulnerable = 14;
 int ticksToShowHealth = 14;
 int arrowCooldown = 0;
+bool paused = false;
 
 std::array<std::array<int, 10>, 6> backgroundTiles;
 std::array<std::array<int, 10>, 6> foregroundTiles;
@@ -65,7 +66,7 @@ void init() {
 }
 
 void updateHero(bool isOnGround, bool isJumping, bool isUpPressed, bool isDownPressed, bool isLeftPressed, bool isAttacking, bool isUsingSpecial,
-                bool isRightPressed, bool isOnStairs) {
+                bool isRightPressed, bool isOnStairs, bool isPausePressed ) {
 
     if (isJumping) {
         if (isOnGround) {
@@ -126,6 +127,11 @@ void updateHero(bool isOnGround, bool isJumping, bool isUpPressed, bool isDownPr
         player.mStance = kAltAttacking;
         arrowCooldown = 4;
         playSound(arrowSound);
+    }
+
+    if ( isPausePressed ) {
+        paused = !paused;
+        ticksToShowHealth = 14;
     }
 }
 
