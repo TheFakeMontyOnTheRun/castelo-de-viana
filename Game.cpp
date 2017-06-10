@@ -36,7 +36,6 @@ std::vector<Item> items;
 std::vector<Actor> arrows;
 
 std::vector<int> bgSound{};
-std::vector<int> stepSound{ 50, 30 };
 std::vector<int> hurtSound{ 400, 300 };
 std::vector<int> swordSound{ 150, 200 };
 std::vector<int> arrowSound{ 500, 600 };
@@ -106,7 +105,6 @@ void updateHero(bool isOnGround, bool isJumping, bool isUpPressed, bool isDownPr
         player.mDirection = kLeft;
         if (isOnGround) {
             player.mStance = kStanding;
-            playSound(stepSound);
         }
     }
 
@@ -115,7 +113,6 @@ void updateHero(bool isOnGround, bool isJumping, bool isUpPressed, bool isDownPr
         player.mDirection = kRight;
         if (isOnGround) {
             player.mStance = kStanding;
-            playSound(stepSound);
         }
     }
 
