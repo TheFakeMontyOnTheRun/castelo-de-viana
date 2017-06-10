@@ -64,7 +64,7 @@ extern std::vector<Actor> foes;
 extern std::vector<Item> items;
 extern std::vector<Actor> doors;
 extern std::vector<Actor> arrows;
-
+extern std::vector<int> melody;
 extern std::shared_ptr<odb::NativeBitmap> currentScreen;
 extern EScreen screen;
 
@@ -77,4 +77,6 @@ void updateHero(bool isOnGround, bool isJumping, bool isUpPressed, bool isDownPr
 void prepareRoom(int room);
 void enforceScreenLimits();
 void prepareScreenFor( EScreen screenState );
+void playSound( const std::vector<int>& sound );
+void playMusic( const std::string& music );
 #endif

@@ -87,15 +87,18 @@ void prepareScreenFor( EScreen screenState ) {
     switch( screenState ) {
         case kIntro:
             currentScreen = odb::loadBitmap("intro.png");
+            playMusic("E5R1E3R0D3R0E3R0E1R0D1R0-G4R1F3R0F1R0F1R0A3R0F1R0E1R0D1R0D1R0E5R0C3R0C1R0C1R0E3R0C1R0-B1R0C1R0-B1R0-A1R0-A1-B5R0E1R0E1R0E1R0E1R0E1R0E1R0D1R0E1R0E1R0E1R0D1R0-A1R0-A1R0B3R1-A1R0-B1R0C1R0D1R0E1R0F1R0E1R0F3R1A3R1B1R0A1R0F3R0E3R0E1R0E4R0");
             break;
         case kGame:
             currentScreen = nullptr;
             break;
         case kGameOver:
             currentScreen = odb::loadBitmap("gameover.png");
+            playMusic("MBT180o2P2P8L8GGGL2E-P24P8L8FFFL2D");
             break;
         case kVictory:
             currentScreen = odb::loadBitmap("victory.png");
+            playMusic("e8e8f8g8g8f8e8d8c8c8d8e8e8d12d4e8e8f8g8g8f8e8d8c8c8d8e8d8c12c4d8d8e8c8d8e12f12e8c8d8e12f12e8d8c8d8p8e8e8f8g8g8f8e8d8c8c8d8e8d8c12c4");
             break;
 
     }
@@ -646,8 +649,8 @@ void render() {
 
 int main(int argc, char **argv) {
 
-    prepareScreenFor(kIntro);
     init();
+    prepareScreenFor(kIntro);
 
     bool done = false;
 
@@ -669,12 +672,11 @@ int main(int argc, char **argv) {
         bool isOnStairs;
         render();
 
-        if ( screen == kGame ) {
-            if (!paused) {
-                gameTick(isOnGround, isOnStairs);
-            } else {
-                nosound();
-            }
+
+        if (!paused) {
+            gameTick(isOnGround, isOnStairs);
+        } else {
+            nosound();
         }
 
 

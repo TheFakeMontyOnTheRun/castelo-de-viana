@@ -43,6 +43,8 @@ std::vector<int> arrowSound{ 500, 600 };
 std::vector<int> jumpSound{ 1000, 2000, 3000, 1500, 500 };
 std::vector<int> pickSound{ 900, 700 };
 
+std::vector<int> melody{};
+
 std::vector<int> currentSound = bgSound;
 std::vector<int>::const_iterator currentSoundPosition = std::begin( bgSound );
 
@@ -259,6 +261,11 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
         currentSound = bgSound;
         currentSoundPosition = std::begin( currentSound );
     }
+
+    if ( screen != kGame ) {
+        return;
+    }
+
 
     if ( ticksUntilVulnerable > 0 ) {
         --ticksUntilVulnerable;
