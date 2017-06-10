@@ -639,5 +639,10 @@ int main(int argc, char **argv) {
 
     }
 
+    nosound();
+    textmode(C80);
+    clrscr();
+    std::cout << "Thanks for playing!" << std::endl;
+
     return 0;
 }
