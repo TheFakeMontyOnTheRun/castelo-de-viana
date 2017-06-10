@@ -422,6 +422,10 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
             continue;
         }
 
+        if ( foe.mType != kSkeleton ) {
+            continue;
+        }
+
         foe.mPosition.mX += foe.mSpeed.mX;
         foe.mPosition.mY += foe.mSpeed.mY;
 
