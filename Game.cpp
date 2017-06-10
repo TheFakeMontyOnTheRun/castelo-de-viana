@@ -40,6 +40,7 @@ std::vector<int> hurtSound{ 400, 300 };
 std::vector<int> swordSound{ 150, 200 };
 std::vector<int> arrowSound{ 500, 600 };
 std::vector<int> jumpSound{ 1000, 2000, 3000, 1500, 500 };
+std::vector<int> pickSound{ 900, 700 };
 
 std::vector<int> currentSound = bgSound;
 std::vector<int>::const_iterator currentSoundPosition = std::begin( bgSound );
@@ -374,6 +375,8 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
     for (const auto& item : items ) {
 
         if ( collide( player, item ) ) {
+
+            playSound(pickSound);
 
             if ( item.mType == kKey && !hasKey ) {
                 hasKey = true;
