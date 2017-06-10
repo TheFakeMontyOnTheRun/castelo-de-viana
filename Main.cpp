@@ -696,9 +696,6 @@ int main(int argc, char **argv) {
         }
 
         bdos(0xC, 0, 0);
-        //gotoxy(1, 2);
-
-        //std::cout << "key: " << lastKey << std::endl;
 
         switch (lastKey) {
             case 27:
