@@ -80,7 +80,26 @@ std::array<unsigned int, 320 * 200> imageBuffer;
 std::array<unsigned char, 320 * 200> buffer;
 std::array<unsigned char, 320 * 100 / 4> evenBuffer;
 std::array<unsigned char, 320 * 100 / 4> oddBuffer;
+std::shared_ptr<odb::NativeBitmap> currentScreen = nullptr;
 
+void prepareScreenFor( EScreen screenState ) {
+    nosound();
+    switch( screenState ) {
+        case kIntro:
+            currentScreen = odb::loadBitmap("intro.png");
+            break;
+        case kGame:
+            currentScreen = nullptr;
+            break;
+        case kGameOver:
+            currentScreen = odb::loadBitmap("gameover.png");
+            break;
+        case kVictory:
+            currentScreen = odb::loadBitmap("victory.png");
+            break;
+
+    }
+}
 
 void initMode4h() {
     union REGS regs;
@@ -245,6 +264,20 @@ void copyImageBufferToVideoMemory() {
 
 void render() {
     std::fill(std::begin(imageBuffer), std::end(imageBuffer), 4);
+
+    if ( currentScreen != nullptr ) {
+
+        auto pixelData = currentScreen->getPixelData();
+
+        for ( int c = 0; c < 320 * 200; ++c ) {
+            imageBuffer[c] = pixelData[ c ];
+        }
+
+        copyImageBufferToVideoMemory();
+        usleep(20000);
+        return;
+    }
+
 
     int y0 = 0;
     int y1 = 0;
@@ -612,6 +645,8 @@ void render() {
 
 
 int main(int argc, char **argv) {
+
+    prepareScreenFor(kIntro);
     init();
 
     bool done = false;
@@ -634,10 +669,12 @@ int main(int argc, char **argv) {
         bool isOnStairs;
         render();
 
-        if ( !paused ) {
-            gameTick(isOnGround, isOnStairs);
-        } else {
-            nosound();
+        if ( screen == kGame ) {
+            if (!paused) {
+                gameTick(isOnGround, isOnStairs);
+            } else {
+                nosound();
+            }
         }
 
 
@@ -695,13 +732,31 @@ int main(int argc, char **argv) {
                 isAltAttackPressed = true;
                 break;
             case 7181:
-                isPausePressed = true;
+                switch( screen ) {
+                    case kIntro:
+                        screen = kGame;
+                        prepareScreenFor(screen);
+                        init();
+                        break;
+                    case kGame:
+                        isPausePressed = true;
+                        break;
+                    case kGameOver:
+                        screen = kIntro;
+                        prepareScreenFor(screen);
+                        break;
+                    case kVictory:
+                        screen = kIntro;
+                        prepareScreenFor(screen);
+                        break;
+                }
                 break;
         }
 
-
-        updateHero(isOnGround, isJumping, isUpPressed, isDownPressed, isLeftPressed, isAttacking, isAltAttackPressed, isRightPressed, isOnStairs, isPausePressed);
-
+        if ( screen == kGame ) {
+            updateHero(isOnGround, isJumping, isUpPressed, isDownPressed, isLeftPressed, isAttacking,
+                       isAltAttackPressed, isRightPressed, isOnStairs, isPausePressed);
+        }
     }
 
     nosound();

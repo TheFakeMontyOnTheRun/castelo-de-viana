@@ -2,6 +2,8 @@
 #define GAME_H
 
 
+#include "NativeBitmap.h"
+
 enum EDirection {
     kLeft, kRight
 };
@@ -15,6 +17,10 @@ enum EItemType {
 
 enum EActorType {
     kPlayer, kSkeleton, kClosedDoor, kOpenDoor, kArrow, kGargoyle, kCapiroto
+};
+
+enum EScreen {
+    kIntro, kGame, kGameOver, kVictory
 };
 
 class Vec2i {
@@ -59,6 +65,9 @@ extern std::vector<Item> items;
 extern std::vector<Actor> doors;
 extern std::vector<Actor> arrows;
 
+extern std::shared_ptr<odb::NativeBitmap> currentScreen;
+extern EScreen screen;
+
 extern void clearBuffers();
 void init();
 void gameTick(bool &isOnGround, bool &isOnStairs);
@@ -67,4 +76,5 @@ void updateHero(bool isOnGround, bool isJumping, bool isUpPressed, bool isDownPr
                 bool isRightPressed, bool isOnStairs, bool isPausePressed );
 void prepareRoom(int room);
 void enforceScreenLimits();
+void prepareScreenFor( EScreen screenState );
 #endif

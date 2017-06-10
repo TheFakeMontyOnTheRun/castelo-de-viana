@@ -46,6 +46,8 @@ std::vector<int> pickSound{ 900, 700 };
 std::vector<int> currentSound = bgSound;
 std::vector<int>::const_iterator currentSoundPosition = std::begin( bgSound );
 
+EScreen screen = kIntro;
+
 void playSound( const std::vector<int>& sound ) {
     if (currentSoundPosition != std::end( currentSound ) && currentSound == sound ) {
         return;
@@ -270,6 +272,11 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
         --arrowCooldown;
     }
 
+    if ( player.mHealth == 0 ) {
+        screen = kGameOver;
+        prepareScreenFor( screen );
+        return;
+    }
 
     if ( player.mStance == EStance::kAttacking ) {
         for ( auto& foe : foes ) {
@@ -416,7 +423,9 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
             actorsToRemove.push_back( foe );
 
             if (foe.mType == kCapiroto) {
-                exit(0);
+                screen = kVictory;
+                prepareScreenFor( screen );
+                return;
             }
 
             continue;
@@ -465,7 +474,7 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
 }
 
 void prepareRoom(int room) {
-
+    nosound();
     if (room < 0) {
         std::cout << "room " << room << " is invalid " << std::endl;
         exit(0);
