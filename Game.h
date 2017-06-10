@@ -14,7 +14,7 @@ enum EItemType {
 };
 
 enum EActorType {
-    kPlayer, kSkeleton, kClosedDoor, kOpenDoor, kArrow
+    kPlayer, kSkeleton, kClosedDoor, kOpenDoor, kArrow, kGargoyle
 };
 
 class Vec2i {

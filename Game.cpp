@@ -231,7 +231,7 @@ void hurtPlayer( int ammount ) {
 
 bool isOnDoor( const Actor& actor ) {
     for (auto& door : doors ) {
-        if ( collide( door, actor ) ) {
+        if ( door.mType == kOpenDoor && collide( door, actor ) ) {
             return true;
         }
     }
@@ -290,7 +290,7 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
         hurtPlayer(1);
     }
 
-    if ( isOnDoor(player ) && hasKey ) {
+    if ( isOnDoor(player ) ) {
         advanceFloor();
     }
     
@@ -365,6 +365,13 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
             if ( collide( foe, arrow, 24 ) ) {
                 foe.mHealth--;
                 actorsToRemove.push_back( arrow );
+
+                if ( foe.mType == kGargoyle ) {
+                    for (auto& door : doors ) {
+                        door.mType = EActorType::kOpenDoor;
+                    }
+                }
+
             }
         }
     }
@@ -399,6 +406,10 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
     actorsToRemove.clear();
 
     for ( auto& foe : foes ) {
+
+        if ( foe.mType != kSkeleton ) {
+            continue;
+        }
 
         if ( foe.mHealth <= 0 ) {
             actorsToRemove.push_back( foe );
@@ -496,6 +507,14 @@ void prepareRoom(int room) {
                 a.mPosition = Vec2i{ x * 32, y * 32 };
                 a.mSpeed.mX = 8;
                 a.mHealth = 2;
+                foes.push_back(a);
+            } else if ( ch == 'g' ) {
+                foregroundTiles[y][x] = 0;
+                Actor a;
+                a.mType = EActorType::kGargoyle;
+                a.mPosition = Vec2i{ x * 32, y * 32 };
+                a.mSpeed.mX = 8;
+                a.mHealth = 1;
                 foes.push_back(a);
             } else if ( ch == 'd' ) {
                 foregroundTiles[y][x] = 0;

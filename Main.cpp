@@ -39,6 +39,12 @@ std::shared_ptr<odb::NativeBitmap> itemSprites[2] = {
         odb::loadBitmap("key.png"),
 };
 
+std::shared_ptr<odb::NativeBitmap> gargoyleSprites[2] = {
+        odb::loadBitmap("garg0.png"),
+        odb::loadBitmap("garg1.png"),
+};
+
+
 std::shared_ptr<odb::NativeBitmap> hero[6][2] = {
         {
                 odb::loadBitmap("up0.png"),
@@ -435,12 +441,23 @@ void render() {
 
     }
 
-    pixelData = foeSprites[counter % 2 ]->getPixelData();
+
 
     for ( const auto& foe : foes ) {
 
-        if ( foe.mType != EActorType::kSkeleton ) {
+        if ( foe.mType != EActorType::kSkeleton && foe.mType != EActorType::kGargoyle ) {
             continue;
+        }
+
+        if ( foe.mType == kSkeleton ) {
+            pixelData = foeSprites[counter % 2 ]->getPixelData();
+        } if ( foe.mType == kGargoyle ) {
+            if ( foe.mHealth > 0 ) {
+                pixelData = gargoyleSprites[0 ]->getPixelData();
+            } else {
+                pixelData = gargoyleSprites[1 ]->getPixelData();
+            }
+
         }
 
         y0 = (foe.mPosition.mY);
