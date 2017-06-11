@@ -247,9 +247,8 @@ void advanceFloor() {
     prepareRoom(room);
 }
 
-void gameTick(bool &isOnGround, bool &isOnStairs) {
-    ++counter;
 
+void playCurrentSound() {
     if ( currentSoundPosition != std::end( currentSound ) ) {
         sound( *currentSoundPosition );
         currentSoundPosition = std::next( currentSoundPosition );
@@ -258,11 +257,9 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
         currentSound = bgSound;
         currentSoundPosition = std::begin( currentSound );
     }
+}
 
-    if ( screen != kGame ) {
-        return;
-    }
-
+void updateTimers() {
 
     if ( ticksUntilVulnerable > 0 ) {
         --ticksUntilVulnerable;
@@ -275,6 +272,18 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
     if ( arrowCooldown > 0 ) {
         --arrowCooldown;
     }
+}
+
+void gameTick(bool &isOnGround, bool &isOnStairs) {
+    ++counter;
+
+    playCurrentSound();
+
+    if ( screen != kGame ) {
+        return;
+    }
+
+    updateTimers();
 
     if ( player.mHealth == 0 ) {
         screen = kGameOver;
