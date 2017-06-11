@@ -92,7 +92,7 @@ void updateHero(bool isOnGround, bool isJumping, bool isUpPressed, bool isDownPr
     }
 
     if (isDownPressed) {
-        if (isOnStairs) {
+        if (isOnStairs && !isOnGround) {
             player.mSpeed.mY = +8;
             player.mStance = kClimbing;
         } else {
@@ -145,7 +145,10 @@ bool isOnFloor( const Actor& actor ) {
     if (ground > 5) {
         return true;
     } else {
-        if (foregroundTiles[ground][(actor.mPosition.mX + 16) / 32] == 1 || foregroundTiles[ground][(actor.mPosition.mX + 16) / 32] == 3) {
+        if (foregroundTiles[ground][(actor.mPosition.mX + 16) / 32] == 1 ||
+                (foregroundTiles[ground][(actor.mPosition.mX + 16) / 32] == 3 &&
+                        foregroundTiles[((actor.mPosition.mY + 16) / 32)][(actor.mPosition.mX + 16) / 32] != 3)
+                ) {
             return true;
         }
     }
@@ -336,7 +339,14 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
 
     isOnGround = isOnFloor(player);
 
-    if (isOnGround ) {
+    if (isOnStairs ) {
+        player.mStance = kClimbing;
+        player.mSpeed.mX = 0;
+    } else {
+        player.mStance = kJumping;
+    }
+
+    if (isOnGround || !isOnStairs) {
         player.mStance = kStanding;
     }
 
@@ -350,6 +360,7 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
 
     if (isOnGround) {
         player.mSpeed.mX = player.mSpeed.mX / 2;
+        player.mPosition.mY = (player.mPosition.mY / 32) * 32;
     }
 
     if (isOnGround && !isOnStairs ) {
@@ -603,7 +614,7 @@ void enforceScreenLimits() {
 
     if (player.mPosition.mY < 0) {
         if ((room / 10) <= 9) {
-            player.mPosition.mY = 200 - 32 - 1;
+            player.mPosition.mY = ( 32 * 6) - 32 - 1;
             room += 10;
             prepareRoom(room);
         } else {
@@ -620,13 +631,13 @@ void enforceScreenLimits() {
         }
     }
 
-    if ((player.mPosition.mY + 32) >= 200) {
+    if ((player.mPosition.mY + 32) >= ( 32 * 6 )) {
         if ((room / 10) >= 1) {
             player.mPosition.mY = 1;
             room -= 10;
             prepareRoom(room);
         } else {
-            player.mPosition.mY = 200 - 32 - 1;
+            player.mPosition.mY = ( 32 * 6 ) - 32 - 1;
         }
     }
 }
