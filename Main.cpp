@@ -19,6 +19,7 @@
 
 #include "Game.h"
 
+int desiredTimeSlice = 100;
 
 std::vector<std::vector<std::shared_ptr<odb::NativeBitmap>>> tiles;
 
@@ -81,6 +82,8 @@ std::array<unsigned char, 320 * 200> buffer;
 std::array<unsigned char, 320 * 100 / 4> evenBuffer;
 std::array<unsigned char, 320 * 100 / 4> oddBuffer;
 std::shared_ptr<odb::NativeBitmap> currentScreen = nullptr;
+
+double timeRendering = 0;
 
 void prepareScreenFor( EScreen screenState ) {
     nosound();
@@ -277,7 +280,6 @@ void render() {
         }
 
         copyImageBufferToVideoMemory();
-        usleep(20000);
         return;
     }
 
@@ -642,8 +644,6 @@ void render() {
         }
         std::cout << std::endl;
     }
-
-    usleep(20000);
 }
 
 
@@ -658,7 +658,13 @@ int main(int argc, char **argv) {
 
     initMode4h();
 
+    double t0;
+    double t1;
+    double ms;
+
     while (!done) {
+
+        t0 = uclock();
 
         bool isOnGround = false;
         bool isJumping = false;
@@ -755,6 +761,16 @@ int main(int argc, char **argv) {
         if ( screen == kGame ) {
             updateHero(isOnGround, isJumping, isUpPressed, isDownPressed, isLeftPressed, isAttacking,
                        isAltAttackPressed, isRightPressed, isOnStairs, isPausePressed);
+        }
+
+        t1 = uclock();
+        ms = (1000 * ( t1 - t0 )) /UCLOCKS_PER_SEC;
+        timeRendering += ms;
+
+        if ( ms < desiredTimeSlice ) {
+            usleep( ( desiredTimeSlice - ms ) * 1000 );
+        } else {
+            ++desiredTimeSlice;
         }
     }
 
