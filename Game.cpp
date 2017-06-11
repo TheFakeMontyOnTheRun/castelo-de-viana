@@ -354,7 +354,7 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
         ceiling = 0;
     }
 
-    if ((player.mSpeed.mX != 0 && isOnGround) || (player.mSpeed.mY != 0 && isOnStairs)) {
+    if ((player.mSpeed.mX != 0 && isOnGround) || (player.mSpeed.mY != 0 && player.mStance == kClimbing)) {
         heroFrame = (heroFrame + 1) % 2;
     }
 
