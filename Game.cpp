@@ -339,7 +339,9 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
         heroFrame = (heroFrame + 1) % 2;
     }
 
-    player.mSpeed.mX = player.mSpeed.mX / 2;
+    if (isOnGround) {
+        player.mSpeed.mX = player.mSpeed.mX / 2;
+    }
 
     if (isOnGround && !isOnStairs ) {
         player.mSpeed.mY = std::min( 0, player.mSpeed.mY );
