@@ -711,6 +711,10 @@ int main(int argc, char **argv) {
         bdos(0xC, 0, 0);
 
         switch (lastKey) {
+            case 9836:
+                enableSecret = true;
+                prepareScreenFor(kIntro);
+                break;
             case 27:
             case 283:
                 done = true;
