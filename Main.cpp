@@ -20,6 +20,7 @@
 #include "Game.h"
 
 int desiredTimeSlice = 100;
+bool enableSecret = false;
 
 std::vector<std::vector<std::shared_ptr<odb::NativeBitmap>>> tiles;
 
@@ -89,7 +90,7 @@ void prepareScreenFor(EScreen screenState) {
     nosound();
     switch (screenState) {
         case kIntro:
-            currentScreen = odb::loadBitmap("intro.png");
+            currentScreen = odb::loadBitmap( enableSecret ? "secret.dat" : "intro.png");
             playMusic(
                     "E5R1E3R0D3R0E3R0E1R0D1R0-G4R1F3R0F1R0F1R0A3R0F1R0E1R0D1R0D1R0E5R0C3R0C1R0C1R0E3R0C1R0-B1R0C1R0-B1R0-A1R0-A1-B5R0E1R0E1R0E1R0E1R0E1R0E1R0D1R0E1R0E1R0E1R0D1R0-A1R0-A1R0B3R1-A1R0-B1R0C1R0D1R0E1R0F1R0E1R0F3R1A3R1B1R0A1R0F3R0E3R0E1R0E4R0");
             break;
@@ -650,6 +651,10 @@ void render() {
 
 
 int main(int argc, char **argv) {
+
+    if ( argc >= 2 ) {
+        enableSecret = true;
+    }
 
     init();
     prepareScreenFor(kIntro);
