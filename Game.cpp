@@ -297,7 +297,7 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
     if ( player.mStance == EStance::kAttacking ) {
         for ( auto& foe : foes ) {
             if ( collide( foe, player, 64 ) ) {
-                foe.mHealth--;
+                foe.mHealth-=2;
             }
         }
 
