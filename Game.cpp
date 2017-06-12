@@ -67,6 +67,7 @@ void init() {
     player.mStance = kJumping;
     counter = 0;
     room = 0;
+    hasKey = false;
     prepareRoom(room);
     playSound(bgSound);
 }
