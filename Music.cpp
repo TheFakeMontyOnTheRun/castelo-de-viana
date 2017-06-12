@@ -22,10 +22,10 @@
 #include <vector>
 #include "Game.h"
 
-void playMusic( const std::string& music ) {
+void playMusic(const std::string &music) {
     int frequency = 0;
     melody.clear();
-    for ( const auto& note : music ) {
+    for (const auto &note : music) {
         switch (note) {
             case 'a':
             case 'A':
@@ -56,7 +56,7 @@ void playMusic( const std::string& music ) {
                 frequency = 1568;
                 break;
         }
-        melody.push_back( frequency );
+        melody.push_back(frequency);
     }
-    playSound( melody );
+    playSound(melody);
 }

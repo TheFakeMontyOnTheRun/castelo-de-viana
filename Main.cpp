@@ -85,12 +85,13 @@ std::shared_ptr<odb::NativeBitmap> currentScreen = nullptr;
 
 double timeRendering = 0;
 
-void prepareScreenFor( EScreen screenState ) {
+void prepareScreenFor(EScreen screenState) {
     nosound();
-    switch( screenState ) {
+    switch (screenState) {
         case kIntro:
             currentScreen = odb::loadBitmap("intro.png");
-            playMusic("E5R1E3R0D3R0E3R0E1R0D1R0-G4R1F3R0F1R0F1R0A3R0F1R0E1R0D1R0D1R0E5R0C3R0C1R0C1R0E3R0C1R0-B1R0C1R0-B1R0-A1R0-A1-B5R0E1R0E1R0E1R0E1R0E1R0E1R0D1R0E1R0E1R0E1R0D1R0-A1R0-A1R0B3R1-A1R0-B1R0C1R0D1R0E1R0F1R0E1R0F3R1A3R1B1R0A1R0F3R0E3R0E1R0E4R0");
+            playMusic(
+                    "E5R1E3R0D3R0E3R0E1R0D1R0-G4R1F3R0F1R0F1R0A3R0F1R0E1R0D1R0D1R0E5R0C3R0C1R0C1R0E3R0C1R0-B1R0C1R0-B1R0-A1R0-A1-B5R0E1R0E1R0E1R0E1R0E1R0E1R0D1R0E1R0E1R0E1R0D1R0-A1R0-A1R0B3R1-A1R0-B1R0C1R0D1R0E1R0F1R0E1R0F3R1A3R1B1R0A1R0F3R0E3R0E1R0E4R0");
             break;
         case kGame:
             currentScreen = nullptr;
@@ -101,7 +102,8 @@ void prepareScreenFor( EScreen screenState ) {
             break;
         case kVictory:
             currentScreen = odb::loadBitmap("victory.png");
-            playMusic("e8e8f8g8g8f8e8d8c8c8d8e8e8d12d4e8e8f8g8g8f8e8d8c8c8d8e8d8c12c4d8d8e8c8d8e12f12e8c8d8e12f12e8d8c8d8p8e8e8f8g8g8f8e8d8c8c8d8e8d8c12c4");
+            playMusic(
+                    "e8e8f8g8g8f8e8d8c8c8d8e8e8d12d4e8e8f8g8g8f8e8d8c8c8d8e8d8c12c4d8d8e8c8d8e12f12e8c8d8e12f12e8d8c8d8p8e8e8f8g8g8f8e8d8c8c8d8e8d8c12c4");
             break;
 
     }
@@ -122,7 +124,7 @@ void clearBuffers() {
     std::fill(std::begin(oddBuffer), std::end(oddBuffer), 0);
 }
 
-std::vector<std::shared_ptr<odb::NativeBitmap>> loadSpriteList(std::string listName ) {
+std::vector<std::shared_ptr<odb::NativeBitmap>> loadSpriteList(std::string listName) {
     std::ifstream tileList(listName);
     std::string buffer;
 
@@ -135,12 +137,12 @@ std::vector<std::shared_ptr<odb::NativeBitmap>> loadSpriteList(std::string listN
     return tilesToLoad;
 }
 
-void loadTiles( std::vector<std::string> tilesToLoad ) {
+void loadTiles(std::vector<std::string> tilesToLoad) {
     tiles.clear();
 
-    for (const auto& tile : tilesToLoad ) {
+    for (const auto &tile : tilesToLoad) {
 
-        if ( tile.substr( tile.length() - 4 ) == ".png" ) {
+        if (tile.substr(tile.length() - 4) == ".png") {
             tiles.push_back({odb::loadBitmap(tile)});
         } else {
             tiles.push_back(loadSpriteList(tile));
@@ -271,12 +273,12 @@ void copyImageBufferToVideoMemory() {
 void render() {
     std::fill(std::begin(imageBuffer), std::end(imageBuffer), 4);
 
-    if ( currentScreen != nullptr ) {
+    if (currentScreen != nullptr) {
 
         auto pixelData = currentScreen->getPixelData();
 
-        for ( int c = 0; c < 320 * 200; ++c ) {
-            imageBuffer[c] = pixelData[ c ];
+        for (int c = 0; c < 320 * 200; ++c) {
+            imageBuffer[c] = pixelData[c];
         }
 
         copyImageBufferToVideoMemory();
@@ -302,7 +304,7 @@ void render() {
 
             if (backgroundTiles[ty][tx] != 0) {
                 auto tileset = tiles[backgroundTiles[ty][tx]];
-                tile = tileset[ counter % tileset.size() ];
+                tile = tileset[counter % tileset.size()];
 
                 if (tile == nullptr) {
                     std::cout << "null tile at " << tx << ", " << ty << std::endl;
@@ -336,7 +338,7 @@ void render() {
 
             if (foregroundTiles[ty][tx] != 0) {
                 auto tileset = tiles[foregroundTiles[ty][tx]];
-                tile = tileset[ counter % tileset.size() ];
+                tile = tileset[counter % tileset.size()];
 
 
                 if (tile == nullptr) {
@@ -374,8 +376,8 @@ void render() {
 
     int *pixelData;
 
-    for ( const auto& door : doors ) {
-        pixelData = doorStates[ door.mType - EActorType::kClosedDoor ]->getPixelData();
+    for (const auto &door : doors) {
+        pixelData = doorStates[door.mType - EActorType::kClosedDoor]->getPixelData();
         y0 = (door.mPosition.mY);
         y1 = 32 + y0;
         x0 = (door.mPosition.mX);
@@ -406,7 +408,7 @@ void render() {
 
     auto sprite = hero[player.mStance][heroFrame];
 
-    if ( ((ticksUntilVulnerable <= 0 ) || (( counter % 2) == 0) ) || paused ) {
+    if (((ticksUntilVulnerable <= 0) || ((counter % 2) == 0)) || paused) {
         y0 = (player.mPosition.mY);
         int spriteWidth = sprite->getWidth();
         y1 = sprite->getHeight() + y0;
@@ -428,9 +430,9 @@ void render() {
 
             for (int x = x0; x < x1; ++x) {
                 if (player.mDirection == EDirection::kRight) {
-                    pixel = (pixelData[(spriteWidth* (y - y0)) + ((x - x0))]);
+                    pixel = (pixelData[(spriteWidth * (y - y0)) + ((x - x0))]);
                 } else {
-                    pixel = (pixelData[(spriteWidth * (y - y0)) + ( ( spriteWidth - 1 ) - (x - x0))]);
+                    pixel = (pixelData[(spriteWidth * (y - y0)) + ((spriteWidth - 1) - (x - x0))]);
                 }
 
                 if (pixel == 0) {
@@ -448,7 +450,7 @@ void render() {
 
     pixelData = arrowSprite->getPixelData();
 
-    for ( const auto& arrow : arrows ) {
+    for (const auto &arrow : arrows) {
         y0 = (arrow.mPosition.mY);
         y1 = 32 + y0;
         x0 = (arrow.mPosition.mX);
@@ -484,22 +486,22 @@ void render() {
     }
 
 
+    for (const auto &foe : foes) {
 
-    for ( const auto& foe : foes ) {
-
-        if ( foe.mType != EActorType::kSkeleton && foe.mType != EActorType::kGargoyle && foe.mType != EActorType::kCapiroto ) {
+        if (foe.mType != EActorType::kSkeleton && foe.mType != EActorType::kGargoyle &&
+            foe.mType != EActorType::kCapiroto) {
             continue;
         }
 
-        if ( foe.mType == kSkeleton ) {
+        if (foe.mType == kSkeleton) {
             pixelData = foeSprites[counter % 2]->getPixelData();
-        } else if ( foe.mType == kCapiroto ) {
-            pixelData = capirotoSprites[counter % 2 ]->getPixelData();
-        } else if ( foe.mType == kGargoyle ) {
-            if ( foe.mHealth > 0 ) {
-                pixelData = gargoyleSprites[0 ]->getPixelData();
+        } else if (foe.mType == kCapiroto) {
+            pixelData = capirotoSprites[counter % 2]->getPixelData();
+        } else if (foe.mType == kGargoyle) {
+            if (foe.mHealth > 0) {
+                pixelData = gargoyleSprites[0]->getPixelData();
             } else {
-                pixelData = gargoyleSprites[1 ]->getPixelData();
+                pixelData = gargoyleSprites[1]->getPixelData();
             }
 
         }
@@ -537,12 +539,12 @@ void render() {
         }
     }
 
-    for ( const auto& item : items) {
+    for (const auto &item : items) {
         y0 = (item.mPosition.mY);
         y1 = 32 + y0;
         x0 = (item.mPosition.mX);
         x1 = 32 + x0;
-        pixelData = itemSprites[ item.mType ]->getPixelData();
+        pixelData = itemSprites[item.mType]->getPixelData();
         int pixel = 0;
         for (int y = y0; y < y1; ++y) {
 
@@ -566,12 +568,12 @@ void render() {
         }
     }
 
-    if ( (hasKey && (( counter % 2) == 0 || paused) ) ) {
+    if ((hasKey && ((counter % 2) == 0 || paused))) {
         y0 = 2;
         y1 = 32 + y0;
         x0 = 2;
         x1 = 32 + x0;
-        pixelData = itemSprites[ kKey ]->getPixelData();
+        pixelData = itemSprites[kKey]->getPixelData();
         int pixel = 0;
         for (int y = y0; y < y1; ++y) {
 
@@ -597,12 +599,12 @@ void render() {
 
     copyImageBufferToVideoMemory();
 
-    if ( paused ) {
+    if (paused) {
         gotoxy(17, 12);
         std::cout << "PAUSED" << std::endl;
     }
 
-    if ( ticksToShowHealth > 0 ) {
+    if (ticksToShowHealth > 0) {
         gotoxy(1, 24);
         std::cout << "PLAYER: ";
 
@@ -620,14 +622,14 @@ void render() {
         std::cout << std::endl;
     }
 
-    if ( hasBossOnScreen ) {
+    if (hasBossOnScreen) {
         gotoxy(1, 23);
         std::cout << "CAPIROTO: ";
 
         int bossHealth = 0;
 
-        for ( auto const& foe : foes ) {
-            if ( foe.mType == kCapiroto ) {
+        for (auto const &foe : foes) {
+            if (foe.mType == kCapiroto) {
                 bossHealth = foe.mHealth;
             }
         }
@@ -737,7 +739,7 @@ int main(int argc, char **argv) {
                 isAltAttackPressed = true;
                 break;
             case 7181:
-                switch( screen ) {
+                switch (screen) {
                     case kIntro:
                         screen = kGame;
                         prepareScreenFor(screen);
@@ -758,17 +760,17 @@ int main(int argc, char **argv) {
                 break;
         }
 
-        if ( screen == kGame ) {
+        if (screen == kGame) {
             updateHero(isOnGround, isJumping, isUpPressed, isDownPressed, isLeftPressed, isAttacking,
                        isAltAttackPressed, isRightPressed, isOnStairs, isPausePressed);
         }
 
         t1 = uclock();
-        ms = (1000 * ( t1 - t0 )) /UCLOCKS_PER_SEC;
+        ms = (1000 * (t1 - t0)) / UCLOCKS_PER_SEC;
         timeRendering += ms;
 
-        if ( ms < desiredTimeSlice ) {
-            usleep( ( desiredTimeSlice - ms ) * 1000 );
+        if (ms < desiredTimeSlice) {
+            usleep((desiredTimeSlice - ms) * 1000);
         } else {
             ++desiredTimeSlice;
         }

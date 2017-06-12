@@ -45,9 +45,11 @@ public:
     EItemType mType;
 };
 
-bool operator==( const Vec2i& a, const Vec2i& b );
-bool operator==( const Item& a, const Item& b );
-bool operator==( const Actor& a, const Actor& b );
+bool operator==(const Vec2i &a, const Vec2i &b);
+
+bool operator==(const Item &a, const Item &b);
+
+bool operator==(const Actor &a, const Actor &b);
 
 extern Actor player;
 extern bool hasKey;
@@ -69,14 +71,26 @@ extern std::shared_ptr<odb::NativeBitmap> currentScreen;
 extern EScreen screen;
 
 extern void clearBuffers();
+
 void init();
+
 void gameTick(bool &isOnGround, bool &isOnStairs);
-void loadTiles( std::vector<std::string> tilesToLoad );
-void updateHero(bool isOnGround, bool isJumping, bool isUpPressed, bool isDownPressed, bool isLeftPressed, bool isAttacking, bool isUsingSpecial,
-                bool isRightPressed, bool isOnStairs, bool isPausePressed );
+
+void loadTiles(std::vector<std::string> tilesToLoad);
+
+void
+updateHero(bool isOnGround, bool isJumping, bool isUpPressed, bool isDownPressed, bool isLeftPressed, bool isAttacking,
+           bool isUsingSpecial,
+           bool isRightPressed, bool isOnStairs, bool isPausePressed);
+
 void prepareRoom(int room);
+
 void enforceScreenLimits();
-void prepareScreenFor( EScreen screenState );
-void playSound( const std::vector<int>& sound );
-void playMusic( const std::string& music );
+
+void prepareScreenFor(EScreen screenState);
+
+void playSound(const std::vector<int> &sound);
+
+void playMusic(const std::string &music);
+
 #endif

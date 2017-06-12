@@ -36,25 +36,25 @@ std::vector<Item> items;
 std::vector<Actor> arrows;
 
 std::vector<int> bgSound{};
-std::vector<int> hurtSound{ 400, 300 };
-std::vector<int> swordSound{ 150, 200 };
-std::vector<int> arrowSound{ 500, 600 };
-std::vector<int> jumpSound{ 1000, 2000, 3000, 1500, 500 };
-std::vector<int> pickSound{ 900, 700 };
+std::vector<int> hurtSound{400, 300};
+std::vector<int> swordSound{150, 200};
+std::vector<int> arrowSound{500, 600};
+std::vector<int> jumpSound{1000, 2000, 3000, 1500, 500};
+std::vector<int> pickSound{900, 700};
 
 std::vector<int> melody{};
 
 std::vector<int> currentSound = bgSound;
-std::vector<int>::const_iterator currentSoundPosition = std::begin( bgSound );
+std::vector<int>::const_iterator currentSoundPosition = std::begin(bgSound);
 
 EScreen screen = kIntro;
 
-void playSound( const std::vector<int>& sound ) {
-    if (currentSoundPosition != std::end( currentSound ) && currentSound == sound ) {
+void playSound(const std::vector<int> &sound) {
+    if (currentSoundPosition != std::end(currentSound) && currentSound == sound) {
         return;
     }
     currentSound = sound;
-    currentSoundPosition = std::begin( currentSound );
+    currentSoundPosition = std::begin(currentSound);
 }
 
 void init() {
@@ -71,8 +71,10 @@ void init() {
     playSound(bgSound);
 }
 
-void updateHero(bool isOnGround, bool isJumping, bool isUpPressed, bool isDownPressed, bool isLeftPressed, bool isAttacking, bool isUsingSpecial,
-                bool isRightPressed, bool isOnStairs, bool isPausePressed ) {
+void
+updateHero(bool isOnGround, bool isJumping, bool isUpPressed, bool isDownPressed, bool isLeftPressed, bool isAttacking,
+           bool isUsingSpecial,
+           bool isRightPressed, bool isOnStairs, bool isPausePressed) {
 
     if (isJumping) {
         if (isOnGround) {
@@ -116,16 +118,16 @@ void updateHero(bool isOnGround, bool isJumping, bool isUpPressed, bool isDownPr
         }
     }
 
-    if ( isAttacking ) {
+    if (isAttacking) {
         player.mStance = kAttacking;
         playSound(swordSound);
     }
 
-    if ( isUsingSpecial && arrowCooldown <= 0  ){
+    if (isUsingSpecial && arrowCooldown <= 0) {
         Actor a;
         a.mType = kArrow;
         a.mPosition = player.mPosition;
-        a.mSpeed = { player.mDirection == kRight ? 16 : -16, 0 };
+        a.mSpeed = {player.mDirection == kRight ? 16 : -16, 0};
         a.mDirection = player.mDirection;
         arrows.push_back(a);
         player.mStance = kAltAttacking;
@@ -133,21 +135,21 @@ void updateHero(bool isOnGround, bool isJumping, bool isUpPressed, bool isDownPr
         playSound(arrowSound);
     }
 
-    if ( isPausePressed ) {
+    if (isPausePressed) {
         paused = !paused;
         ticksToShowHealth = 14;
     }
 }
 
-bool isOnFloor( const Actor& actor ) {
+bool isOnFloor(const Actor &actor) {
     int ground = ((actor.mPosition.mY + 32) / 32);
 
     if (ground > 5) {
         return true;
     } else {
         if (foregroundTiles[ground][(actor.mPosition.mX + 16) / 32] == 1 ||
-                (foregroundTiles[ground][(actor.mPosition.mX + 16) / 32] == 3 &&
-                        foregroundTiles[((actor.mPosition.mY + 16) / 32)][(actor.mPosition.mX + 16) / 32] != 3)
+            (foregroundTiles[ground][(actor.mPosition.mX + 16) / 32] == 3 &&
+             foregroundTiles[((actor.mPosition.mY + 16) / 32)][(actor.mPosition.mX + 16) / 32] != 3)
                 ) {
             return true;
         }
@@ -156,17 +158,17 @@ bool isOnFloor( const Actor& actor ) {
     return false;
 }
 
-bool isBlockedByWall( const Actor& actor ) {
-    int front = ((actor.mPosition.mX ) / 32);
+bool isBlockedByWall(const Actor &actor) {
+    int front = ((actor.mPosition.mX) / 32);
 
-    if ( actor.mDirection == EDirection::kRight ) {
+    if (actor.mDirection == EDirection::kRight) {
         front++;
     }
 
-    return ( foregroundTiles[ ( actor.mPosition.mY + 16  ) / 32 ][ front ] == 1 );
+    return (foregroundTiles[(actor.mPosition.mY + 16) / 32][front] == 1);
 }
 
-bool collide( const Actor& a, const Item& b, int tolerance = 32 ) {
+bool collide(const Actor &a, const Item &b, int tolerance = 32) {
     if (std::abs(a.mPosition.mY - b.mPosition.mY) < tolerance) {
 
         if (a.mDirection == EDirection::kRight) {
@@ -185,7 +187,7 @@ bool collide( const Actor& a, const Item& b, int tolerance = 32 ) {
     return false;
 }
 
-bool collide( const Actor& a, const Actor& b, int tolerance = 32 ) {
+bool collide(const Actor &a, const Actor &b, int tolerance = 32) {
     if (std::abs(a.mPosition.mY - b.mPosition.mY) < tolerance) {
 
         if (b.mDirection == EDirection::kRight) {
@@ -204,39 +206,41 @@ bool collide( const Actor& a, const Actor& b, int tolerance = 32 ) {
     return false;
 }
 
-void removeFrom( std::vector<Actor>& mainCollection, std::vector<Actor>& removeList ) {
-    mainCollection.erase( std::remove_if( std::begin(mainCollection),std::end(mainCollection),
-                                  [&](Actor x){
-                                      return std::find(std::begin(removeList),std::end(removeList),x)!=std::end(removeList);
-                                  }
-    ), std::end(mainCollection) );
+void removeFrom(std::vector<Actor> &mainCollection, std::vector<Actor> &removeList) {
+    mainCollection.erase(std::remove_if(std::begin(mainCollection), std::end(mainCollection),
+                                        [&](Actor x) {
+                                            return std::find(std::begin(removeList), std::end(removeList), x) !=
+                                                   std::end(removeList);
+                                        }
+    ), std::end(mainCollection));
 }
 
 
-void removeFrom( std::vector<Item>& mainCollection, std::vector<Item>& removeList ) {
-    mainCollection.erase( std::remove_if( std::begin(mainCollection),std::end(mainCollection),
-                                          [&](Item x){
-                                              return std::find(std::begin(removeList),std::end(removeList),x)!=std::end(removeList);
-                                          }
-    ), std::end(mainCollection) );
+void removeFrom(std::vector<Item> &mainCollection, std::vector<Item> &removeList) {
+    mainCollection.erase(std::remove_if(std::begin(mainCollection), std::end(mainCollection),
+                                        [&](Item x) {
+                                            return std::find(std::begin(removeList), std::end(removeList), x) !=
+                                                   std::end(removeList);
+                                        }
+    ), std::end(mainCollection));
 }
 
 
-bool isOnHarmfulBlock( const Actor& actor ) {
-    int block = foregroundTiles[((actor.mPosition.mY + 16) / 32)][ ( actor.mPosition.mX + 16 ) / 32 ];
+bool isOnHarmfulBlock(const Actor &actor) {
+    int block = foregroundTiles[((actor.mPosition.mY + 16) / 32)][(actor.mPosition.mX + 16) / 32];
     return (block == 5);
 }
 
-void hurtPlayer( int ammount ) {
+void hurtPlayer(int ammount) {
     player.mHealth -= ammount;
     ticksUntilVulnerable = 14;
     ticksToShowHealth = 14;
-    playSound( hurtSound );
+    playSound(hurtSound);
 }
 
-bool isOnDoor( const Actor& actor ) {
-    for (auto& door : doors ) {
-        if ( door.mType == kOpenDoor && collide( door, actor ) ) {
+bool isOnDoor(const Actor &actor) {
+    for (auto &door : doors) {
+        if (door.mType == kOpenDoor && collide(door, actor)) {
             return true;
         }
     }
@@ -252,27 +256,27 @@ void advanceFloor() {
 
 
 void playCurrentSound() {
-    if ( currentSoundPosition != std::end( currentSound ) ) {
-        sound( *currentSoundPosition );
-        currentSoundPosition = std::next( currentSoundPosition );
+    if (currentSoundPosition != std::end(currentSound)) {
+        sound(*currentSoundPosition);
+        currentSoundPosition = std::next(currentSoundPosition);
     } else {
         nosound();
         currentSound = bgSound;
-        currentSoundPosition = std::begin( currentSound );
+        currentSoundPosition = std::begin(currentSound);
     }
 }
 
 void updateTimers() {
 
-    if ( ticksUntilVulnerable > 0 ) {
+    if (ticksUntilVulnerable > 0) {
         --ticksUntilVulnerable;
     }
 
-    if ( ticksToShowHealth > 0 ) {
+    if (ticksToShowHealth > 0) {
         --ticksToShowHealth;
     }
 
-    if ( arrowCooldown > 0 ) {
+    if (arrowCooldown > 0) {
         --arrowCooldown;
     }
 }
@@ -282,42 +286,42 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
 
     playCurrentSound();
 
-    if ( screen != kGame ) {
+    if (screen != kGame) {
         return;
     }
 
     updateTimers();
 
-    if ( player.mHealth == 0 ) {
+    if (player.mHealth == 0) {
         screen = kGameOver;
-        prepareScreenFor( screen );
+        prepareScreenFor(screen);
         return;
     }
 
-    if ( player.mStance == EStance::kAttacking ) {
-        for ( auto& foe : foes ) {
-            if ( collide( foe, player, 64 ) ) {
-                foe.mHealth-=2;
+    if (player.mStance == EStance::kAttacking) {
+        for (auto &foe : foes) {
+            if (collide(foe, player, 64)) {
+                foe.mHealth -= 2;
             }
         }
 
         player.mStance = EStance::kStanding;
     }
 
-    isOnStairs= (foregroundTiles[(player.mPosition.mY + 16) / 32][(player.mPosition.mX + 16) / 32] == 3);
+    isOnStairs = (foregroundTiles[(player.mPosition.mY + 16) / 32][(player.mPosition.mX + 16) / 32] == 3);
 
-    if ( isBlockedByWall(player ) ) {
+    if (isBlockedByWall(player)) {
         player.mSpeed.mX = 0;
     }
 
-    if ( isOnHarmfulBlock( player ) && ticksUntilVulnerable <= 0 ) {
+    if (isOnHarmfulBlock(player) && ticksUntilVulnerable <= 0) {
         hurtPlayer(1);
     }
 
-    if ( isOnDoor(player ) ) {
+    if (isOnDoor(player)) {
         advanceFloor();
     }
-    
+
     player.mPosition.mX += player.mSpeed.mX;
     player.mPosition.mY += player.mSpeed.mY;
 
@@ -331,15 +335,15 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
 
     enforceScreenLimits();
 
-    if ( player.mSpeed.mX == 0 ) {
+    if (player.mSpeed.mX == 0) {
         heroFrame = 0;
     }
 
-    int ceiling = ( player.mPosition.mY) / 32;
+    int ceiling = (player.mPosition.mY) / 32;
 
     isOnGround = isOnFloor(player);
 
-    if (isOnStairs ) {
+    if (isOnStairs) {
         player.mStance = kClimbing;
         player.mSpeed.mX = 0;
     } else {
@@ -363,16 +367,16 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
         player.mPosition.mY = (player.mPosition.mY / 32) * 32;
     }
 
-    if (isOnGround && !isOnStairs ) {
-        player.mSpeed.mY = std::min( 0, player.mSpeed.mY );
-        player.mPosition.mY = std::min( player.mPosition.mY, (player.mPosition.mY / 32) * 32 );
+    if (isOnGround && !isOnStairs) {
+        player.mSpeed.mY = std::min(0, player.mSpeed.mY);
+        player.mPosition.mY = std::min(player.mPosition.mY, (player.mPosition.mY / 32) * 32);
     }
 
-    if ( player.mSpeed.mY < 0 && foregroundTiles[ceiling][(player.mPosition.mX + 16) / 32] == 1) {
+    if (player.mSpeed.mY < 0 && foregroundTiles[ceiling][(player.mPosition.mX + 16) / 32] == 1) {
         player.mSpeed.mY = -player.mSpeed.mY;
     }
 
-    if ( player.mSpeed.mY < 0 && foregroundTiles[player.mPosition.mY / 32][(player.mPosition.mX + 16) / 32] == 1) {
+    if (player.mSpeed.mY < 0 && foregroundTiles[player.mPosition.mY / 32][(player.mPosition.mX + 16) / 32] == 1) {
         player.mSpeed.mY = -player.mSpeed.mY;
     }
 
@@ -386,22 +390,22 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
 
     std::vector<Actor> actorsToRemove;
 
-    for ( auto& arrow : arrows ) {
+    for (auto &arrow : arrows) {
         arrow.mPosition.mX += arrow.mSpeed.mX;
         arrow.mPosition.mY += arrow.mSpeed.mY;
 
-        if ( isBlockedByWall( arrow ) ) {
-            actorsToRemove.push_back( arrow );
+        if (isBlockedByWall(arrow)) {
+            actorsToRemove.push_back(arrow);
             continue;
         }
 
-        for ( auto& foe : foes ) {
-            if ( collide( foe, arrow, 32 ) ) {
+        for (auto &foe : foes) {
+            if (collide(foe, arrow, 32)) {
                 foe.mHealth--;
-                actorsToRemove.push_back( arrow );
+                actorsToRemove.push_back(arrow);
 
-                if ( foe.mType == kGargoyle ) {
-                    for (auto& door : doors ) {
+                if (foe.mType == kGargoyle) {
+                    for (auto &door : doors) {
                         door.mType = EActorType::kOpenDoor;
                     }
                 }
@@ -410,24 +414,24 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
         }
     }
 
-    removeFrom( arrows, actorsToRemove );
+    removeFrom(arrows, actorsToRemove);
 
     std::vector<Item> itemsToRemove;
 
-    for (const auto& item : items ) {
+    for (const auto &item : items) {
 
-        if ( collide( player, item ) ) {
-            if ( item.mType == kKey && !hasKey ) {
+        if (collide(player, item)) {
+            if (item.mType == kKey && !hasKey) {
                 hasKey = true;
-                itemsToRemove.push_back( item );
+                itemsToRemove.push_back(item);
                 playSound(pickSound);
-                for (auto& door : doors ) {
+                for (auto &door : doors) {
                     door.mType = EActorType::kOpenDoor;
                 }
-            } else if ( item.mType == kMeat ) {
-                if ( player.mHealth < 10 ) {
+            } else if (item.mType == kMeat) {
+                if (player.mHealth < 10) {
                     playSound(pickSound);
-                    itemsToRemove.push_back( item );
+                    itemsToRemove.push_back(item);
                     player.mHealth++;
                 }
                 ticksToShowHealth = 14;
@@ -435,68 +439,68 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
         }
     }
 
-    removeFrom( items, itemsToRemove );
+    removeFrom(items, itemsToRemove);
 
     actorsToRemove.clear();
 
-    for ( auto& foe : foes ) {
+    for (auto &foe : foes) {
 
-        if ( foe.mType != kSkeleton && foe.mType != kCapiroto ) {
+        if (foe.mType != kSkeleton && foe.mType != kCapiroto) {
             continue;
         }
 
-        if ( foe.mHealth <= 0 ) {
-            actorsToRemove.push_back( foe );
+        if (foe.mHealth <= 0) {
+            actorsToRemove.push_back(foe);
 
             if (foe.mType == kCapiroto) {
                 screen = kVictory;
-                prepareScreenFor( screen );
+                prepareScreenFor(screen);
                 return;
             }
 
             continue;
         }
 
-        if ( foe.mType != kSkeleton ) {
+        if (foe.mType != kSkeleton) {
             continue;
         }
 
         foe.mPosition.mX += foe.mSpeed.mX;
         foe.mPosition.mY += foe.mSpeed.mY;
 
-        if ( foe.mPosition.mX >= ( 320 - 32 ) ) {
+        if (foe.mPosition.mX >= (320 - 32)) {
             foe.mSpeed.mX = -8;
             foe.mDirection = EDirection::kLeft;
         }
 
-        if ( foe.mPosition.mX < 0 ) {
+        if (foe.mPosition.mX < 0) {
             foe.mSpeed.mX = 8;
             foe.mDirection = EDirection::kRight;
         }
 
-        if ( isBlockedByWall( foe )  ) {
+        if (isBlockedByWall(foe)) {
             foe.mSpeed.mX *= -1;
 
-            if ( foe.mDirection == EDirection::kLeft ) {
+            if (foe.mDirection == EDirection::kLeft) {
                 foe.mDirection = EDirection::kRight;
             } else {
                 foe.mDirection = EDirection::kLeft;
             }
         }
 
-        if ( (ticksUntilVulnerable <= 0 ) && collide( foe, player, 16 ) ) {
+        if ((ticksUntilVulnerable <= 0) && collide(foe, player, 16)) {
             hurtPlayer(1);
         }
 
         foe.mSpeed.mY += 2;
         bool isOnGround = isOnFloor(foe);
 
-        if ( isOnGround ) {
+        if (isOnGround) {
             foe.mSpeed.mY = 0;
             foe.mPosition.mY = (foe.mPosition.mY / 32) * 32;
         }
     }
-    removeFrom( foes, actorsToRemove );
+    removeFrom(foes, actorsToRemove);
 }
 
 void prepareRoom(int room) {
@@ -532,49 +536,49 @@ void prepareRoom(int room) {
             fgmap >> ch;
 
 
-            if ( ch == 'm' ) {
+            if (ch == 'm') {
                 foregroundTiles[y][x] = 0;
                 Item item;
                 item.mType = kMeat;
                 item.mPosition = Vec2i{x * 32, y * 32};
                 items.push_back(item);
-            } else if ( ch == 'k' ) {
-                if ( !hasKey ) {
+            } else if (ch == 'k') {
+                if (!hasKey) {
                     foregroundTiles[y][x] = 0;
                     Item item;
                     item.mType = kKey;
                     item.mPosition = Vec2i{x * 32, y * 32};
                     items.push_back(item);
                 }
-            } else if ( ch == 'a' ) {
+            } else if (ch == 'a') {
                 foregroundTiles[y][x] = 0;
                 Actor a;
                 a.mType = EActorType::kSkeleton;
-                a.mPosition = Vec2i{ x * 32, y * 32 };
+                a.mPosition = Vec2i{x * 32, y * 32};
                 a.mSpeed.mX = 8;
                 a.mHealth = 2;
                 foes.push_back(a);
-            } else if ( ch == 'c' ) {
+            } else if (ch == 'c') {
                 foregroundTiles[y][x] = 0;
                 Actor a;
                 a.mType = EActorType::kCapiroto;
-                a.mPosition = Vec2i{ x * 32, y * 32 };
+                a.mPosition = Vec2i{x * 32, y * 32};
                 a.mHealth = 20;
                 hasBossOnScreen = true;
                 foes.push_back(a);
-            } else if ( ch == 'g' ) {
+            } else if (ch == 'g') {
                 foregroundTiles[y][x] = 0;
                 Actor a;
                 a.mType = EActorType::kGargoyle;
-                a.mPosition = Vec2i{ x * 32, y * 32 };
+                a.mPosition = Vec2i{x * 32, y * 32};
                 a.mSpeed.mX = 8;
                 a.mHealth = 1;
                 foes.push_back(a);
-            } else if ( ch == 'd' ) {
+            } else if (ch == 'd') {
                 foregroundTiles[y][x] = 0;
                 Actor a;
                 a.mType = hasKey ? EActorType::kOpenDoor : EActorType::kClosedDoor;
-                a.mPosition = Vec2i{ x * 32, y * 32 };
+                a.mPosition = Vec2i{x * 32, y * 32};
                 a.mSpeed.mX = 8;
                 doors.push_back(a);
             } else {
@@ -597,7 +601,7 @@ void prepareRoom(int room) {
         tilesToLoad.push_back(buffer);
     }
 
-    loadTiles( tilesToLoad );
+    loadTiles(tilesToLoad);
 
     clearBuffers();
 }
@@ -614,7 +618,7 @@ void enforceScreenLimits() {
 
     if (player.mPosition.mY < 0) {
         if ((room / 10) <= 9) {
-            player.mPosition.mY = ( 32 * 6) - 32 - 1;
+            player.mPosition.mY = (32 * 6) - 32 - 1;
             room += 10;
             prepareRoom(room);
         } else {
@@ -631,25 +635,26 @@ void enforceScreenLimits() {
         }
     }
 
-    if ((player.mPosition.mY + 32) >= ( 32 * 6 )) {
+    if ((player.mPosition.mY + 32) >= (32 * 6)) {
         if ((room / 10) >= 1) {
             player.mPosition.mY = 1;
             room -= 10;
             prepareRoom(room);
         } else {
-            player.mPosition.mY = ( 32 * 6 ) - 32 - 1;
+            player.mPosition.mY = (32 * 6) - 32 - 1;
         }
     }
 }
 
-bool operator==( const Vec2i& a, const Vec2i& b ) {
+bool operator==(const Vec2i &a, const Vec2i &b) {
     return a.mX == b.mX && a.mY == b.mY;
 }
 
-bool operator==( const Item& a, const Item& b ) {
+bool operator==(const Item &a, const Item &b) {
     return a.mType == b.mType && a.mPosition == b.mPosition;
 }
 
-bool operator==( const Actor& a, const Actor& b ) {
-    return a.mType == b.mType && a.mStance == b.mStance && a.mDirection == b.mDirection && a.mPosition == b.mPosition && a.mSpeed == b.mSpeed;
+bool operator==(const Actor &a, const Actor &b) {
+    return a.mType == b.mType && a.mStance == b.mStance && a.mDirection == b.mDirection && a.mPosition == b.mPosition &&
+           a.mSpeed == b.mSpeed;
 }
