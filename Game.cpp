@@ -49,6 +49,8 @@ std::vector<int>::const_iterator currentSoundPosition = std::begin(bgSound);
 
 EScreen screen = kIntro;
 
+void evalutePlayerAttack();
+
 void playSound(const std::vector<int> &sound) {
     if (currentSoundPosition != std::end(currentSound) && currentSound == sound) {
         return;
@@ -300,11 +302,7 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
     }
 
     if (player.mStance == EStance::kAttacking) {
-        for (auto &foe : foes) {
-            if (collide(foe, player, 64)) {
-                foe.mHealth -= 2;
-            }
-        }
+        evalutePlayerAttack();
 
         player.mStance = EStance::kStanding;
     }
@@ -514,6 +512,15 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
         }
     }
     removeFrom(foes, actorsToRemove);
+}
+
+void evalutePlayerAttack() {
+    for (auto &foe : foes) {
+            if ( foe.mType != kCapiroto && collide(foe, player, 48)) {
+                foe.mHealth -= 2;
+                return; //only one enemy per attack!
+            }
+        }
 }
 
 void prepareRoom(int room) {
