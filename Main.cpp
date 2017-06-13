@@ -19,7 +19,7 @@
 
 #include "Game.h"
 
-int desiredTimeSlice = 100;
+int desiredTimeSlice = 75;
 bool enableSecret = false;
 
 std::vector<std::vector<std::shared_ptr<odb::NativeBitmap>>> tiles;
