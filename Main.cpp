@@ -635,7 +635,7 @@ void render() {
             }
         }
 
-        for (int c = 0; c < 20; ++c) {
+        for (int c = 0; c < 10; ++c) {
             char ch;
             if (c >= bossHealth) {
                 ch = 176;
