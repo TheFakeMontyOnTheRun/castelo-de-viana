@@ -446,6 +446,18 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
 
     for (auto &foe : foes) {
 
+        if (foe.mType == kSpawner) {
+            if ( ( counter % 40 ) == 0 ) {
+                Actor a;
+                a.mType = EActorType::kSkeleton;
+                a.mPosition = Vec2i( foe.mPosition );
+                a.mSpeed.mX = 8;
+                a.mHealth = 2;
+                foes.push_back(a);
+            }
+            continue;
+        }
+
         if (foe.mType != kSkeleton && foe.mType != kCapiroto) {
             continue;
         }
@@ -566,6 +578,13 @@ void prepareRoom(int room) {
                 a.mPosition = Vec2i{x * 32, y * 32};
                 a.mHealth = 20;
                 hasBossOnScreen = true;
+                foes.push_back(a);
+            } else if (ch == 's') {
+                foregroundTiles[y][x] = 0;
+                Actor a;
+                a.mType = EActorType::kSpawner;
+                a.mPosition = Vec2i{x * 32, y * 32};
+                a.mHealth = 20;
                 foes.push_back(a);
             } else if (ch == 'g') {
                 foregroundTiles[y][x] = 0;
