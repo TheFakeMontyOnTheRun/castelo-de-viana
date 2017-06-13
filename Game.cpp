@@ -516,7 +516,7 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
 
 void evalutePlayerAttack() {
     for (auto &foe : foes) {
-            if ( foe.mType != kCapiroto && collide(foe, player, 48)) {
+            if ( foe.mType != kCapiroto && foe.mType != kGargoyle && collide(foe, player, 48)) {
                 foe.mHealth -= 2;
                 return; //only one enemy per attack!
             }
