@@ -499,13 +499,13 @@ void render() {
     for (const auto &foe : foes) {
 
         if (foe.mType != EActorType::kSkeleton && foe.mType != EActorType::kGargoyle &&
-            foe.mType != EActorType::kCapiroto) {
+            foe.mType != EActorType::kTinhoso) {
             continue;
         }
 
         if (foe.mType == kSkeleton) {
             pixelData = foeSprites[counter % 2]->getPixelData();
-        } else if (foe.mType == kCapiroto) {
+        } else if (foe.mType == kTinhoso) {
             pixelData = capirotoSprites[counter % 2]->getPixelData();
         } else if (foe.mType == kGargoyle) {
             if (foe.mHealth > 0) {
@@ -634,12 +634,12 @@ void render() {
 
     if (hasBossOnScreen) {
         gotoxy(1, 23);
-        std::cout << "CAPIROTO: ";
+        std::cout << "TINHOSO: ";
 
         int bossHealth = 0;
 
         for (auto const &foe : foes) {
-            if (foe.mType == kCapiroto) {
+            if (foe.mType == kTinhoso) {
                 bossHealth = foe.mHealth;
             }
         }

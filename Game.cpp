@@ -466,14 +466,14 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
             continue;
         }
 
-        if (foe.mType != kSkeleton && foe.mType != kCapiroto) {
+        if (foe.mType != kSkeleton && foe.mType != kTinhoso ) {
             continue;
         }
 
         if (foe.mHealth <= 0) {
             actorsToRemove.push_back(foe);
 
-            if (foe.mType == kCapiroto) {
+            if (foe.mType == kTinhoso) {
                 screen = kVictory;
                 prepareScreenFor(screen);
                 return;
@@ -526,7 +526,7 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
 
 void evalutePlayerAttack() {
     for (auto &foe : foes) {
-            if ( foe.mType != kCapiroto && foe.mType != kGargoyle && collide(foe, player, 48)) {
+            if ( foe.mType != kTinhoso && foe.mType != kGargoyle && collide(foe, player, 48)) {
                 foe.mHealth -= 2;
                 return; //only one enemy per attack!
             }
@@ -588,12 +588,12 @@ void prepareRoom(int room) {
                 a.mSpeed.mX = 8;
                 a.mHealth = 2;
                 foes.push_back(a);
-            } else if (ch == 'c') {
+            } else if (ch == 't') {
                 foregroundTiles[y][x] = 0;
                 Actor a;
-                a.mType = EActorType::kCapiroto;
+                a.mType = EActorType::kTinhoso;
                 a.mPosition = Vec2i{x * 32, y * 32};
-                a.mHealth = 10;
+                a.mHealth = 5;
                 hasBossOnScreen = true;
                 foes.push_back(a);
             } else if (ch == 's') {
