@@ -92,7 +92,17 @@ updateHero(bool isOnGround, bool isJumping, bool isUpPressed, bool isDownPressed
             player.mSpeed.mY = -8;
             player.mStance = kClimbing;
         } else if (isOnGround) {
-            player.mStance = kUp;
+            if ( !isOnStairs && arrowCooldown <= 0) {
+                Actor a;
+                a.mType = kArrow;
+                a.mPosition = player.mPosition;
+                a.mSpeed = {0, -16};
+                a.mDirection = player.mDirection;
+                arrows.push_back(a);
+                player.mStance = kUp;
+                arrowCooldown = 4;
+                playSound(arrowSound);
+            }
         }
     }
 

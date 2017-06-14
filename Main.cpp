@@ -24,7 +24,10 @@ bool enableSecret = false;
 
 std::vector<std::vector<std::shared_ptr<odb::NativeBitmap>>> tiles;
 
-std::shared_ptr<odb::NativeBitmap> arrowSprite = odb::loadBitmap("arrow.png");
+std::shared_ptr<odb::NativeBitmap> arrowSprite[2] = {
+        odb::loadBitmap("arrow.png"),
+        odb::loadBitmap("arrowup.png")
+};
 
 std::shared_ptr<odb::NativeBitmap> doorStates[2] = {
         odb::loadBitmap("door0.png"),
@@ -449,9 +452,15 @@ void render() {
         }
     }
 
-    pixelData = arrowSprite->getPixelData();
-
     for (const auto &arrow : arrows) {
+
+        if (std::abs(arrow.mSpeed.mX) > std::abs(arrow.mSpeed.mY) ) {
+            pixelData = arrowSprite[0]->getPixelData();
+        } else {
+            pixelData = arrowSprite[1]->getPixelData();
+        }
+
+
         y0 = (arrow.mPosition.mY);
         y1 = 32 + y0;
         x0 = (arrow.mPosition.mX);
