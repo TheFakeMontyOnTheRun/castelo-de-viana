@@ -54,6 +54,12 @@ std::shared_ptr<odb::NativeBitmap> capirotoSprites[2] = {
         odb::loadBitmap("capi1.png"),
 };
 
+std::shared_ptr<odb::NativeBitmap> tinhosoSprites[2] = {
+        odb::loadBitmap("tinhoso0.png"),
+        odb::loadBitmap("tinhoso1.png"),
+};
+
+
 std::shared_ptr<odb::NativeBitmap> hero[6][2] = {
         {
                 odb::loadBitmap("up0.png"),
@@ -499,13 +505,15 @@ void render() {
     for (const auto &foe : foes) {
 
         if (foe.mType != EActorType::kSkeleton && foe.mType != EActorType::kGargoyle &&
-            foe.mType != EActorType::kTinhoso) {
+            foe.mType != EActorType::kTinhoso && foe.mType != EActorType::kCapiroto ) {
             continue;
         }
 
         if (foe.mType == kSkeleton) {
             pixelData = foeSprites[counter % 2]->getPixelData();
         } else if (foe.mType == kTinhoso) {
+            pixelData = tinhosoSprites[counter % 2]->getPixelData();
+        } else if (foe.mType == kCapiroto) {
             pixelData = capirotoSprites[counter % 2]->getPixelData();
         } else if (foe.mType == kGargoyle) {
             if (foe.mHealth > 0) {
@@ -634,17 +642,17 @@ void render() {
 
     if (hasBossOnScreen) {
         gotoxy(1, 23);
-        std::cout << "TINHOSO: ";
+        std::cout << currentBossName << ": ";
 
         int bossHealth = 0;
 
         for (auto const &foe : foes) {
-            if (foe.mType == kTinhoso) {
+            if (foe.mType == kTinhoso || foe.mType == kCapiroto) {
                 bossHealth = foe.mHealth;
             }
         }
 
-        for (int c = 0; c < 10; ++c) {
+        for (int c = 0; c < totalBossHealth; ++c) {
             char ch;
             if (c >= bossHealth) {
                 ch = 176;

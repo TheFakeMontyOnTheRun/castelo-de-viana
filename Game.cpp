@@ -41,12 +41,12 @@ std::vector<int> swordSound{150, 200};
 std::vector<int> arrowSound{500, 600};
 std::vector<int> jumpSound{1000, 2000, 3000, 1500, 500};
 std::vector<int> pickSound{900, 700};
-
+int totalBossHealth = 0;
 std::vector<int> melody{};
 
 std::vector<int> currentSound = bgSound;
 std::vector<int>::const_iterator currentSoundPosition = std::begin(bgSound);
-
+std::string currentBossName;
 EScreen screen = kIntro;
 
 void evalutePlayerAttack();
@@ -466,18 +466,24 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
             continue;
         }
 
-        if (foe.mType != kSkeleton && foe.mType != kTinhoso ) {
+        if (foe.mType != kSkeleton && foe.mType != kTinhoso && foe.mType != kCapiroto ) {
             continue;
         }
 
         if (foe.mHealth <= 0) {
             actorsToRemove.push_back(foe);
 
-            if (foe.mType == kTinhoso) {
+            if (foe.mType == kCapiroto) {
                 screen = kVictory;
                 prepareScreenFor(screen);
                 return;
             }
+
+
+            if (foe.mType == kTinhoso) {
+                hasBossOnScreen = false;
+            }
+
 
             continue;
         }
@@ -526,7 +532,7 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
 
 void evalutePlayerAttack() {
     for (auto &foe : foes) {
-            if ( foe.mType != kTinhoso && foe.mType != kGargoyle && collide(foe, player, 48)) {
+            if ( foe.mType != kTinhoso && foe.mType != kCapiroto && foe.mType != kGargoyle && collide(foe, player, 48)) {
                 foe.mHealth -= 2;
                 return; //only one enemy per attack!
             }
@@ -588,8 +594,20 @@ void prepareRoom(int room) {
                 a.mSpeed.mX = 8;
                 a.mHealth = 2;
                 foes.push_back(a);
+            } else if (ch == 'c') {
+                foregroundTiles[y][x] = 0;
+                currentBossName = "CAPIROTO";
+                Actor a;
+                a.mType = EActorType::kCapiroto;
+                a.mPosition = Vec2i{x * 32, y * 32};
+                a.mHealth = 10;
+                totalBossHealth = 10;
+                hasBossOnScreen = true;
+                foes.push_back(a);
             } else if (ch == 't') {
                 foregroundTiles[y][x] = 0;
+                currentBossName = "TINHOSO";
+                totalBossHealth = 5;
                 Actor a;
                 a.mType = EActorType::kTinhoso;
                 a.mPosition = Vec2i{x * 32, y * 32};

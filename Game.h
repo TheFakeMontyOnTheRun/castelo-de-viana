@@ -16,7 +16,7 @@ enum EItemType {
 };
 
 enum EActorType {
-    kPlayer, kSkeleton, kClosedDoor, kOpenDoor, kArrow, kGargoyle, kTinhoso, kSpawner
+    kPlayer, kSkeleton, kClosedDoor, kOpenDoor, kArrow, kGargoyle, kTinhoso, kSpawner, kCapiroto
 };
 
 enum EScreen {
@@ -69,7 +69,8 @@ extern std::vector<Actor> arrows;
 extern std::vector<int> melody;
 extern std::shared_ptr<odb::NativeBitmap> currentScreen;
 extern EScreen screen;
-
+extern std::string currentBossName;
+extern int totalBossHealth;
 extern void clearBuffers();
 
 void init();
