@@ -467,7 +467,7 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
         }
 
 
-        if (foe.mType == kHand) {
+        if (( counter % 5 ) == 0 && foe.mType == kHand) {
             int dx = player.mPosition.mX - foe.mPosition.mX;
             int dy = player.mPosition.mY - foe.mPosition.mY;
 
