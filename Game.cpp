@@ -409,7 +409,7 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
         }
 
         for (auto &foe : foes) {
-            if (collide(foe, arrow, 32)) {
+            if ( foe.mType != kHand && collide(foe, arrow, 32)) {
                 foe.mHealth--;
                 actorsToRemove.push_back(arrow);
 
@@ -561,7 +561,7 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
 
 void evalutePlayerAttack() {
     for (auto &foe : foes) {
-            if ( foe.mType != kTinhoso && foe.mType != kCapiroto && foe.mType != kGargoyle && collide(foe, player, 48)) {
+            if ( foe.mType != kTinhoso && foe.mType != kHand &&  foe.mType != kCapiroto && foe.mType != kGargoyle && collide(foe, player, 48)) {
                 foe.mHealth -= 2;
                 return; //only one enemy per attack!
             }
