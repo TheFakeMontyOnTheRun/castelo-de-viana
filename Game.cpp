@@ -455,7 +455,7 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
     for (auto &foe : foes) {
 
         if (foe.mType == kSpawner) {
-            if ( ( counter % 40 ) == 0 ) {
+            if ( ( counter % 40 ) == 0 && ( foes.size() <= 5 ) ) {
                 Actor a;
                 a.mType = EActorType::kSkeleton;
                 a.mPosition = Vec2i( foe.mPosition );
