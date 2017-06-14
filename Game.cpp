@@ -466,7 +466,25 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
             continue;
         }
 
-        if (foe.mType != kSkeleton && foe.mType != kTinhoso && foe.mType != kCapiroto ) {
+
+        if (foe.mType == kHand) {
+            int dx = player.mPosition.mX - foe.mPosition.mX;
+            int dy = player.mPosition.mY - foe.mPosition.mY;
+
+            if ( dx > 0 ) {
+                foe.mSpeed.mX = 1;
+            } else {
+                foe.mSpeed.mX = -1;
+            }
+
+            if ( dy > 0 ) {
+                foe.mSpeed.mY = 1;
+            } else {
+                foe.mSpeed.mY = -1;
+            }
+        }
+
+        if (foe.mType != kSkeleton && foe.mType != kTinhoso && foe.mType != kCapiroto && foe.mType != kHand ) {
             continue;
         }
 
@@ -479,16 +497,14 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
                 return;
             }
 
-
             if (foe.mType == kTinhoso) {
                 hasBossOnScreen = false;
             }
 
-
             continue;
         }
 
-        if (foe.mType != kSkeleton) {
+        if (foe.mType != kSkeleton && foe.mType != kHand ) {
             continue;
         }
 
