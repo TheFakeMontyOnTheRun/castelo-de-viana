@@ -645,7 +645,7 @@ void prepareRoom(int room) {
 
 void enforceScreenLimits() {
     if (player.mPosition.mX < 0) {
-        if ((room % 10) > 0) {
+        if ((room % 10) > 0 && !hasBossOnScreen) {
             player.mPosition.mX = 320 - 32 - 1;
             prepareRoom(--room);
         } else {
@@ -654,7 +654,7 @@ void enforceScreenLimits() {
     }
 
     if (player.mPosition.mY < 0) {
-        if ((room / 10) <= 9) {
+        if ((room / 10) <= 9 && !hasBossOnScreen) {
             player.mPosition.mY = (32 * 6) - 32 - 1;
             room += 10;
             prepareRoom(room);
@@ -664,7 +664,7 @@ void enforceScreenLimits() {
     }
 
     if ((player.mPosition.mX + 32) >= 320) {
-        if ((room % 10) < 9) {
+        if ((room % 10) < 9 && !hasBossOnScreen) {
             player.mPosition.mX = 1;
             prepareRoom(++room);
         } else {
@@ -673,7 +673,7 @@ void enforceScreenLimits() {
     }
 
     if ((player.mPosition.mY + 32) >= (32 * 6)) {
-        if ((room / 10) >= 1) {
+        if ((room / 10) >= 1 && !hasBossOnScreen) {
             player.mPosition.mY = 1;
             room -= 10;
             prepareRoom(room);
