@@ -629,8 +629,8 @@ void prepareRoom(int room) {
                 Actor a;
                 a.mType = EActorType::kCapiroto;
                 a.mPosition = Vec2i{x * 32, y * 32};
-                a.mHealth = 10;
-                totalBossHealth = 10;
+                a.mHealth = 25;
+                totalBossHealth = 25;
                 hasBossOnScreen = true;
                 foes.push_back(a);
 
