@@ -54,6 +54,11 @@ std::shared_ptr<odb::NativeBitmap> capirotoSprites[2] = {
         odb::loadBitmap("capi1.png"),
 };
 
+std::shared_ptr<odb::NativeBitmap> handSprites[2] = {
+        odb::loadBitmap("hand0.png"),
+        odb::loadBitmap("hand0.png"),
+};
+
 std::shared_ptr<odb::NativeBitmap> tinhosoSprites[2] = {
         odb::loadBitmap("tinhoso0.png"),
         odb::loadBitmap("tinhoso1.png"),
@@ -504,7 +509,7 @@ void render() {
 
     for (const auto &foe : foes) {
 
-        if (foe.mType != EActorType::kSkeleton && foe.mType != EActorType::kGargoyle &&
+        if (foe.mType != EActorType::kSkeleton && foe.mType != EActorType::kGargoyle && foe.mType != EActorType::kHand &&
             foe.mType != EActorType::kTinhoso && foe.mType != EActorType::kCapiroto ) {
             continue;
         }
@@ -513,6 +518,8 @@ void render() {
             pixelData = foeSprites[counter % 2]->getPixelData();
         } else if (foe.mType == kTinhoso) {
             pixelData = tinhosoSprites[counter % 2]->getPixelData();
+        } else if (foe.mType == kHand) {
+            pixelData = handSprites[counter % 2]->getPixelData();
         } else if (foe.mType == kCapiroto) {
             pixelData = capirotoSprites[counter % 2]->getPixelData();
         } else if (foe.mType == kGargoyle) {

@@ -604,6 +604,27 @@ void prepareRoom(int room) {
                 totalBossHealth = 10;
                 hasBossOnScreen = true;
                 foes.push_back(a);
+
+                {
+                    foregroundTiles[y + 2][ x + 2] = 0;
+                    Actor a;
+                    a.mType = EActorType::kHand;
+                    a.mPosition = Vec2i{(x + 2 ) * 32, (y + 2) * 32};
+                    a.mDirection = kLeft;
+                    a.mHealth = 100000;
+                    foes.push_back(a);
+                }
+                {
+                    foregroundTiles[y + 2][x - 2] = 0;
+                    Actor a;
+                    a.mType = EActorType::kHand;
+                    a.mDirection = kRight;
+                    a.mPosition = Vec2i{(x - 2) * 32, (y + 2) * 32};
+                    a.mHealth = 100000;
+                    foes.push_back(a);
+                }
+
+
             } else if (ch == 't') {
                 foregroundTiles[y][x] = 0;
                 currentBossName = "TINHOSO";

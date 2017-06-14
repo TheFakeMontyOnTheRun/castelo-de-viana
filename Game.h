@@ -16,7 +16,7 @@ enum EItemType {
 };
 
 enum EActorType {
-    kPlayer, kSkeleton, kClosedDoor, kOpenDoor, kArrow, kGargoyle, kTinhoso, kSpawner, kCapiroto
+    kPlayer, kSkeleton, kClosedDoor, kOpenDoor, kArrow, kGargoyle, kTinhoso, kSpawner, kCapiroto, kHand
 };
 
 enum EScreen {
