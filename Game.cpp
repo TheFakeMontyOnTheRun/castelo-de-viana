@@ -482,6 +482,19 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
             } else {
                 foe.mSpeed.mY = -1;
             }
+
+            switch ( foe.mDirection ) {
+                case kLeft:
+                    if ( foe.mPosition.mX < 160 ) {
+                        foe.mSpeed.mX = -foe.mSpeed.mX;
+                    }
+                    break;
+                case kRight:
+                    if (  160 <= foe.mPosition.mX) {
+                        foe.mSpeed.mX = -foe.mSpeed.mX;
+                    }
+                    break;
+            }
         }
 
         if (foe.mType != kSkeleton && foe.mType != kTinhoso && foe.mType != kCapiroto && foe.mType != kHand ) {
