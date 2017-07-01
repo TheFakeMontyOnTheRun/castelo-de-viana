@@ -1,0 +1,17 @@
+CXX = clang++
+
+SDL_LIB = -L/usr/lib -lSDL -lSDL_gfx -lSDL_image -lSDL_mixer
+SDL_INCLUDE = -I/usr/local/include `sdl-config --cflags `
+
+CXXFLAGS = -std=c++14 -O2 -ferror-limit=1 -c -g  $(SDL_INCLUDE) -Iinclude -Inoudar-core/noudar-core/include -Istb
+OBJS = Game.o Main.o SDLRenderer.o NativeBitmap.o LoadImageSDL.o MusicSDL.o
+LIBS = $(SDL_LIB)
+TARGET = game
+
+$(TARGET):	$(OBJS)
+	$(CXX) -o $(TARGET) $(OBJS) $(LIBS)
+
+all:   $(TARGET)
+
+clean:
+	rm -f $(OBJS) $(TARGET)

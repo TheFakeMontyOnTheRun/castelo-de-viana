@@ -30,7 +30,7 @@
 #include <conio.h>
 
 #include "NativeBitmap.h"
-#include "LoadImageDOS.h"
+#include "LoadImage.h"
 
 #include <memory>
 #include <string>

@@ -5,7 +5,7 @@
 #include <fstream>
 #include <sstream>
 #include "NativeBitmap.h"
-#include "LoadImageDOS.h"
+#include "LoadImage.h"
 
 #include "Game.h"
 #include "Renderer.h"

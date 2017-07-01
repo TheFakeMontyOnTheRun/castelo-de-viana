@@ -15,7 +15,7 @@
 #include <fstream>
 #include <sstream>
 #include "NativeBitmap.h"
-#include "LoadImageDOS.h"
+#include "LoadImage.h"
 
 
 #include <string>
