@@ -1,14 +1,6 @@
-#include <go32.h>
-#include <sys/farptr.h>
-#include <conio.h>
-#include <dpmi.h>
-#include <go32.h>
-#include <pc.h>
-#include <bios.h>
 #include <algorithm>
 #include <array>
 #include <random>
-#include <iostream>
 #include <time.h>
 #include <unistd.h>
 #include <memory>
@@ -16,6 +8,7 @@
 #include <sstream>
 
 #include "Game.h"
+#include "Renderer.h"
 
 int heroFrame = 0;
 Actor player;
@@ -270,10 +263,10 @@ void advanceFloor() {
 
 void playCurrentSound() {
     if (currentSoundPosition != std::end(currentSound)) {
-        sound(*currentSoundPosition);
+        soundFrequency(*currentSoundPosition);
         currentSoundPosition = std::next(currentSoundPosition);
     } else {
-        nosound();
+        muteSound();
         currentSound = bgSound;
         currentSoundPosition = std::begin(currentSound);
     }
@@ -569,24 +562,22 @@ void evalutePlayerAttack() {
 }
 
 void prepareRoom(int room) {
-    nosound();
-    if (room < 0) {
-        std::cout << "room " << room << " is invalid " << std::endl;
-        exit(0);
-    }
+    muteSound();
 
     std::stringstream roomName;
 
     roomName = std::stringstream("");
+    roomName << getResPath();
     roomName << room;
     roomName << ".bg";
     std::ifstream bgmap(roomName.str());
 
     roomName = std::stringstream("");
+    roomName << getResPath();
     roomName << room;
     roomName << ".fg";
-
     std::ifstream fgmap(roomName.str());
+
     foes.clear();
     items.clear();
     doors.clear();
@@ -693,10 +684,12 @@ void prepareRoom(int room) {
     }
 
     roomName = std::stringstream("");
+    roomName << getResPath();
     roomName << room;
     roomName << ".lst";
 
     std::ifstream tileList(roomName.str());
+
     std::string buffer;
 
     std::vector<std::string> tilesToLoad;
@@ -705,6 +698,8 @@ void prepareRoom(int room) {
         std::getline(tileList, buffer);
         tilesToLoad.push_back(buffer);
     }
+
+
 
     loadTiles(tilesToLoad);
 

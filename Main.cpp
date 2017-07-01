@@ -1,110 +1,96 @@
-#include <go32.h>
-#include <sys/farptr.h>
-#include <conio.h>
-#include <dpmi.h>
-#include <go32.h>
-#include <pc.h>
-#include <bios.h>
 #include <algorithm>
 #include <array>
 #include <random>
-#include <iostream>
-#include <time.h>
-#include <unistd.h>
 #include <memory>
 #include <fstream>
 #include <sstream>
 #include "NativeBitmap.h"
-#include "LoadImage.h"
+#include "LoadImageDOS.h"
 
 #include "Game.h"
+#include "Renderer.h"
 
-int desiredTimeSlice = 75;
 bool enableSecret = false;
 
 std::vector<std::vector<std::shared_ptr<odb::NativeBitmap>>> tiles;
 
 std::shared_ptr<odb::NativeBitmap> arrowSprite[2] = {
-        odb::loadBitmap("arrow.png"),
-        odb::loadBitmap("arrowup.png")
+        odb::loadBitmap(getResPath() + "arrow.png"),
+        odb::loadBitmap(getResPath() + "arrowup.png")
 };
 
 std::shared_ptr<odb::NativeBitmap> doorStates[2] = {
-        odb::loadBitmap("door0.png"),
-        odb::loadBitmap("door1.png"),
+        odb::loadBitmap(getResPath() + "door0.png"),
+        odb::loadBitmap(getResPath() + "door1.png"),
 };
 
 std::shared_ptr<odb::NativeBitmap> foeSprites[2] = {
-        odb::loadBitmap("foe0.png"),
-        odb::loadBitmap("foe1.png"),
+        odb::loadBitmap(getResPath() + "foe0.png"),
+        odb::loadBitmap(getResPath() + "foe1.png"),
 };
 
 std::shared_ptr<odb::NativeBitmap> itemSprites[2] = {
-        odb::loadBitmap("meat.png"),
-        odb::loadBitmap("key.png"),
+        odb::loadBitmap(getResPath() + "meat.png"),
+        odb::loadBitmap(getResPath() + "key.png"),
 };
 
 std::shared_ptr<odb::NativeBitmap> gargoyleSprites[2] = {
-        odb::loadBitmap("garg0.png"),
-        odb::loadBitmap("garg1.png"),
+        odb::loadBitmap(getResPath() + "garg0.png"),
+        odb::loadBitmap(getResPath() + "garg1.png"),
 };
 
 std::shared_ptr<odb::NativeBitmap> capirotoSprites[2] = {
-        odb::loadBitmap("capi0.png"),
-        odb::loadBitmap("capi1.png"),
+        odb::loadBitmap(getResPath() + "capi0.png"),
+        odb::loadBitmap(getResPath() + "capi1.png"),
 };
 
 std::shared_ptr<odb::NativeBitmap> handSprites[2] = {
-        odb::loadBitmap("hand0.png"),
-        odb::loadBitmap("hand0.png"),
+        odb::loadBitmap(getResPath() + "hand0.png"),
+        odb::loadBitmap(getResPath() + "hand0.png"),
 };
 
 std::shared_ptr<odb::NativeBitmap> tinhosoSprites[2] = {
-        odb::loadBitmap("tinhoso0.png"),
-        odb::loadBitmap("tinhoso1.png"),
+        odb::loadBitmap(getResPath() + "tinhoso0.png"),
+        odb::loadBitmap(getResPath() + "tinhoso1.png"),
 };
 
 
 std::shared_ptr<odb::NativeBitmap> hero[6][2] = {
         {
-                odb::loadBitmap("up0.png"),
-                odb::loadBitmap("up1.png"),
+                odb::loadBitmap( getResPath() + "up0.png"),
+                odb::loadBitmap( getResPath() + "up1.png"),
         },
         {
-                odb::loadBitmap("hero0.png"),
-                odb::loadBitmap("hero1.png"),
+                odb::loadBitmap( getResPath() + "hero0.png"),
+                odb::loadBitmap( getResPath() + "hero1.png"),
         },
         {
-                odb::loadBitmap("down0.png"),
-                odb::loadBitmap("down1.png"),
+                odb::loadBitmap( getResPath() + "down0.png"),
+                odb::loadBitmap( getResPath() + "down1.png"),
         },
         {
-                odb::loadBitmap("attack0.png"),
-                odb::loadBitmap("attack0.png"),
+                odb::loadBitmap( getResPath() + "attack0.png"),
+                odb::loadBitmap( getResPath() + "attack0.png"),
         },
         {
-                odb::loadBitmap("jump0.png"),
-                odb::loadBitmap("jump0.png"),
+                odb::loadBitmap( getResPath() + "jump0.png"),
+                odb::loadBitmap( getResPath() + "jump0.png"),
         },
         {
-                odb::loadBitmap("up0.png"),
-                odb::loadBitmap("up1.png"),
+                odb::loadBitmap( getResPath() + "up0.png"),
+                odb::loadBitmap( getResPath() + "up1.png"),
         },
 };
 
 std::array<unsigned int, 320 * 200> imageBuffer;
-std::array<unsigned char, 320 * 200> buffer;
-std::array<unsigned char, 320 * 100 / 4> evenBuffer;
-std::array<unsigned char, 320 * 100 / 4> oddBuffer;
 std::shared_ptr<odb::NativeBitmap> currentScreen = nullptr;
 
-double timeRendering = 0;
 
 void prepareScreenFor(EScreen screenState) {
-    nosound();
+    muteSound();
     switch (screenState) {
         case kIntro:
-            currentScreen = odb::loadBitmap( enableSecret ? "secret.dat" : "intro.png");
+            currentScreen = odb::loadBitmap( getResPath() + (enableSecret ? "secret.dat" : "intro.png") );
             playMusic(
                     "E5R1E3R0D3R0E3R0E1R0D1R0-G4R1F3R0F1R0F1R0A3R0F1R0E1R0D1R0D1R0E5R0C3R0C1R0C1R0E3R0C1R0-B1R0C1R0-B1R0-A1R0-A1-B5R0E1R0E1R0E1R0E1R0E1R0E1R0D1R0E1R0E1R0E1R0D1R0-A1R0-A1R0B3R1-A1R0-B1R0C1R0D1R0E1R0F1R0E1R0F3R1A3R1B1R0A1R0F3R0E3R0E1R0E4R0");
             break;
@@ -112,11 +98,11 @@ void prepareScreenFor(EScreen screenState) {
             currentScreen = nullptr;
             break;
         case kGameOver:
-            currentScreen = odb::loadBitmap("gameover.png");
+            currentScreen = odb::loadBitmap( getResPath() + "gameover.png");
             playMusic("MBT180o2P2P8L8GGGL2E-P24P8L8FFFL2D");
             break;
         case kVictory:
-            currentScreen = odb::loadBitmap("victory.png");
+            currentScreen = odb::loadBitmap( getResPath() + "victory.png");
             playMusic(
                     "e8e8f8g8g8f8e8d8c8c8d8e8e8d12d4e8e8f8g8g8f8e8d8c8c8d8e8d8c12c4d8d8e8c8d8e12f12e8c8d8e12f12e8d8c8d8p8e8e8f8g8g8f8e8d8c8c8d8e8d8c12c4");
             break;
@@ -124,19 +110,8 @@ void prepareScreenFor(EScreen screenState) {
     }
 }
 
-void initMode4h() {
-    union REGS regs;
-
-    regs.h.ah = 0x00;
-    regs.h.al = 0x4;
-    int86(0x10, &regs, &regs);
-}
-
 void clearBuffers() {
     std::fill(std::begin(imageBuffer), std::end(imageBuffer), 4);
-    std::fill(std::begin(buffer), std::end(buffer), 4);
-    std::fill(std::begin(evenBuffer), std::end(evenBuffer), 0);
-    std::fill(std::begin(oddBuffer), std::end(oddBuffer), 0);
 }
 
 std::vector<std::shared_ptr<odb::NativeBitmap>> loadSpriteList(std::string listName) {
@@ -147,7 +122,7 @@ std::vector<std::shared_ptr<odb::NativeBitmap>> loadSpriteList(std::string listN
 
     while (tileList.good()) {
         std::getline(tileList, buffer);
-        tilesToLoad.push_back(odb::loadBitmap(buffer));
+        tilesToLoad.push_back(odb::loadBitmap( getResPath() + buffer));
     }
     return tilesToLoad;
 }
@@ -158,131 +133,11 @@ void loadTiles(std::vector<std::string> tilesToLoad) {
     for (const auto &tile : tilesToLoad) {
 
         if (tile.substr(tile.length() - 4) == ".png") {
-            tiles.push_back({odb::loadBitmap(tile)});
+            tiles.push_back({odb::loadBitmap( getResPath() + tile)});
         } else {
-            tiles.push_back(loadSpriteList(tile));
+            tiles.push_back(loadSpriteList( getResPath() + tile));
         }
     }
-}
-
-void plot(int x, int y, int color) {
-    int b, m; /* bits and mask */
-    unsigned char c;
-    /* address section differs depending on odd/even scanline */
-    bool odd = (1 == (y & 0x1));
-
-    /* divide by 2 (each address section is 100 pixels) */
-    y >>= 1;
-
-    /* start bit (b) and mask (m) for 2-bit pixels */
-    switch (x & 0x3) {
-        case 0:
-            b = 6;
-            m = 0xC0;
-            break;
-        case 1:
-            b = 4;
-            m = 0x30;
-            break;
-        case 2:
-            b = 2;
-            m = 0x0C;
-            break;
-        case 3:
-            b = 0;
-            m = 0x03;
-            break;
-    }
-
-    /* divide X by 4 (2 bits for each pixel) */
-    x >>= 2;
-
-    unsigned int offset = ((80 * y) + x);
-
-    /* read current pixel */
-    if (odd) {
-        c = oddBuffer[offset];
-    } else {
-        c = evenBuffer[offset];
-    }
-
-    /* remove bits at new position */
-    c = c & ~m;
-
-    /* set bits at new position */
-    c = c | (color << b);
-
-    if (odd) {
-        oddBuffer[offset] = c;
-    } else {
-        evenBuffer[offset] = c;
-    }
-}
-
-void copyImageBufferToVideoMemory() {
-
-    int origin = 0;
-    int value = 0;
-    int last = 0;
-    auto currentImageBufferPos = std::begin(imageBuffer);
-    auto currentBufferPos = std::begin(buffer);
-
-    for (int y = 0; y < 200; ++y) {
-
-        if (y < 0 || y >= 200) {
-            continue;
-        }
-
-        for (int x = 0; x < 320; ++x) {
-
-            if (x < 0 || x >= 320) {
-                continue;
-            }
-
-            origin = *currentImageBufferPos;
-            last = *currentBufferPos;
-
-            if (last == origin) {
-                currentBufferPos = std::next(currentBufferPos);
-                currentImageBufferPos = std::next(currentImageBufferPos);
-                continue;
-            }
-
-            value = origin;
-
-            if (0 < origin && origin < 4) {
-                if (((x + y) % 2) == 0) {
-                    value = 0;
-                } else {
-                    value = origin;
-                }
-            }
-
-            if (4 <= origin && origin < 8) {
-                value = origin - 4;
-            }
-
-            if (origin >= 8) {
-                if (((x + y) % 2) == 0) {
-                    value = 3;
-                } else {
-                    value = origin - 8;
-                }
-            }
-
-            plot(x, y, value);
-            *currentBufferPos = origin;
-
-            currentBufferPos = std::next(currentBufferPos);
-            currentImageBufferPos = std::next(currentImageBufferPos);
-        }
-    }
-
-    dosmemput(evenBuffer.data(), 320 * 100 / 4, 0xB800 * 16);
-    dosmemput(oddBuffer.data(), 320 * 100 / 4, (0xB800 * 16) + 0x2000);
-
-    //gotoxy(1, 1);
-    //std::cout << "room " << room << std::endl;
 }
 
 void render() {
@@ -296,7 +151,7 @@ void render() {
             imageBuffer[c] = pixelData[c];
         }
 
-        copyImageBufferToVideoMemory();
+        copyImageBufferToVideoMemory(imageBuffer);
         return;
     }
 
@@ -320,11 +175,6 @@ void render() {
             if (backgroundTiles[ty][tx] != 0) {
                 auto tileset = tiles[backgroundTiles[ty][tx]];
                 tile = tileset[counter % tileset.size()];
-
-                if (tile == nullptr) {
-                    std::cout << "null tile at " << tx << ", " << ty << std::endl;
-                    exit(0);
-                }
 
                 pixelData = tile->getPixelData();
 
@@ -354,12 +204,6 @@ void render() {
             if (foregroundTiles[ty][tx] != 0) {
                 auto tileset = tiles[foregroundTiles[ty][tx]];
                 tile = tileset[counter % tileset.size()];
-
-
-                if (tile == nullptr) {
-                    std::cout << "null tile at " << tx << ", " << ty << std::endl;
-                    exit(0);
-                }
 
                 pixelData = tile->getPixelData();
 
@@ -622,54 +466,15 @@ void render() {
         }
     }
 
-    copyImageBufferToVideoMemory();
+    copyImageBufferToVideoMemory(imageBuffer);
 
     if (paused) {
-        gotoxy(17, 12);
-        std::cout << "PAUSED" << std::endl;
     }
 
     if (ticksToShowHealth > 0) {
-        gotoxy(1, 24);
-        std::cout << "PLAYER: ";
-
-        for (int c = 0; c < 10; ++c) {
-            char ch;
-            if (c >= player.mHealth) {
-                ch = 176;
-            } else {
-                ch = 219;
-            }
-
-            std::cout << ch;
-        }
-
-        std::cout << std::endl;
     }
 
     if (hasBossOnScreen) {
-        gotoxy(1, 23);
-        std::cout << currentBossName << ": ";
-
-        int bossHealth = 0;
-
-        for (auto const &foe : foes) {
-            if (foe.mType == kTinhoso || foe.mType == kCapiroto) {
-                bossHealth = foe.mHealth;
-            }
-        }
-
-        for (int c = 0; c < totalBossHealth; ++c) {
-            char ch;
-            if (c >= bossHealth) {
-                ch = 176;
-            } else {
-                ch = 219;
-            }
-
-            std::cout << ch;
-        }
-        std::cout << std::endl;
     }
 }
 
@@ -685,17 +490,11 @@ int main(int argc, char **argv) {
 
     bool done = false;
 
-    int lastKey = 0;
-
-    initMode4h();
-
-    double t0;
-    double t1;
-    double ms;
+    initVideo();
 
     while (!done) {
 
-        t0 = uclock();
+        beginFrame();
 
         bool isOnGround = false;
         bool isJumping = false;
@@ -713,84 +512,76 @@ int main(int argc, char **argv) {
         if (!paused) {
             gameTick(isOnGround, isOnStairs);
         } else {
-            nosound();
+            muteSound();
         }
 
 
-        lastKey = bioskey(0x11);
-        auto extendedKeys = bioskey(0x12);
+        auto controlState = getControlState();
 
-        if (extendedKeys & (0b0000000000000100) ||
-            extendedKeys & (0b0000000100000000)
-                ) {
+        if ( controlState.sword ) {
             isAttacking = true;
         }
 
-        if (extendedKeys & (0b0000000000000001) ||
-            extendedKeys & (0b0000000000000010)
-                ) {
+        if ( controlState.jump ) {
             isJumping = true;
         }
 
-        bdos(0xC, 0, 0);
+        if ( controlState.secret ) {
+            enableSecret = true;
+            prepareScreenFor(kIntro);
+        }
 
-        switch (lastKey) {
-            case 9836:
-                enableSecret = true;
-                prepareScreenFor(kIntro);
-                break;
-            case 27:
-            case 283:
-                done = true;
-                break;
-            case 'q':
-                isJumping = true;
-                break;
-            case 'w':
-            case 4471:
-            case 18656:
-                isUpPressed = true;
-                break;
-            case 's':
-            case 8051:
-            case 20704:
-                isDownPressed = true;
-                break;
-            case 'a':
-            case 7777:
-            case 19424:
-                isLeftPressed = true;
-                break;
-            case 'd':
-            case 8292:
-            case 19936:
-                isRightPressed = true;
-                break;
-            case ' ':
-            case 3849:
-            case 14624:
-                isAltAttackPressed = true;
-                break;
-            case 7181:
-                switch (screen) {
-                    case kIntro:
-                        screen = kGame;
-                        prepareScreenFor(screen);
-                        init();
-                        break;
-                    case kGame:
-                        isPausePressed = true;
-                        break;
-                    case kGameOver:
-                        screen = kIntro;
-                        prepareScreenFor(screen);
-                        break;
-                    case kVictory:
-                        screen = kIntro;
-                        prepareScreenFor(screen);
-                        break;
-                }
-                break;
+        if ( controlState.escape ) {
+            done = true;
+        }
+
+        if ( controlState.jump ) {
+            isJumping = true;
+        }
+
+        if ( controlState.moveUp ) {
+            isJumping = true;
+        }
+
+        if ( controlState.moveDown ) {
+            isDownPressed = true;
+        }
+
+        if ( controlState.moveUp ) {
+            isUpPressed = true;
+        }
+
+        if ( controlState.moveLeft ) {
+            isLeftPressed = true;
+        }
+
+        if ( controlState.moveRight ) {
+            isRightPressed = true;
+        }
+
+        if ( controlState.fireArrow ) {
+            isAltAttackPressed = true;
+        }
+
+        if ( controlState.enter ) {
+            switch (screen) {
+                case kIntro:
+                    screen = kGame;
+                    prepareScreenFor(screen);
+                    init();
+                    break;
+                case kGame:
+                    isPausePressed = true;
+                    break;
+                case kGameOver:
+                    screen = kIntro;
+                    prepareScreenFor(screen);
+                    break;
+                case kVictory:
+                    screen = kIntro;
+                    prepareScreenFor(screen);
+                    break;
+            }
         }
 
         if (screen == kGame) {
@@ -798,21 +589,10 @@ int main(int argc, char **argv) {
                        isAltAttackPressed, isRightPressed, isOnStairs, isPausePressed);
         }
 
-        t1 = uclock();
-        ms = (1000 * (t1 - t0)) / UCLOCKS_PER_SEC;
-        timeRendering += ms;
-
-        if (ms < desiredTimeSlice) {
-            usleep((desiredTimeSlice - ms) * 1000);
-        } else {
-            ++desiredTimeSlice;
-        }
+        doneWithFrame();
     }
 
-    nosound();
-    textmode(C80);
-    clrscr();
-    std::cout << "Thanks for playing!" << std::endl;
+    onQuit();
 
     return 0;
 }

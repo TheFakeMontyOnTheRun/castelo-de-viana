@@ -30,7 +30,7 @@
 #include <conio.h>
 
 #include "NativeBitmap.h"
-#include "LoadImage.h"
+#include "LoadImageDOS.h"
 
 #include <memory>
 #include <string>
@@ -98,20 +98,7 @@ namespace odb {
         int xSize;
         int ySize;
         int components;
-/*
- * 0 transparent
- * 1 magenta dark
- * 2 cyan dark
- * 3 white
- * 4 black
- * 5 magenta
- * 6 cyan
- * 7 white
- * 8 black
- * 9 magenta light
- * 10 cyan light
- * 11 white
- * */
+
         auto image = stbi_load_from_memory((const stbi_uc *) buffer.data(), buffer.size(), &xSize, &ySize, &components,
                                            1);
         auto rawData = new int[xSize * ySize];
