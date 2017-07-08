@@ -63,6 +63,10 @@ ControlState getControlState() {
 	toReturn.moveUp = true;
 	break;
 
+      case SDLK_l:
+	toReturn.secret = true;
+	break;
+
       case SDLK_DOWN:
 	toReturn.moveDown = true;
 	break;
@@ -88,6 +92,7 @@ ControlState getControlState() {
 }
   
 void beginFrame() {
+  clearBuffers();
 }
 
 void doneWithFrame() {
