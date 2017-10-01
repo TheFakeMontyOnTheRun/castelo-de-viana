@@ -540,7 +540,7 @@ int main(int argc, char **argv) {
         }
 
         if ( controlState.moveUp ) {
-            isJumping = true;
+            isAltAttackPressed = true;
         }
 
         if ( controlState.moveDown ) {
