@@ -22,9 +22,10 @@ double t0;
 double t1;
 double ms;
 SDL_Surface *video;
+ControlState toReturn;
 
 ControlState getControlState() {
-  ControlState toReturn;
+
   SDL_Event event;
   
   while ( SDL_PollEvent( &event ) ) {
@@ -34,60 +35,108 @@ ControlState getControlState() {
       exit(0);
 #endif
     }
-    
-    if ( event.type == SDL_KEYDOWN ) {
-      switch ( event.key.keysym.sym ) {
-      case SDLK_q:
+
+      if ( event.type == SDL_KEYDOWN ) {
+          switch ( event.key.keysym.sym ) {
+              case SDLK_q:
 #ifndef __EMSCRIPTEN__
-	exit(0);
+                  exit(0);
 #endif
-	
-	
-      case SDLK_ESCAPE:
-	toReturn.escape = true;
-	break;
-	
-      case SDLK_RETURN:
-	toReturn.enter = true;
-	break;
-	
-      case SDLK_LEFT:
-	toReturn.moveLeft = true;
-	break;
 
-      case SDLK_RIGHT:
-	toReturn.moveRight = true;
-	break;
-	
-      case SDLK_UP:
-	toReturn.moveUp = true;
-	break;
 
-      case SDLK_l:
-	toReturn.secret = true;
-	break;
+              case SDLK_ESCAPE:
+                  toReturn.escape = true;
+                  break;
 
-      case SDLK_DOWN:
-	toReturn.moveDown = true;
-	break;
-	
-	
-      case SDLK_LSHIFT:
-      case SDLK_RSHIFT:
-	toReturn.jump = true;
-	break;
-	
-      case SDLK_LCTRL:
-      case SDLK_RCTRL:
-	toReturn.sword = true;
-	break;
-	
-      case SDLK_SPACE:
-	toReturn.fireArrow = true;	  
-	break;
+              case SDLK_RETURN:
+                  toReturn.enter = true;
+                  break;
+
+              case SDLK_LEFT:
+                  toReturn.moveLeft = true;
+                  break;
+
+              case SDLK_RIGHT:
+                  toReturn.moveRight = true;
+                  break;
+
+              case SDLK_UP:
+                  toReturn.moveUp = true;
+                  break;
+
+              case SDLK_l:
+                  toReturn.secret = true;
+                  break;
+
+              case SDLK_DOWN:
+                  toReturn.moveDown = true;
+                  break;
+
+
+              case SDLK_LSHIFT:
+              case SDLK_RSHIFT:
+                  toReturn.jump = true;
+                  break;
+
+              case SDLK_LCTRL:
+              case SDLK_RCTRL:
+                  toReturn.sword = true;
+                  break;
+
+              case SDLK_SPACE:
+                  toReturn.fireArrow = true;
+                  break;
+          }
+      } else if ( event.type == SDL_KEYUP ) {
+          switch ( event.key.keysym.sym ) {
+
+
+              case SDLK_ESCAPE:
+                  toReturn.escape = false;
+                  break;
+
+              case SDLK_RETURN:
+                  toReturn.enter = false;
+                  break;
+
+              case SDLK_LEFT:
+                  toReturn.moveLeft = false;
+                  break;
+
+              case SDLK_RIGHT:
+                  toReturn.moveRight = false;
+                  break;
+
+              case SDLK_UP:
+                  toReturn.moveUp = false;
+                  break;
+
+              case SDLK_l:
+                  toReturn.secret = false;
+                  break;
+
+              case SDLK_DOWN:
+                  toReturn.moveDown = false;
+                  break;
+
+
+              case SDLK_LSHIFT:
+              case SDLK_RSHIFT:
+                  toReturn.jump = false;
+                  break;
+
+              case SDLK_LCTRL:
+              case SDLK_RCTRL:
+                  toReturn.sword = false;
+                  break;
+
+              case SDLK_SPACE:
+                  toReturn.fireArrow = false;
+                  break;
+          }
       }
-    }
-  }  
+
+  }
   return toReturn;
 }
   
