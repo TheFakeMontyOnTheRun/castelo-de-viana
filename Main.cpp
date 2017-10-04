@@ -10,6 +10,11 @@
 #include "Game.h"
 #include "Renderer.h"
 
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+#include <emscripten/html5.h>
+#endif
+
 bool enableSecret = false;
 
 std::vector<std::vector<std::shared_ptr<odb::NativeBitmap>>> tiles;
@@ -478,6 +483,106 @@ void render() {
     }
 }
 
+bool done = false;
+
+void sysTick() {
+    beginFrame();
+
+    bool isOnGround = false;
+    bool isJumping = false;
+    bool isUpPressed = false;
+    bool isDownPressed = false;
+    bool isLeftPressed = false;
+    bool isRightPressed = false;
+    bool isAttacking = false;
+    bool isAltAttackPressed = false;
+    bool isPausePressed = false;
+    bool isOnStairs;
+    render();
+
+
+    if (!paused) {
+        gameTick(isOnGround, isOnStairs);
+    } else {
+        muteSound();
+    }
+
+
+    auto controlState = getControlState();
+
+    if ( controlState.sword ) {
+        isAttacking = true;
+    }
+
+    if ( controlState.jump ) {
+        isJumping = true;
+    }
+
+    if ( controlState.secret ) {
+        enableSecret = true;
+        prepareScreenFor(kIntro);
+    }
+
+    if ( controlState.escape ) {
+        done = true;
+    }
+
+    if ( controlState.jump ) {
+        isJumping = true;
+    }
+
+    if ( controlState.moveUp && !isOnStairs && isOnGround ) {
+        isAltAttackPressed = true;
+    }
+
+    if ( controlState.moveDown ) {
+        isDownPressed = true;
+    }
+
+    if ( controlState.moveUp ) {
+        isUpPressed = true;
+    }
+
+    if ( controlState.moveLeft ) {
+        isLeftPressed = true;
+    }
+
+    if ( controlState.moveRight ) {
+        isRightPressed = true;
+    }
+
+    if ( controlState.fireArrow ) {
+        isAltAttackPressed = true;
+    }
+
+    if ( controlState.enter ) {
+        switch (screen) {
+            case kIntro:
+                screen = kGame;
+                prepareScreenFor(screen);
+                init();
+                break;
+            case kGame:
+                isPausePressed = true;
+                break;
+            case kGameOver:
+                screen = kIntro;
+                prepareScreenFor(screen);
+                break;
+            case kVictory:
+                screen = kIntro;
+                prepareScreenFor(screen);
+                break;
+        }
+    }
+
+    if (screen == kGame) {
+        updateHero(isOnGround, isJumping, isUpPressed, isDownPressed, isLeftPressed, isAttacking,
+                   isAltAttackPressed, isRightPressed, isOnStairs, isPausePressed);
+    }
+
+    doneWithFrame();
+}
 
 int main(int argc, char **argv) {
 
@@ -488,109 +593,17 @@ int main(int argc, char **argv) {
     init();
     prepareScreenFor(kIntro);
 
-    bool done = false;
 
     initVideo();
 
+#ifndef __EMSCRIPTEN__
     while (!done) {
-
-        beginFrame();
-
-        bool isOnGround = false;
-        bool isJumping = false;
-        bool isUpPressed = false;
-        bool isDownPressed = false;
-        bool isLeftPressed = false;
-        bool isRightPressed = false;
-        bool isAttacking = false;
-        bool isAltAttackPressed = false;
-        bool isPausePressed = false;
-        bool isOnStairs;
-        render();
-
-
-        if (!paused) {
-            gameTick(isOnGround, isOnStairs);
-        } else {
-            muteSound();
-        }
-
-
-        auto controlState = getControlState();
-
-        if ( controlState.sword ) {
-            isAttacking = true;
-        }
-
-        if ( controlState.jump ) {
-            isJumping = true;
-        }
-
-        if ( controlState.secret ) {
-            enableSecret = true;
-            prepareScreenFor(kIntro);
-        }
-
-        if ( controlState.escape ) {
-            done = true;
-        }
-
-        if ( controlState.jump ) {
-            isJumping = true;
-        }
-
-        if ( controlState.moveUp ) {
-            isAltAttackPressed = true;
-        }
-
-        if ( controlState.moveDown ) {
-            isDownPressed = true;
-        }
-
-        if ( controlState.moveUp ) {
-            isUpPressed = true;
-        }
-
-        if ( controlState.moveLeft ) {
-            isLeftPressed = true;
-        }
-
-        if ( controlState.moveRight ) {
-            isRightPressed = true;
-        }
-
-        if ( controlState.fireArrow ) {
-            isAltAttackPressed = true;
-        }
-
-        if ( controlState.enter ) {
-            switch (screen) {
-                case kIntro:
-                    screen = kGame;
-                    prepareScreenFor(screen);
-                    init();
-                    break;
-                case kGame:
-                    isPausePressed = true;
-                    break;
-                case kGameOver:
-                    screen = kIntro;
-                    prepareScreenFor(screen);
-                    break;
-                case kVictory:
-                    screen = kIntro;
-                    prepareScreenFor(screen);
-                    break;
-            }
-        }
-
-        if (screen == kGame) {
-            updateHero(isOnGround, isJumping, isUpPressed, isDownPressed, isLeftPressed, isAttacking,
-                       isAltAttackPressed, isRightPressed, isOnStairs, isPausePressed);
-        }
-
-        doneWithFrame();
+        sysTick();
     }
+#else
+    emscripten_set_main_loop(sysTick, 30, 1);
+#endif
+
 
     onQuit();
 

@@ -1,0 +1,18 @@
+CXX = em++
+CXXFLAGS = -std=c++14 -ferror-limit=1 -c -g -Iinclude -Istb -O3  --preload-file resSDL --use-preload-plugins
+
+LDFLAGS = -O3 -s USE_ZLIB=1 -s USE_LIBPNG=1 -s --preload-file resSDL --use-preload-plugins
+
+OBJS = Game.o Main.o SDLRenderer.o NativeBitmap.o LoadImageSDL.o MusicSDL.o
+
+TARGET = game.html
+
+$(TARGET):	$(OBJS)
+	$(CXX) -o $(TARGET) $(OBJS) $(LDFLAGS)
+
+all:   $(TARGET)
+
+clean:
+	rm -f $(OBJS) $(TARGET)
+	rm game.data
+	rm game.js	
