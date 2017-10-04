@@ -96,7 +96,9 @@ void beginFrame() {
 }
 
 void doneWithFrame() {
+#ifndef __EMSCRIPTEN__
   SDL_Delay(50);
+#endif
   SDL_Flip(video);
 }
 
@@ -119,7 +121,7 @@ void copyImageBufferToVideoMemory(const std::array<unsigned int, 320 * 200>& ima
   rect.y = 0;
   rect.w = 640;
   rect.h = 480;
-  SDL_FillRect( video, &rect, 0 );
+  SDL_FillRect( video, &rect, SDL_MapRGB( video->format, 0, 0, 0 ) );
   
   for ( int y = 0; y < 200; ++y ) {
     for ( int x = 0; x < 320; ++x ) {
