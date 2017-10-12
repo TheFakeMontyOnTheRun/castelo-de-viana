@@ -4,9 +4,9 @@ LDFLAGS = -lemu
 
 CXX = i586-pc-msdosdjgpp-g++
 
-OBJS = Main.o Game.o LoadImageDOS.o NativeBitmap.o MusicDOS.o DOSRenderer.o
+OBJS = Main.o Game.o LoadImageVGA.o NativeBitmap.o MusicDOS.o VGARenderer.o
 
-TARGET = viana.exe
+TARGET = vianavga.exe
 
 $(TARGET):	$(OBJS)
 	$(CXX) -o $(TARGET) $(OBJS) $(LDFLAGS)
