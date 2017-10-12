@@ -16,6 +16,11 @@
 
 #include <SDL/SDL.h>
 
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+#include <emscripten/html5.h>
+#endif
+
 double timeRendering = 0;
 int desiredTimeSlice = 75;
 double t0;
@@ -34,9 +39,7 @@ ControlState getControlState() {
 #ifndef __EMSCRIPTEN__
       exit(0);
 #endif
-    }
-
-      if ( event.type == SDL_KEYDOWN ) {
+    } else if ( event.type == SDL_KEYDOWN ) {
           switch ( event.key.keysym.sym ) {
               case SDLK_q:
 #ifndef __EMSCRIPTEN__
@@ -148,7 +151,7 @@ void doneWithFrame() {
 #ifndef __EMSCRIPTEN__
   SDL_Delay(50);
 #endif
-  SDL_Flip(video);
+  SDL_UpdateRect(video, 0, 0, 0 ,0);
 }
 
 void soundFrequency(int frequency) {
@@ -168,30 +171,41 @@ void copyImageBufferToVideoMemory(const std::array<unsigned int, 320 * 200>& ima
 
   rect.x = 0;
   rect.y = 0;
-  rect.w = 640;
-  rect.h = 480;
+  rect.w = 320;
+  rect.h = 200;
   SDL_FillRect( video, &rect, SDL_MapRGB( video->format, 0, 0, 0 ) );
-  
+
   for ( int y = 0; y < 200; ++y ) {
     for ( int x = 0; x < 320; ++x ) {
-      rect.x = x * 2;
-      rect.y = y * 2;
-      rect.w = 2;
-      rect.h = 2;
+      rect.x = x;
+      rect.y = y;
+      rect.w = 1;
+      rect.h = 1;
 
       pos = ( 320 * y ) + x;
-      
       SDL_FillRect( video, &rect, imageBuffer[ pos ] );
-
     }
   }
-
-  
 }
 
+#ifdef __EMSCRIPTEN__
+void enterFullScreenMode() {
+    EmscriptenFullscreenStrategy s;
+    memset(&s, 0, sizeof(s));
+    s.scaleMode = EMSCRIPTEN_FULLSCREEN_SCALE_ASPECT;
+    s.canvasResolutionScaleMode = EMSCRIPTEN_FULLSCREEN_CANVAS_SCALE_NONE;
+    s.filteringMode = EMSCRIPTEN_FULLSCREEN_FILTERING_DEFAULT;
+    emscripten_enter_soft_fullscreen(0, &s);
+}
+#endif
+
 void initVideo() {
-  SDL_Init( SDL_INIT_EVERYTHING );
-  video = SDL_SetVideoMode( 640, 480, 32, 0 );
+  SDL_Init( SDL_INIT_VIDEO );
+  video = SDL_SetVideoMode( 320, 200, 0, 0 );
+
+#ifdef __EMSCRIPTEN__
+    enterFullScreenMode();
+#endif
 }
 
 std::string getResPath() {
