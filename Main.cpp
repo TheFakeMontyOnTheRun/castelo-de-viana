@@ -601,7 +601,7 @@ int main(int argc, char **argv) {
         sysTick();
     }
 #else
-    emscripten_set_main_loop(sysTick, 30, 1);
+    emscripten_set_main_loop(sysTick, 20, 1);
 #endif
 
 

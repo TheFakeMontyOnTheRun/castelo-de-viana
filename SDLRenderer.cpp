@@ -151,7 +151,7 @@ void doneWithFrame() {
 #ifndef __EMSCRIPTEN__
   SDL_Delay(50);
 #endif
-  SDL_UpdateRect(video, 0, 0, 0 ,0);
+  SDL_Flip(video);
 }
 
 void soundFrequency(int frequency) {
@@ -164,6 +164,40 @@ void onQuit() {
   SDL_Quit();
 }
 
+
+void putpixel(SDL_Surface *surface, int x, int y, Uint32 pixel)
+{
+    int bpp = surface->format->BytesPerPixel;
+    /* Here p is the address to the pixel we want to set */
+    Uint8 *p = (Uint8 *)surface->pixels + y * surface->pitch + x * bpp;
+
+    switch(bpp) {
+        case 1:
+            *p = pixel;
+            break;
+
+        case 2:
+            *(Uint16 *)p = pixel;
+            break;
+
+        case 3:
+            if(SDL_BYTEORDER == SDL_BIG_ENDIAN) {
+                p[0] = (pixel >> 16) & 0xff;
+                p[1] = (pixel >> 8) & 0xff;
+                p[2] = pixel & 0xff;
+            } else {
+                p[0] = pixel & 0xff;
+                p[1] = (pixel >> 8) & 0xff;
+                p[2] = (pixel >> 16) & 0xff;
+            }
+            break;
+
+        case 4:
+            *(Uint32 *)p = pixel;
+            break;
+    }
+}
+
 void copyImageBufferToVideoMemory(const std::array<unsigned int, 320 * 200>& imageBuffer ) {
 
   SDL_Rect rect;
@@ -174,8 +208,15 @@ void copyImageBufferToVideoMemory(const std::array<unsigned int, 320 * 200>& ima
   rect.w = 320;
   rect.h = 200;
   SDL_FillRect( video, &rect, SDL_MapRGB( video->format, 0, 0, 0 ) );
+    auto screen = video;
+    if ( SDL_MUSTLOCK(screen) ) {
+        if ( SDL_LockSurface(screen) < 0 ) {
+            fprintf(stderr, "Can't lock screen: %s\n", SDL_GetError());
+            return;
+        }
+    }
 
-  for ( int y = 0; y < 200; ++y ) {
+    for ( int y = 0; y < 200; ++y ) {
     for ( int x = 0; x < 320; ++x ) {
       rect.x = x;
       rect.y = y;
@@ -183,9 +224,15 @@ void copyImageBufferToVideoMemory(const std::array<unsigned int, 320 * 200>& ima
       rect.h = 1;
 
       pos = ( 320 * y ) + x;
-      SDL_FillRect( video, &rect, imageBuffer[ pos ] );
+
+        putpixel(video, x, y, imageBuffer[ pos ]);
+
     }
   }
+    if ( SDL_MUSTLOCK(screen) ) {
+        SDL_UnlockSurface(screen);
+    }
+
 }
 
 #ifdef __EMSCRIPTEN__
@@ -201,7 +248,10 @@ void enterFullScreenMode() {
 
 void initVideo() {
   SDL_Init( SDL_INIT_VIDEO );
-  video = SDL_SetVideoMode( 320, 200, 0, 0 );
+
+
+
+  video = SDL_SetVideoMode( 320, 200, 0, SDL_ASYNCBLIT | SDL_HWACCEL | SDL_HWSURFACE);
 
 #ifdef __EMSCRIPTEN__
     enterFullScreenMode();
