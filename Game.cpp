@@ -505,6 +505,8 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
 
             if (foe.mType == kTinhoso) {
                 hasBossOnScreen = false;
+
+                doors.clear();
             }
 
             continue;
@@ -674,6 +676,13 @@ void prepareRoom(int room) {
                 foregroundTiles[y][x] = 0;
                 Actor a;
                 a.mType = hasKey ? EActorType::kOpenDoor : EActorType::kClosedDoor;
+                a.mPosition = Vec2i{x * 32, y * 32};
+                a.mSpeed.mX = 8;
+                doors.push_back(a);
+            } else if (ch == 'D') {
+                foregroundTiles[y][x] = 0;
+                Actor a;
+                a.mType = EActorType::kClosedDoor;
                 a.mPosition = Vec2i{x * 32, y * 32};
                 a.mSpeed.mX = 8;
                 doors.push_back(a);
