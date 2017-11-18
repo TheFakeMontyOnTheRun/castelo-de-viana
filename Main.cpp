@@ -19,6 +19,10 @@ bool enableSecret = false;
 
 std::vector<std::vector<std::shared_ptr<odb::NativeBitmap>>> tiles;
 
+std::shared_ptr<odb::NativeBitmap> pausedSign = {
+        odb::loadBitmap(getResPath() + "paused.png")
+};
+
 std::shared_ptr<odb::NativeBitmap> arrowSprite[2] = {
         odb::loadBitmap(getResPath() + "arrow.png"),
         odb::loadBitmap(getResPath() + "arrowup.png")
@@ -471,9 +475,22 @@ void render() {
         }
     }
 
-    copyImageBufferToVideoMemory(imageBuffer);
-
     if (paused) {
+        auto pixelsPause = pausedSign->getPixelData();
+        auto width = pausedSign->getWidth();
+        auto height = pausedSign->getHeight();
+        auto centerX = 320 / 2;
+        auto centerY = 200 / 2;
+
+        for ( int y = 0; y < height; ++y ) {
+            auto py = centerY - (height / 2) + y;
+            for ( int x = 0; x < width; ++x ) {
+                auto px = centerX - (width / 2) + x;
+
+                auto pixel = (pixelsPause[(width * y) + x]);
+                imageBuffer[(320 * py) + (px)] = pixel;
+            }
+        }
     }
 
     if (ticksToShowHealth > 0) {
@@ -481,6 +498,8 @@ void render() {
 
     if (hasBossOnScreen) {
     }
+
+    copyImageBufferToVideoMemory(imageBuffer);
 }
 
 bool done = false;
