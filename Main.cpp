@@ -493,10 +493,47 @@ void render() {
         }
     }
 
+#ifdef CGA
+    int bossHealthColour = 10;
+    int heroHealthColour = 9;
+    int backgroundColour = 8;
+#else
+    int bossHealthColour = 0xFFFF0000;
+    int heroHealthColour = 0xFFFFFFFF;
+    int backgroundColour = 0xFFAAAAAA;
+#endif
+
     if (ticksToShowHealth > 0) {
+        for ( int y = 192; y < 200; ++y ) {
+            for ( int x = 0; x < (8 * player.mHealth); ++x ) {
+                imageBuffer[(320 * y) + (x)] = heroHealthColour;
+            }
+
+            for ( int x = (8 * player.mHealth); x < (80); ++x ) {
+                imageBuffer[(320 * y) + (x)] = backgroundColour;
+            }
+
+        }
     }
 
     if (hasBossOnScreen) {
+        int bossHealth = 0;
+
+        for (auto const &foe : foes) {
+            if (foe.mType == kTinhoso || foe.mType == kCapiroto) {
+                bossHealth = foe.mHealth;
+            }
+        }
+
+        for ( int y = 184; y < 192; ++y ) {
+            for ( int x = 0; x < (8 * bossHealth ); ++x ) {
+                imageBuffer[(320 * y) + (x)] = bossHealthColour;
+            }
+
+            for ( int x = (8 * bossHealth); x < (totalBossHealth * 8); ++x ) {
+                imageBuffer[(320 * y) + (x)] = backgroundColour;
+            }
+        }
     }
 
     copyImageBufferToVideoMemory(imageBuffer);
