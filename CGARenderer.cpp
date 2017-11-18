@@ -251,5 +251,5 @@ void initVideo() {
 }
 
 std::string getResPath() {
-    return "rescga/";
+    return "resCGA/";
 }
