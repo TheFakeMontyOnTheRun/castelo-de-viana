@@ -17,3 +17,9 @@
 
 void playMusic(const std::string &music) {
 }
+
+void setupOPL2() {
+}
+
+void stopSounds() {
+}

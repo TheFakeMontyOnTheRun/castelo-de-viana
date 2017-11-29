@@ -13,7 +13,8 @@ set(SOURCE_FILES
         LoadImageSDL.cpp
         LoadImage.h
         NativeBitmap.cpp
-        NativeBitmap.h SDLRenderer.cpp Renderer.h )
+        NativeBitmap.h SDLRenderer.cpp Renderer.h
+        )
 
 find_package(OpenGL REQUIRED)
 include (FindPkgConfig)

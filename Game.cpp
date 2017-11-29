@@ -28,29 +28,17 @@ std::vector<Actor> doors;
 std::vector<Item> items;
 std::vector<Actor> arrows;
 
-std::vector<int> bgSound{};
-std::vector<int> hurtSound{400, 300};
-std::vector<int> swordSound{150, 200};
-std::vector<int> arrowSound{500, 600};
-std::vector<int> jumpSound{1000, 2000, 3000, 1500, 500};
-std::vector<int> pickSound{900, 700};
-int totalBossHealth = 0;
-std::vector<int> melody{};
+auto hurtSound = "dca|dca|";
+auto swordSound = "dgd|dgd|dgd";
+auto arrowSound = "abc|abc|abc";
+auto jumpSound = "cdefedc|cdefedc|cdefedc";
+auto pickSound = "abfc|abfc|abfc";
 
-std::vector<int> currentSound = bgSound;
-std::vector<int>::const_iterator currentSoundPosition = std::begin(bgSound);
+int totalBossHealth = 0;
 std::string currentBossName;
 EScreen screen = kIntro;
 
 void evalutePlayerAttack();
-
-void playSound(const std::vector<int> &sound) {
-    if (currentSoundPosition != std::end(currentSound) && currentSound == sound) {
-        return;
-    }
-    currentSound = sound;
-    currentSoundPosition = std::begin(currentSound);
-}
 
 void init() {
     player.mPosition.mX = 0;
@@ -64,7 +52,6 @@ void init() {
     room = 0;
     hasKey = false;
     prepareRoom(room);
-    playSound(bgSound);
 }
 
 void
@@ -75,7 +62,7 @@ updateHero(bool isOnGround, bool isJumping, bool isUpPressed, bool isDownPressed
     if (isJumping) {
         if (isOnGround) {
             player.mSpeed.mY = -12;
-            playSound(jumpSound);
+            playMusic(jumpSound);
         }
         player.mStance = kJumping;
     }
@@ -94,7 +81,7 @@ updateHero(bool isOnGround, bool isJumping, bool isUpPressed, bool isDownPressed
                 arrows.push_back(a);
                 player.mStance = kUp;
                 arrowCooldown = 4;
-                playSound(arrowSound);
+                playMusic(arrowSound);
             }
         }
     }
@@ -126,7 +113,7 @@ updateHero(bool isOnGround, bool isJumping, bool isUpPressed, bool isDownPressed
 
     if (isAttacking) {
         player.mStance = kAttacking;
-        playSound(swordSound);
+        playMusic(swordSound);
     }
 
     if (isUsingSpecial && arrowCooldown <= 0) {
@@ -138,7 +125,7 @@ updateHero(bool isOnGround, bool isJumping, bool isUpPressed, bool isDownPressed
         arrows.push_back(a);
         player.mStance = kAltAttacking;
         arrowCooldown = 4;
-        playSound(arrowSound);
+        playMusic(arrowSound);
     }
 
     if (isPausePressed) {
@@ -241,7 +228,7 @@ void hurtPlayer(int ammount) {
     player.mHealth -= ammount;
     ticksUntilVulnerable = 14;
     ticksToShowHealth = 14;
-    playSound(hurtSound);
+    playMusic(hurtSound);
 }
 
 bool isOnDoor(const Actor &actor) {
@@ -258,18 +245,6 @@ void advanceFloor() {
     room += 10;
     hasKey = false;
     prepareRoom(room);
-}
-
-
-void playCurrentSound() {
-    if (currentSoundPosition != std::end(currentSound)) {
-        soundFrequency(*currentSoundPosition);
-        currentSoundPosition = std::next(currentSoundPosition);
-    } else {
-        muteSound();
-        currentSound = bgSound;
-        currentSoundPosition = std::begin(currentSound);
-    }
 }
 
 void updateTimers() {
@@ -289,8 +264,6 @@ void updateTimers() {
 
 void gameTick(bool &isOnGround, bool &isOnStairs) {
     ++counter;
-
-    playCurrentSound();
 
     if (screen != kGame) {
         return;
@@ -426,13 +399,13 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
             if (item.mType == kKey && !hasKey) {
                 hasKey = true;
                 itemsToRemove.push_back(item);
-                playSound(pickSound);
+                playMusic(pickSound);
                 for (auto &door : doors) {
                     door.mType = EActorType::kOpenDoor;
                 }
             } else if (item.mType == kMeat) {
                 if (player.mHealth < 10) {
-                    playSound(pickSound);
+                    playMusic(pickSound);
                     itemsToRemove.push_back(item);
                     player.mHealth = 10;
                 }

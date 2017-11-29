@@ -1,15 +1,16 @@
-CXXFLAGS = -g -c -DCGA -Istb -O6 -Ofast  -funroll-loops -funroll-all-loops -fomit-frame-pointer -fno-exceptions -fno-rtti -ffast-math -mtune=i486 -march=i486 -fpermissive
+CXXFLAGS = -g -c -DCGA -Istb -IOPL2LPT -O6 -Ofast  -funroll-loops -funroll-all-loops -fomit-frame-pointer -fno-exceptions -fno-rtti -ffast-math -mtune=i486 -march=i486 -fpermissive -Wno-narrowing
 
 LDFLAGS = -lemu
 
 CXX = i586-pc-msdosdjgpp-g++
 
-OBJS = Main.o Game.o LoadImageCGA.o NativeBitmap.o MusicDOS.o CGARenderer.o
-
+OBJS = Main.o Game.o LoadImageCGA.o NativeBitmap.o MusicDOS.o CGARenderer.o OPL2LPT/controller.o OPL2LPT/timer.o OPL2LPT/OPL2.o
+			
 TARGET = vianacga.exe
 
 $(TARGET):	$(OBJS)
 	$(CXX) -o $(TARGET) $(OBJS) $(LDFLAGS)
+	i586-pc-msdosdjgpp-strip $(TARGET)
 
 all:	$(TARGET)
 

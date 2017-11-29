@@ -96,6 +96,7 @@ void beginFrame() {
 }
 
 void doneWithFrame() {
+    soundTick();
     t1 = uclock();
     ms = (1000 * (t1 - t0)) / UCLOCKS_PER_SEC;
     timeRendering += ms;
@@ -107,19 +108,13 @@ void doneWithFrame() {
     }
 }
 
-void soundFrequency(int frequency) {
-    sound( frequency );
-}
 
-void muteSound() {
-    nosound();
-}
 
 void onQuit() {
-    nosound();
+    stopSounds();
     textmode(C80);
     clrscr();
-//    std::cout << "Thanks for playing!" << std::endl;
+    puts("Thanks for playing!\n\r\n");
 }
 
 void plot(int x, int y, int color) {

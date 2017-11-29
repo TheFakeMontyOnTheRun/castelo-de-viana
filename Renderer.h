@@ -30,4 +30,7 @@ void muteSound();
 void onQuit();
 void initVideo();
 std::string getResPath();
+void setupOPL2();
+void stopSounds();
+void soundTick();
 #endif //CASTLEVANIA_RENDERER_H_H

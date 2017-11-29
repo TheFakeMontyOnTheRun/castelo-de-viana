@@ -95,25 +95,29 @@ std::array<unsigned int, 320 * 200> imageBuffer;
 std::shared_ptr<odb::NativeBitmap> currentScreen = nullptr;
 
 
+void initOPL2() {
+    setupOPL2();
+}
+
 void prepareScreenFor(EScreen screenState) {
     muteSound();
     switch (screenState) {
         case kIntro:
             currentScreen = odb::loadBitmap( getResPath() + (enableSecret ? "secret.dat" : "intro.png") );
             playMusic(
-                    "E5R1E3R0D3R0E3R0E1R0D1R0-G4R1F3R0F1R0F1R0A3R0F1R0E1R0D1R0D1R0E5R0C3R0C1R0C1R0E3R0C1R0-B1R0C1R0-B1R0-A1R0-A1-B5R0E1R0E1R0E1R0E1R0E1R0E1R0D1R0E1R0E1R0E1R0D1R0-A1R0-A1R0B3R1-A1R0-B1R0C1R0D1R0E1R0F1R0E1R0F3R1A3R1B1R0A1R0F3R0E3R0E1R0E4R0");
+                    "t150m200o5l8egredgrdcerc<b>er<ba>a<a>agdefefedr4.regredgrdcerc<b>er<ba>a<a>agdedcr4.c<g>cea>cr<ag>cr<gfarfearedgrdcfrc<bagab>cdfegredgrdcerc<b>er<ba>a<a>agdedcr4.cro3c2|m85o3l8crer<br>dr<ar>cr<grbrfr>cr<grbr>crer<gb>dgcrer<br>dr<ar>cr<grbrfr>cr<grbr>ceger4.rfrafergedrfdcrec<br>d<bar>c<agrgd<gr4.o4crer<br>dr<ar>cr<grbrfr>cr<grbr>cege|m85o3l8r4gr4.gr4.er4.err4fr4.gr4.gr4.grr4gr4.er4.er4.frr4gr4>ccr4ccr4<aarraar4ggr4ffr4.ro4gab>dr4.r<gr4.gr4.err4er4.fr4.g");
             break;
         case kGame:
             currentScreen = nullptr;
             break;
         case kGameOver:
             currentScreen = odb::loadBitmap( getResPath() + "gameover.png");
-            playMusic("MBT180o2P2P8L8GGGL2E-P24P8L8FFFL2D");
+//            playMusic("mbt180o2p2p8l8gggl2e-p24p8l8fffl2d");
             break;
         case kVictory:
             currentScreen = odb::loadBitmap( getResPath() + "victory.png");
-            playMusic(
-                    "e8e8f8g8g8f8e8d8c8c8d8e8e8d12d4e8e8f8g8g8f8e8d8c8c8d8e8d8c12c4d8d8e8c8d8e12f12e8c8d8e12f12e8d8c8d8p8e8e8f8g8g8f8e8d8c8c8d8e8d8c12c4");
+//            playMusic(
+//                    "e8e8f8g8g8f8e8d8c8c8d8e8e8d12d4e8e8f8g8g8f8e8d8c8c8d8e8d8c12c4d8d8e8c8d8e12f12e8c8d8e12f12e8d8c8d8p8e8e8f8g8g8f8e8d8c8c8d8e8d8c12c4");
             break;
 
     }
@@ -643,7 +647,8 @@ void sysTick() {
 int main(int argc, char **argv) {
 
     if ( argc >= 2 ) {
-        enableSecret = true;
+      //  enableSecret = true;
+        initOPL2();
     }
 
     init();
