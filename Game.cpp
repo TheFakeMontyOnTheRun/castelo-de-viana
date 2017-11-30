@@ -408,6 +408,7 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
                     playMusic(pickSound);
                     itemsToRemove.push_back(item);
                     player.mHealth = 10;
+                    playMusic(pickSound);
                 }
                 ticksToShowHealth = 14;
             }
