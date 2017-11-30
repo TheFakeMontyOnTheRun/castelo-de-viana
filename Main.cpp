@@ -104,8 +104,8 @@ void prepareScreenFor(EScreen screenState) {
     switch (screenState) {
         case kIntro:
             currentScreen = odb::loadBitmap( getResPath() + (enableSecret ? "secret.dat" : "intro.png") );
-            playMusic(
-                    "t150m200o5l8egredgrdcerc<b>er<ba>a<a>agdefefedr4.regredgrdcerc<b>er<ba>a<a>agdedcr4.c<g>cea>cr<ag>cr<gfarfearedgrdcfrc<bagab>cdfegredgrdcerc<b>er<ba>a<a>agdedcr4.cro3c2|m85o3l8crer<br>dr<ar>cr<grbrfr>cr<grbr>crer<gb>dgcrer<br>dr<ar>cr<grbrfr>cr<grbr>ceger4.rfrafergedrfdcrec<br>d<bar>c<agrgd<gr4.o4crer<br>dr<ar>cr<grbrfr>cr<grbr>cege|m85o3l8r4gr4.gr4.er4.err4fr4.gr4.gr4.grr4gr4.er4.er4.frr4gr4>ccr4ccr4<aarraar4ggr4ffr4.ro4gab>dr4.r<gr4.gr4.err4er4.fr4.g");
+//            playMusic(
+//                    "e5r1e3r0d3r0e3r0e1r0d1r0-g4r1f3r0f1r0f1r0a3r0f1r0e1r0d1r0d1r0e5r0c3r0c1r0c1r0e3r0c1r0-b1r0c1r0-b1r0-a1r0-a1-b5r0e1r0e1r0e1r0e1r0e1r0e1r0d1r0e1r0e1r0e1r0d1r0-a1r0-a1r0b3r1-a1r0-b1r0c1r0d1r0e1r0f1r0e1r0f3r1a3r1b1r0a1r0f3r0e3r0e1r0e4r0|e5r1e3r0d3r0e3r0e1r0d1r0-g4r1f3r0f1r0f1r0a3r0f1r0e1r0d1r0d1r0e5r0c3r0c1r0c1r0e3r0c1r0-b1r0c1r0-b1r0-a1r0-a1-b5r0e1r0e1r0e1r0e1r0e1r0e1r0d1r0e1r0e1r0e1r0d1r0-a1r0-a1r0b3r1-a1r0-b1r0c1r0d1r0e1r0f1r0e1r0f3r1a3r1b1r0a1r0f3r0e3r0e1r0e4r0|e5r1e3r0d3r0e3r0e1r0d1r0-g4r1f3r0f1r0f1r0a3r0f1r0e1r0d1r0d1r0e5r0c3r0c1r0c1r0e3r0c1r0-b1r0c1r0-b1r0-a1r0-a1-b5r0e1r0e1r0e1r0e1r0e1r0e1r0d1r0e1r0e1r0e1r0d1r0-a1r0-a1r0b3r1-a1r0-b1r0c1r0d1r0e1r0f1r0e1r0f3r1a3r1b1r0a1r0f3r0e3r0e1r0e4r0");
             break;
         case kGame:
             currentScreen = nullptr;
