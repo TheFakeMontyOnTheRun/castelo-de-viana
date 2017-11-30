@@ -113,7 +113,7 @@ void prepareScreenFor(EScreen screenState) {
             break;
         case kGameOver:
             currentScreen = odb::loadBitmap( getResPath() + "gameover.png");
-//            playMusic("mbt180o2p2p8l8gggl2e-p24p8l8fffl2d");
+            playMusic("gggefffd|gggefffd|gggefffd");
             break;
         case kVictory:
             currentScreen = odb::loadBitmap( getResPath() + "victory.png");
