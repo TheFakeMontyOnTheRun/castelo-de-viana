@@ -10,9 +10,143 @@
  * Hacked for a OPL2PRN test program by pdewacht@gmail.com.
  */
 #include <cstring>
+#include <iostream>
 #include "OPL2.h"
 #include "midi_instruments.h"
 #include "timer.h"
+#include "controller.h"
+
+int music_instrument = 0;
+
+char* instruments[] = {
+        PIANO1, //0
+        PIANO2,
+        PIANO3,
+        HONKTONK,
+        EP1,
+        EP2,
+        HARPSIC,
+        CLAVIC,
+        CELESTA,
+        GLOCK,
+        MUSICBOX,
+        VIBES,
+        MARIMBA,
+        XYLO,
+        TUBEBELL,
+        SANTUR,
+        ORGAN1,
+        ORGAN2,
+        ORGAN3,
+        PIPEORG,
+        REEDORG,
+        ACORDIAN,
+        HARMONIC,
+        BANDNEON,
+        NYLONGT,
+        STEELGT,
+        JAZZGT,
+        CLEANGT,
+        MUTEGT,
+        OVERDGT,
+        DISTGT,
+        GTHARMS,
+        ACOUBASS,
+        FINGBASS,
+        PICKBASS,
+        FRETLESS,
+        SLAPBAS1,
+        SLAPBAS2,
+        SYNBASS1,
+        SYNBASS2,
+        VIOLIN,
+        VIOLA,
+        CELLO,
+        CONTRAB,
+        TREMSTR,
+        PIZZ,
+        HARP,
+        TIMPANI,
+        STRINGS,
+        SLOWSTR,
+        SYNSTR1,
+        SYNSTR2,
+        CHOIR,
+        OOHS,
+        SYNVOX,
+        ORCHIT,
+        TRUMPET,
+        TROMBONE,
+        TUBA,
+        MUTETRP,
+        FRHORN,
+        BRASS1,
+        SYNBRAS1,
+        SYNBRAS2,
+        SOPSAX,
+        ALTOSAX,
+        TENSAX,
+        BARISAX,
+        OBOE,
+        ENGLHORN,
+        BASSOON,
+        CLARINET,
+        PICCOLO,
+        FLUTE1,
+        RECORDER,
+        PANFLUTE,
+        BOTTLEB,
+        SHAKU,
+        WHISTLE,
+        OCARINA,
+        SQUARWAV,
+        SAWWAV,
+        SYNCALLI,
+        CHIFLEAD,
+        CHARANG,
+        SOLOVOX,
+        FIFTHSAW,
+        BASSLEAD,
+        FANTASIA,
+        WARMPAD,
+        POLYSYN,
+        SPACEVOX,
+        BOWEDGLS,
+        METALPAD,
+        HALOPAD,
+        SWEEPPAD,
+        ICERAIN,
+        SOUNDTRK,
+        CRYSTAL,
+        ATMOSPH,
+        BRIGHT,
+        GOBLIN,
+        ECHODROP,
+        STARTHEM,
+        SITAR,
+        BANJO,
+        SHAMISEN,
+        KOTO,
+        KALIMBA,
+        BAGPIPE,
+        FIDDLE,
+        SHANNAI,
+        TINKLBEL,
+        AGOGO,
+        STEELDRM,
+        WOODBLOK,
+        TAIKO,
+        MELOTOM,
+        SYNDRUM,
+        REVRSCYM,
+        FRETNOIS,
+        BRTHNOIS,
+        SEASHORE,
+        BIRDS,
+        TELEPHON,
+        HELICOPT,
+        APPLAUSE
+};
 
 void parseTune(struct Tune *tune);
 
@@ -87,6 +221,7 @@ void music_set(const char* melody1, const char* melody2, const char* melody3) {
 }
 
 void music_setup() {
+    std::cout << "instrument " << music_instrument << std::endl;
     tempo = 200;
 
     // Initialize 3 channels of the tune.
@@ -96,7 +231,7 @@ void music_setup() {
         channel.channel = i;
         channel.octave = 4;
         channel.noteDuration = 50;
-        channel.noteLength = 20;
+        channel.noteLength = 50;
         channel.releaseTime = 0;
         channel.nextNoteTime = timer_get();
         channel.index = 0;
@@ -104,11 +239,11 @@ void music_setup() {
     }
 
     // Setup channels 0, 1 and 2.
-    opl2.setInstrument(0, STRINGS);
+    opl2.setInstrument(0, instruments[ music_instrument ]);
     opl2.setBlock(0, 5);
-    opl2.setInstrument(1, STRINGS);
+    opl2.setInstrument(1, instruments[ music_instrument ]);
     opl2.setBlock(1, 4);
-    opl2.setInstrument(2, STRINGS);
+    opl2.setInstrument(2, instruments[ music_instrument ]);
     opl2.setBlock(2, 4);
 
     timer_setup(100);

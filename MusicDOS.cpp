@@ -163,9 +163,10 @@ void muteSound() {
     }
 }
 
-void setupOPL2(void) {
+void setupOPL2(int instrument) {
     short lpt_base = setup();
     opl2.init(lpt_base);
+    music_instrument = instrument;
     music_setup();
     enableOPL2 = true;
 }

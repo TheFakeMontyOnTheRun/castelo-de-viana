@@ -5,4 +5,6 @@ extern void music_setup();
 extern void music_loop();
 extern void music_shutdown();
 
+//instrument used for sfx - a quite misleading name...
+extern int music_instrument;
 #endif

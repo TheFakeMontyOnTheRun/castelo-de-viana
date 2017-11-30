@@ -4,6 +4,7 @@
 #include <memory>
 #include <fstream>
 #include <sstream>
+#include <cstring>
 #include "NativeBitmap.h"
 #include "LoadImage.h"
 
@@ -95,8 +96,8 @@ std::array<unsigned int, 320 * 200> imageBuffer;
 std::shared_ptr<odb::NativeBitmap> currentScreen = nullptr;
 
 
-void initOPL2() {
-    setupOPL2();
+void initOPL2(int instrument) {
+    setupOPL2(instrument);
 }
 
 void prepareScreenFor(EScreen screenState) {
@@ -648,7 +649,19 @@ int main(int argc, char **argv) {
 
     if ( argc >= 2 ) {
       //  enableSecret = true;
-        initOPL2();
+        if ( !std::strcmp(argv[1], "opl2lpt")) {
+            int instrument = 80;
+
+            if (argc >= 3 ) {
+                instrument = atoi(argv[2]);
+            }
+
+            initOPL2(instrument);
+        }
+
+        if ( !std::strcmp(argv[1], "secret")) {
+            enableSecret = true;
+        }
     }
 
     init();
