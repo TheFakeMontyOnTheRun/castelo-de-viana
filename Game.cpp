@@ -5,7 +5,6 @@
 #include <unistd.h>
 #include <memory>
 #include <fstream>
-#include <sstream>
 
 #include "Game.h"
 #include "Renderer.h"
@@ -540,20 +539,12 @@ void evalutePlayerAttack() {
 
 void prepareRoom(int room) {
     muteSound();
+    char buffer[64];
+    snprintf(buffer, 64, "%s%d.bg", odb::getResPath().c_str(), room );
+    std::ifstream bgmap(buffer);
 
-    std::stringstream roomName;
-
-    roomName = std::stringstream("");
-    roomName << odb::getResPath();
-    roomName << room;
-    roomName << ".bg";
-    std::ifstream bgmap(roomName.str());
-
-    roomName = std::stringstream("");
-    roomName << odb::getResPath();
-    roomName << room;
-    roomName << ".fg";
-    std::ifstream fgmap(roomName.str());
+    snprintf(buffer, 64, "%s%d.fg", odb::getResPath().c_str(), room );
+    std::ifstream fgmap(buffer);
 
     foes.clear();
     items.clear();
@@ -667,18 +658,14 @@ void prepareRoom(int room) {
         }
     }
 
-    roomName = std::stringstream("");
-    roomName << odb::getResPath();
-    roomName << room;
-    roomName << ".lst";
+    snprintf(buffer, 64, "%s%d.lst", odb::getResPath().c_str(), room );
 
-    std::ifstream tileList(roomName.str());
-
-    std::string buffer;
+    std::ifstream tileList(buffer);
 
     std::vector<std::string> tilesToLoad;
 
     while (tileList.good()) {
+        std::string buffer;
         std::getline(tileList, buffer);
         tilesToLoad.push_back(buffer);
     }
