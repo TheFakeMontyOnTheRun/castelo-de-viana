@@ -544,13 +544,13 @@ void prepareRoom(int room) {
     std::stringstream roomName;
 
     roomName = std::stringstream("");
-    roomName << getResPath();
+    roomName << odb::getResPath();
     roomName << room;
     roomName << ".bg";
     std::ifstream bgmap(roomName.str());
 
     roomName = std::stringstream("");
-    roomName << getResPath();
+    roomName << odb::getResPath();
     roomName << room;
     roomName << ".fg";
     std::ifstream fgmap(roomName.str());
@@ -668,7 +668,7 @@ void prepareRoom(int room) {
     }
 
     roomName = std::stringstream("");
-    roomName << getResPath();
+    roomName << odb::getResPath();
     roomName << room;
     roomName << ".lst";
 

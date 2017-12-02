@@ -1,20 +1,10 @@
-#include <array>
-#include <string>
-#include <iostream>
-#include <vector>
-#include <memory>
-#include <map>
-#include <conio.h>
 #include <sys/movedata.h>
 #include <sys/farptr.h>
 #include <sys/nearptr.h>
 #include <dpmi.h>
 #include <go32.h>
-#include <sys/movedata.h>
 #include <pc.h>
-#include <sys/farptr.h>
 #include <bios.h>
-#include <sys/nearptr.h>
 #include <conio.h>
 
 #include <cstdlib>
@@ -26,35 +16,15 @@
 #include <string>
 #include <vector>
 #include <functional>
-#include <cmath>
 #include <algorithm>
-#include <cmath>
-#include <vector>
-#include <cstring>
-#include <memory>
-#include <iostream>
-#include <map>
 #include <array>
-#include <iostream>
-
-#include <conio.h>
 #include <string>
 #include <map>
 
 #include "NativeBitmap.h"
 #include "LoadImage.h"
 
-#include <memory>
-#include <string>
-#include <vector>
-#include <cstdlib>
-#include <cstring>
-
-#include "NativeBitmap.h"
-
-
 #define STB_IMAGE_IMPLEMENTATION
-
 #include "stb_image.h"
 
 
@@ -86,6 +56,34 @@ namespace odb {
         return total;
     }
 
+    std::string getResPath() {
+        return "resCGA/";
+    }
+
+    std::vector<std::shared_ptr<odb::NativeBitmap>> loadSpriteList(std::string listName) {
+
+        FILE *fd = fopen(listName.c_str(), "r");
+        auto buffer = readToBuffer(fd);
+        buffer.push_back('\n');
+        std::vector<std::shared_ptr<odb::NativeBitmap>> tilesToLoad;
+        int lastPoint = 0;
+        int since = 0;
+        auto bufferBegin = std::begin( buffer );
+        for (const auto& c : buffer ) {
+            ++since;
+            if ( c == '\n' ) {
+                auto filename = std::string( bufferBegin + lastPoint, bufferBegin + lastPoint + since - 1 );
+                lastPoint += since;
+                if ( !filename.empty()) {
+                    tilesToLoad.push_back(odb::loadBitmap( getResPath() + filename));
+                }
+                since = 0;
+            }
+        }
+
+        return tilesToLoad;
+    }
+
 
     std::vector<char> loadBinaryFileFromPath(const std::string &path) {
         FILE *fd;
@@ -104,8 +102,6 @@ namespace odb {
 
     std::shared_ptr<NativeBitmap> loadBitmap(std::string path) {
 
-        //std::cout << "loading " << path << std::endl;
-
         auto buffer = loadBinaryFileFromPath(path);
         int xSize;
         int ySize;
@@ -118,7 +114,6 @@ namespace odb {
         for (int y = 0; y < ySize; ++y) {
             for (int x = 0; x < xSize; ++x) {
                 int pixel = image[(y * xSize) + x];
-//                std::cout << pixel << ", ";
                 switch (pixel) {
                     case 154:
                         pixel = 10;
@@ -153,19 +148,15 @@ namespace odb {
                         pixel = 0;
                         break;
                     default:
-                        std::cout << "wtf is " << pixel << " at " << x << ", " << y << "?" << std::endl;
-                        exit(0);
                         pixel = 0;
                         break;
                 }
                 rawData[(y * xSize) + x] = pixel;
-                //std::cout << (( rawData[ ( y * xSize ) + x ] )) << ", ";
             }
-            //std::cout << std::endl;
         }
-        //std::cout << components << std::endl;
+
         stbi_image_free(image);
-//exit(0);
-        return (std::make_shared<odb::NativeBitmap>(path, xSize, ySize, rawData));
+
+        return (std::make_shared<odb::NativeBitmap>(xSize, ySize, rawData));
     }
 }

@@ -1,5 +1,3 @@
-#include <go32.h>
-#include <sys/farptr.h>
 #include <stdlib.h>
 #include <conio.h>
 #include <dos.h>
@@ -8,18 +6,8 @@
 #include <go32.h>
 #include <pc.h>
 #include <bios.h>
-#include <algorithm>
-#include <array>
-#include <random>
-#include <iostream>
 #include <time.h>
 #include <unistd.h>
-#include <memory>
-#include <fstream>
-#include <sstream>
-#include "NativeBitmap.h"
-#include "LoadImage.h"
-
 
 #include <algorithm>
 #include <string>
@@ -28,12 +16,6 @@
 #include <memory>
 
 #include "Game.h"
-
-#include <stdlib.h>
-#include <conio.h>
-#include <dos.h>
-#include <sys/farptr.h>
-#include <go32.h>
 #include "OPL2.h"
 #include "controller.h"
 

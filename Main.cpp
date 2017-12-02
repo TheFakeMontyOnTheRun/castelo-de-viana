@@ -1,9 +1,6 @@
 #include <algorithm>
 #include <array>
-#include <random>
 #include <memory>
-#include <fstream>
-#include <sstream>
 #include <vector>
 #include <cstring>
 #include "NativeBitmap.h"
@@ -22,74 +19,74 @@ bool enableSecret = false;
 std::vector<std::vector<std::shared_ptr<odb::NativeBitmap>>> tiles;
 
 std::shared_ptr<odb::NativeBitmap> pausedSign = {
-        odb::loadBitmap(getResPath() + "paused.png")
+        odb::loadBitmap(odb::getResPath() + "paused.png")
 };
 
 std::shared_ptr<odb::NativeBitmap> arrowSprite[2] = {
-        odb::loadBitmap(getResPath() + "arrow.png"),
-        odb::loadBitmap(getResPath() + "arrowup.png")
+        odb::loadBitmap(odb::getResPath() + "arrow.png"),
+        odb::loadBitmap(odb::getResPath() + "arrowup.png")
 };
 
 std::shared_ptr<odb::NativeBitmap> doorStates[2] = {
-        odb::loadBitmap(getResPath() + "door0.png"),
-        odb::loadBitmap(getResPath() + "door1.png"),
+        odb::loadBitmap(odb::getResPath() + "door0.png"),
+        odb::loadBitmap(odb::getResPath() + "door1.png"),
 };
 
 std::shared_ptr<odb::NativeBitmap> foeSprites[2] = {
-        odb::loadBitmap(getResPath() + "foe0.png"),
-        odb::loadBitmap(getResPath() + "foe1.png"),
+        odb::loadBitmap(odb::getResPath() + "foe0.png"),
+        odb::loadBitmap(odb::getResPath() + "foe1.png"),
 };
 
 std::shared_ptr<odb::NativeBitmap> itemSprites[2] = {
-        odb::loadBitmap(getResPath() + "meat.png"),
-        odb::loadBitmap(getResPath() + "key.png"),
+        odb::loadBitmap(odb::getResPath() + "meat.png"),
+        odb::loadBitmap(odb::getResPath() + "key.png"),
 };
 
 std::shared_ptr<odb::NativeBitmap> gargoyleSprites[2] = {
-        odb::loadBitmap(getResPath() + "garg0.png"),
-        odb::loadBitmap(getResPath() + "garg1.png"),
+        odb::loadBitmap(odb::getResPath() + "garg0.png"),
+        odb::loadBitmap(odb::getResPath() + "garg1.png"),
 };
 
 std::shared_ptr<odb::NativeBitmap> capirotoSprites[2] = {
-        odb::loadBitmap(getResPath() + "capi0.png"),
-        odb::loadBitmap(getResPath() + "capi1.png"),
+        odb::loadBitmap(odb::getResPath() + "capi0.png"),
+        odb::loadBitmap(odb::getResPath() + "capi1.png"),
 };
 
 std::shared_ptr<odb::NativeBitmap> handSprites[2] = {
-        odb::loadBitmap(getResPath() + "hand0.png"),
-        odb::loadBitmap(getResPath() + "hand0.png"),
+        odb::loadBitmap(odb::getResPath() + "hand0.png"),
+        odb::loadBitmap(odb::getResPath() + "hand0.png"),
 };
 
 std::shared_ptr<odb::NativeBitmap> tinhosoSprites[2] = {
-        odb::loadBitmap(getResPath() + "tinhoso0.png"),
-        odb::loadBitmap(getResPath() + "tinhoso1.png"),
+        odb::loadBitmap(odb::getResPath() + "tinhoso0.png"),
+        odb::loadBitmap(odb::getResPath() + "tinhoso1.png"),
 };
 
 
 std::shared_ptr<odb::NativeBitmap> hero[6][2] = {
         {
-                odb::loadBitmap( getResPath() + "up0.png"),
-                odb::loadBitmap( getResPath() + "up1.png"),
+                odb::loadBitmap( odb::getResPath() + "up0.png"),
+                odb::loadBitmap( odb::getResPath() + "up1.png"),
         },
         {
-                odb::loadBitmap( getResPath() + "hero0.png"),
-                odb::loadBitmap( getResPath() + "hero1.png"),
+                odb::loadBitmap( odb::getResPath() + "hero0.png"),
+                odb::loadBitmap( odb::getResPath() + "hero1.png"),
         },
         {
-                odb::loadBitmap( getResPath() + "down0.png"),
-                odb::loadBitmap( getResPath() + "down1.png"),
+                odb::loadBitmap( odb::getResPath() + "down0.png"),
+                odb::loadBitmap( odb::getResPath() + "down1.png"),
         },
         {
-                odb::loadBitmap( getResPath() + "attack0.png"),
-                odb::loadBitmap( getResPath() + "attack0.png"),
+                odb::loadBitmap( odb::getResPath() + "attack0.png"),
+                odb::loadBitmap( odb::getResPath() + "attack0.png"),
         },
         {
-                odb::loadBitmap( getResPath() + "jump0.png"),
-                odb::loadBitmap( getResPath() + "jump0.png"),
+                odb::loadBitmap( odb::getResPath() + "jump0.png"),
+                odb::loadBitmap( odb::getResPath() + "jump0.png"),
         },
         {
-                odb::loadBitmap( getResPath() + "up0.png"),
-                odb::loadBitmap( getResPath() + "up1.png"),
+                odb::loadBitmap( odb::getResPath() + "up0.png"),
+                odb::loadBitmap( odb::getResPath() + "up1.png"),
         },
 };
 
@@ -105,7 +102,7 @@ void prepareScreenFor(EScreen screenState) {
     muteSound();
     switch (screenState) {
         case kIntro:
-            currentScreen = odb::loadBitmap( getResPath() + (enableSecret ? "secret.dat" : "intro.png") );
+            currentScreen = odb::loadBitmap( odb::getResPath() + (enableSecret ? "secret.dat" : "intro.png") );
 //            playMusic(
 //                    "001|eefggfedccdeeddeefgg|eefggfedccdeeddeefgg|eefggfedccdeeddeefgg");
             break;
@@ -113,12 +110,11 @@ void prepareScreenFor(EScreen screenState) {
             currentScreen = nullptr;
             break;
         case kGameOver:
-            currentScreen = odb::loadBitmap( getResPath() + "gameover.png");
-            playMusic("gggefffd|gggefffd|gggefffd");
+            currentScreen = odb::loadBitmap( odb::getResPath() + "gameover.png");
             playMusic("020|gggefffd|gggefffd|gggefffd");
             break;
         case kVictory:
-            currentScreen = odb::loadBitmap( getResPath() + "victory.png");
+            currentScreen = odb::loadBitmap( odb::getResPath() + "victory.png");
 //            playMusic(
 //                    "e8e8f8g8g8f8e8d8c8c8d8e8e8d12d4e8e8f8g8g8f8e8d8c8c8d8e8d8c12c4d8d8e8c8d8e12f12e8c8d8e12f12e8d8c8d8p8e8e8f8g8g8f8e8d8c8c8d8e8d8c12c4");
             break;
@@ -130,28 +126,15 @@ void clearBuffers() {
     std::fill(std::begin(imageBuffer), std::end(imageBuffer), 4);
 }
 
-std::vector<std::shared_ptr<odb::NativeBitmap>> loadSpriteList(std::string listName) {
-    std::ifstream tileList(listName);
-    std::string buffer;
-
-    std::vector<std::shared_ptr<odb::NativeBitmap>> tilesToLoad;
-
-    while (tileList.good()) {
-        std::getline(tileList, buffer);
-        tilesToLoad.push_back(odb::loadBitmap( getResPath() + buffer));
-    }
-    return tilesToLoad;
-}
-
 void loadTiles(std::vector<std::string> tilesToLoad) {
     tiles.clear();
 
     for (const auto &tile : tilesToLoad) {
 
         if (tile.substr(tile.length() - 4) == ".png") {
-            tiles.push_back({odb::loadBitmap( getResPath() + tile)});
+            tiles.push_back({odb::loadBitmap( odb::getResPath() + tile)});
         } else {
-            tiles.push_back(loadSpriteList( getResPath() + tile));
+            tiles.push_back(odb::loadSpriteList( odb::getResPath() + tile));
         }
     }
 }
