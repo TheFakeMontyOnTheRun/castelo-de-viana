@@ -1,6 +1,9 @@
 #include <go32.h>
 #include <sys/farptr.h>
+#include <stdlib.h>
 #include <conio.h>
+#include <dos.h>
+#include <sys/farptr.h>
 #include <dpmi.h>
 #include <go32.h>
 #include <pc.h>
@@ -18,8 +21,12 @@
 #include "LoadImage.h"
 
 
+#include <algorithm>
 #include <string>
 #include <vector>
+#include <array>
+#include <memory>
+
 #include "Game.h"
 
 #include <stdlib.h>
@@ -99,12 +106,16 @@ void playSound(const std::vector<int> &sound) {
 }
 
 
-void playMusic(const std::string &music) {
+void playMusic(const std::string &musicTrack) {
     if (enableOPL2) {
-        if (music.empty()) {
+        if (musicTrack.empty()) {
             music_set("", "", "");
             return;
         }
+        auto trackBeginPosition = musicTrack.find('|');
+        auto instrumentDefinition = atoi(musicTrack.substr(0, trackBeginPosition).c_str());
+        music_instrument = instrumentDefinition;
+        auto music = musicTrack.substr(trackBeginPosition + 1 );
         auto melody1 = music.substr(0, music.find('|'));
         auto melody2 = music.substr( music.find('|') + 1 );
         auto melody3 = melody2.substr( melody2.find('|') + 1 );
@@ -115,7 +126,7 @@ void playMusic(const std::string &music) {
 
     int frequency = 0;
     melody.clear();
-    for (const auto &note : music) {
+    for (const auto &note : musicTrack) {
         switch (note) {
             case 'a':
             case 'A':

@@ -4,6 +4,7 @@
 #include <memory>
 #include <fstream>
 #include <sstream>
+#include <vector>
 #include <cstring>
 #include "NativeBitmap.h"
 #include "LoadImage.h"
@@ -106,7 +107,7 @@ void prepareScreenFor(EScreen screenState) {
         case kIntro:
             currentScreen = odb::loadBitmap( getResPath() + (enableSecret ? "secret.dat" : "intro.png") );
 //            playMusic(
-//                    "e5r1e3r0d3r0e3r0e1r0d1r0-g4r1f3r0f1r0f1r0a3r0f1r0e1r0d1r0d1r0e5r0c3r0c1r0c1r0e3r0c1r0-b1r0c1r0-b1r0-a1r0-a1-b5r0e1r0e1r0e1r0e1r0e1r0e1r0d1r0e1r0e1r0e1r0d1r0-a1r0-a1r0b3r1-a1r0-b1r0c1r0d1r0e1r0f1r0e1r0f3r1a3r1b1r0a1r0f3r0e3r0e1r0e4r0|e5r1e3r0d3r0e3r0e1r0d1r0-g4r1f3r0f1r0f1r0a3r0f1r0e1r0d1r0d1r0e5r0c3r0c1r0c1r0e3r0c1r0-b1r0c1r0-b1r0-a1r0-a1-b5r0e1r0e1r0e1r0e1r0e1r0e1r0d1r0e1r0e1r0e1r0d1r0-a1r0-a1r0b3r1-a1r0-b1r0c1r0d1r0e1r0f1r0e1r0f3r1a3r1b1r0a1r0f3r0e3r0e1r0e4r0|e5r1e3r0d3r0e3r0e1r0d1r0-g4r1f3r0f1r0f1r0a3r0f1r0e1r0d1r0d1r0e5r0c3r0c1r0c1r0e3r0c1r0-b1r0c1r0-b1r0-a1r0-a1-b5r0e1r0e1r0e1r0e1r0e1r0e1r0d1r0e1r0e1r0e1r0d1r0-a1r0-a1r0b3r1-a1r0-b1r0c1r0d1r0e1r0f1r0e1r0f3r1a3r1b1r0a1r0f3r0e3r0e1r0e4r0");
+//                    "001|eefggfedccdeeddeefgg|eefggfedccdeeddeefgg|eefggfedccdeeddeefgg");
             break;
         case kGame:
             currentScreen = nullptr;
@@ -114,6 +115,7 @@ void prepareScreenFor(EScreen screenState) {
         case kGameOver:
             currentScreen = odb::loadBitmap( getResPath() + "gameover.png");
             playMusic("gggefffd|gggefffd|gggefffd");
+            playMusic("020|gggefffd|gggefffd|gggefffd");
             break;
         case kVictory:
             currentScreen = odb::loadBitmap( getResPath() + "victory.png");

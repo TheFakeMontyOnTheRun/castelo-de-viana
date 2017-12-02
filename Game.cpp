@@ -9,6 +9,7 @@
 
 #include "Game.h"
 #include "Renderer.h"
+#include "LoadImage.h"
 
 int heroFrame = 0;
 Actor player;
@@ -28,11 +29,11 @@ std::vector<Actor> doors;
 std::vector<Item> items;
 std::vector<Actor> arrows;
 
-auto hurtSound = "dca|dca|";
-auto swordSound = "dgd|dgd|dgd";
-auto arrowSound = "abc|abc|abc";
-auto jumpSound = "cdefedc|cdefedc|cdefedc";
-auto pickSound = "abfc|abfc|abfc";
+auto hurtSound = "053|dca|dca|";
+auto swordSound = "044|dgd|dgd|dgd";
+auto arrowSound = "044|abc|abc|abc";
+auto jumpSound = "046|cdefedc|cdefedc|cdefedc";
+auto pickSound = "054|abfc|abfc|abfc";
 
 int totalBossHealth = 0;
 std::string currentBossName;

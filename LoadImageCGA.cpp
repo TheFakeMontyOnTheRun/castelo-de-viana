@@ -5,6 +5,9 @@
 #include <memory>
 #include <map>
 #include <conio.h>
+#include <sys/movedata.h>
+#include <sys/farptr.h>
+#include <sys/nearptr.h>
 #include <dpmi.h>
 #include <go32.h>
 #include <sys/movedata.h>
@@ -12,9 +15,16 @@
 #include <sys/farptr.h>
 #include <bios.h>
 #include <sys/nearptr.h>
+#include <conio.h>
 
 #include <cstdlib>
+#include <cstdlib>
 #include <cstdio>
+#include <cstring>
+#include <cmath>
+#include <memory>
+#include <string>
+#include <vector>
 #include <functional>
 #include <cmath>
 #include <algorithm>
@@ -28,6 +38,8 @@
 #include <iostream>
 
 #include <conio.h>
+#include <string>
+#include <map>
 
 #include "NativeBitmap.h"
 #include "LoadImage.h"

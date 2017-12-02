@@ -190,8 +190,13 @@ OPL2 opl2;
 struct Tune music[3];
 
 void music_set(const char* melody1, const char* melody2, const char* melody3) {
+    timer_reset(100);
 
     if (std::strlen(melody1) == 0 ) {
+        tuneData[0] = "";
+        tuneData[1] = "";
+        tuneData[2] = "";
+
         for (int i = 0; i < 3; i++) {
             if (opl2.getKeyOn(music[i].channel)) {
                 opl2.setKeyOn(music[i].channel, false);
@@ -205,7 +210,6 @@ void music_set(const char* melody1, const char* melody2, const char* melody3) {
     tuneData[1] = melody2;
     tuneData[2] = melody3;
 
-    timer_reset(100);
     for (int i = 0; i < 3; i++) {
         struct Tune channel;
         channel.data = tuneData[i];
@@ -218,6 +222,13 @@ void music_set(const char* melody1, const char* melody2, const char* melody3) {
         channel.index = 0;
         music[i] = channel;
     }
+
+    opl2.setInstrument(0, instruments[ music_instrument ]);
+    opl2.setBlock(0, 5);
+    opl2.setInstrument(1, instruments[ music_instrument ]);
+    opl2.setBlock(1, 4);
+    opl2.setInstrument(2, instruments[ music_instrument ]);
+    opl2.setBlock(2, 4);
 }
 
 void music_setup() {
@@ -273,15 +284,7 @@ void music_loop() {
     }
 
     if (!busy) {
-//        for (int i = 0; i < 3; i++) {
-//            music[i].index = 0;
-//            music[i].nextNoteTime = timer_get() + 100;
-//        }
-        for (int i = 0; i < 3; i++) {
-            if (opl2.getKeyOn(music[i].channel)) {
-                opl2.setKeyOn(music[i].channel, false);
-            }
-        }
+        music_set("", "", "");
     }
 
     hlt();
