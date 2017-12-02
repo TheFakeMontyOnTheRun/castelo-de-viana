@@ -81,6 +81,37 @@ namespace odb {
         return toReturn;
     }
 
+    std::string getResPath() {
+        return "resSDL/";
+    }
+
+    std::vector<std::shared_ptr<odb::NativeBitmap>> loadSpriteList(std::string listName) {
+
+        FILE *fd = fopen(listName.c_str(), "r");
+        auto buffer = readToBuffer(fd);
+        buffer.push_back('\n');
+        fclose(fd);
+        std::vector<std::shared_ptr<odb::NativeBitmap>> tilesToLoad;
+        int lastPoint = 0;
+        int since = 0;
+        auto bufferBegin = std::begin( buffer );
+        for (const auto& c : buffer ) {
+            ++since;
+            if ( c == '\n' ) {
+                auto filename = std::string( bufferBegin + lastPoint, bufferBegin + lastPoint + since - 1 );
+                lastPoint += since;
+                if ( !filename.empty()) {
+                    tilesToLoad.push_back(odb::loadBitmap( getResPath() + filename));
+                }
+                since = 0;
+            }
+        }
+
+
+
+        return tilesToLoad;
+    }
+
     std::shared_ptr<NativeBitmap> loadBitmap(std::string path) {
 
         //std::cout << "loading " << path << std::endl;
@@ -116,6 +147,6 @@ namespace odb {
             rawData[ c ] = origin;
         }
 
-        return (std::make_shared<odb::NativeBitmap>(path, xSize, ySize, rawData));
+        return (std::make_shared<odb::NativeBitmap>( xSize, ySize, rawData));
     }
 }

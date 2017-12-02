@@ -18,7 +18,7 @@
 void playMusic(const std::string &music) {
 }
 
-void setupOPL2() {
+void setupOPL2(int instrument) {
 }
 
 void stopSounds() {

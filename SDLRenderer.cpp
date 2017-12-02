@@ -257,7 +257,3 @@ void initVideo() {
     enterFullScreenMode();
 #endif
 }
-
-std::string getResPath() {
-    return "resSDL/";
-}
