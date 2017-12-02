@@ -16,15 +16,16 @@
 #include <unistd.h>
 
 
-double timeRendering = 0;
+
+clock_t timeRendering = 0;
 int desiredTimeSlice = 75;
 std::array<unsigned char, 320 * 200> buffer;
 std::array<unsigned char, 320 * 100 / 4> evenBuffer;
 std::array<unsigned char, 320 * 100 / 4> oddBuffer;
 
-double t0;
-double t1;
-double ms;
+clock_t t0;
+clock_t t1;
+clock_t ms;
 
 ControlState getControlState() {
     ControlState toReturn;
