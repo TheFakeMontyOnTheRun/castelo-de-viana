@@ -65,6 +65,7 @@ namespace odb {
         FILE *fd = fopen(listName.c_str(), "r");
         auto buffer = readToBuffer(fd);
         buffer.push_back('\n');
+        fclose(fd);
         std::vector<std::shared_ptr<odb::NativeBitmap>> tilesToLoad;
         int lastPoint = 0;
         int since = 0;
@@ -80,6 +81,8 @@ namespace odb {
                 since = 0;
             }
         }
+
+
 
         return tilesToLoad;
     }

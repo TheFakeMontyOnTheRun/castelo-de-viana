@@ -5,7 +5,6 @@
 #include <cstring>
 #include "NativeBitmap.h"
 #include "LoadImage.h"
-
 #include "Game.h"
 #include "Renderer.h"
 

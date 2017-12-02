@@ -232,9 +232,6 @@ void copyImageBufferToVideoMemory(const std::array<unsigned int, 320 * 200>& ima
 
     dosmemput(evenBuffer.data(), 320 * 100 / 4, 0xB800 * 16);
     dosmemput(oddBuffer.data(), 320 * 100 / 4, (0xB800 * 16) + 0x2000);
-
-    //gotoxy(1, 1);
-    //std::cout << "room " << room << std::endl;
 }
 
 void initVideo() {

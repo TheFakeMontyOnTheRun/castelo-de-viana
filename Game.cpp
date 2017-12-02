@@ -4,7 +4,6 @@
 #include <time.h>
 #include <unistd.h>
 #include <memory>
-#include <fstream>
 
 #include "Game.h"
 #include "Renderer.h"
@@ -540,25 +539,32 @@ void evalutePlayerAttack() {
 void prepareRoom(int room) {
     muteSound();
     char buffer[64];
+
     snprintf(buffer, 64, "%s%d.bg", odb::getResPath().c_str(), room );
-    std::ifstream bgmap(buffer);
+    FILE *fd;
+    fd = fopen(buffer, "r");
+    auto bgmap = odb::readToBuffer(fd);
+    fclose( fd );
 
     snprintf(buffer, 64, "%s%d.fg", odb::getResPath().c_str(), room );
-    std::ifstream fgmap(buffer);
+    fd = fopen(buffer, "r");
+    auto fgmap = odb::readToBuffer(fd);
+    fclose( fd );
 
     foes.clear();
     items.clear();
     doors.clear();
     hasBossOnScreen = false;
+    int position = 0;
     for (int y = 0; y < 6; ++y) {
         for (int x = 0; x < 10; ++x) {
             char ch = '0';
 
-            bgmap >> ch;
+            ch = bgmap[ position ];
             backgroundTiles[y][x] = ch - '0';
 
-            fgmap >> ch;
-
+            ch = fgmap[ position ];
+            ++position;
 
             if (ch == 'm') {
                 foregroundTiles[y][x] = 0;
@@ -656,21 +662,32 @@ void prepareRoom(int room) {
                 foregroundTiles[y][x] = ch - '0';
             }
         }
+        ++position; //\n
     }
 
     snprintf(buffer, 64, "%s%d.lst", odb::getResPath().c_str(), room );
 
-    std::ifstream tileList(buffer);
-
     std::vector<std::string> tilesToLoad;
 
-    while (tileList.good()) {
-        std::string buffer;
-        std::getline(tileList, buffer);
-        tilesToLoad.push_back(buffer);
+    fd = fopen(buffer, "r");
+    auto listBuffer = odb::readToBuffer(fd);
+    listBuffer.push_back('\n');
+    fclose(fd);
+
+    int lastPoint = 0;
+    int since = 0;
+    auto bufferBegin = std::begin( listBuffer );
+    for (const auto& c : listBuffer ) {
+        ++since;
+        if ( c == '\n' ) {
+            auto filename = std::string( bufferBegin + lastPoint, bufferBegin + lastPoint + since - 1 );
+            lastPoint += since;
+            if ( !filename.empty()) {
+                tilesToLoad.push_back(filename);
+            }
+            since = 0;
+        }
     }
-
-
 
     loadTiles(tilesToLoad);
 
