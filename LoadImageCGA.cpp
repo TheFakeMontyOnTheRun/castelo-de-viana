@@ -8,18 +8,13 @@
 #include <conio.h>
 
 #include <cstdlib>
-#include <cstdlib>
 #include <cstdio>
 #include <cstring>
 #include <cmath>
 #include <memory>
 #include <string>
 #include <vector>
-#include <functional>
-#include <algorithm>
 #include <array>
-#include <string>
-#include <map>
 
 #include "NativeBitmap.h"
 #include "LoadImage.h"

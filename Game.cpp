@@ -1,9 +1,8 @@
-#include <algorithm>
-#include <array>
-#include <random>
 #include <time.h>
 #include <unistd.h>
+#include <array>
 #include <memory>
+#include <algorithm>
 
 #include "Game.h"
 #include "Renderer.h"

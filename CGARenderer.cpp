@@ -1,10 +1,6 @@
 //
 // Created by monty on 01-07-2017.
 //
-#include <array>
-
-#include "Renderer.h"
-
 #include <go32.h>
 #include <sys/farptr.h>
 #include <conio.h>
@@ -15,7 +11,9 @@
 #include <time.h>
 #include <unistd.h>
 
+#include <array>
 
+#include "Renderer.h"
 
 clock_t timeRendering = 0;
 int desiredTimeSlice = 75;
