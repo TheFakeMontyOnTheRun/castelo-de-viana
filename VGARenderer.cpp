@@ -104,14 +104,6 @@ void doneWithFrame() {
     }
 }
 
-void soundFrequency(int frequency) {
-    sound( frequency );
-}
-
-void muteSound() {
-    nosound();
-}
-
 void onQuit() {
     nosound();
     textmode(C80);
@@ -194,8 +186,4 @@ void initVideo() {
             }
         }
     }
-}
-
-std::string getResPath() {
-    return "resVGA/";
 }
