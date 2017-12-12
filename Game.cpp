@@ -309,7 +309,7 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
 
     enforceScreenLimits();
 
-    if (player.mSpeed.mX == 0) {
+    if (player.mSpeed.mX == 0 && player.mSpeed.mY == 0 ) {
         heroFrame = 0;
     }
 
@@ -326,13 +326,22 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
 
     if (isOnGround || !isOnStairs) {
         player.mStance = kStanding;
+
+        if (player.mSpeed.mX == 0 ) {
+            heroFrame = 0;
+        }
+
     }
 
     if (ceiling < 0) {
         ceiling = 0;
     }
 
-    if ((player.mSpeed.mX != 0 && isOnGround) || (player.mSpeed.mY != 0 && player.mStance == kClimbing)) {
+    if (player.mSpeed.mY != 0 && player.mStance == kClimbing) {
+        heroFrame = (heroFrame + 1) % 2;
+    }
+
+    if ((player.mSpeed.mX != 0 && isOnGround)) {
         heroFrame = (heroFrame + 1) % 2;
     }
 
