@@ -90,7 +90,16 @@ updateHero(bool isOnGround, bool isJumping, bool isUpPressed, bool isDownPressed
             player.mSpeed.mY = +8;
             player.mStance = kClimbing;
         } else {
-            player.mStance = kStanding;
+            int posX = ((player.mPosition.mX + 16) / 32);
+            int posY = ((player.mPosition.mY + 16) / 32);
+
+            if ( posY <=5 && foregroundTiles[ posY + 1 ][posX] == 3 ) {
+                player.mSpeed.mY = +16; //give the player an extra push down to overcome the engine's protection stopping the player
+                //from falling
+                player.mStance = kClimbing;
+            } else {
+                player.mStance = kStanding;
+            }
         }
     }
 

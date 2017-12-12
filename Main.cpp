@@ -541,7 +541,7 @@ void sysTick() {
     bool isAttacking = false;
     bool isAltAttackPressed = false;
     bool isPausePressed = false;
-    bool isOnStairs;
+    bool isOnStairs = false;
     render();
 
 
