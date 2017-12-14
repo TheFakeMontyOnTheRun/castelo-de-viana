@@ -5,9 +5,9 @@
 #include <vector>
 #include <algorithm>
 
-#include "Game.h"
-#include "Renderer.h"
-#include "LoadImage.h"
+#include "../include/Game.h"
+#include "../include/Renderer.h"
+#include "../include/LoadImage.h"
 
 int heroFrame = 0;
 Actor player;

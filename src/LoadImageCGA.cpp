@@ -16,8 +16,8 @@
 #include <vector>
 #include <array>
 
-#include "NativeBitmap.h"
-#include "LoadImage.h"
+#include "../include/NativeBitmap.h"
+#include "../include/LoadImage.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"

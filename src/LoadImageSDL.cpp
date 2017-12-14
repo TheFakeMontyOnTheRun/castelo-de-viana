@@ -29,9 +29,6 @@
 #include <cstdlib>
 #include <cstring>
 
-#include "NativeBitmap.h"
-
-
 #define STB_IMAGE_IMPLEMENTATION
 
 #include "stb_image.h"

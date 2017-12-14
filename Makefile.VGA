@@ -1,10 +1,10 @@
-CXXFLAGS = -g -c -DVGA -IOPL2LPT -Istb -O6 -Ofast  -funroll-loops -funroll-all-loops -fomit-frame-pointer -fno-exceptions -fno-rtti -ffast-math -mtune=i386 -march=i386 -fpermissive
+CXXFLAGS = -g -c -DVGA -Iinclude -IOPL2LPT -Istb -O6 -Ofast  -funroll-loops -funroll-all-loops -fomit-frame-pointer -fno-exceptions -fno-rtti -ffast-math -mtune=i386 -march=i386 -fpermissive  -Wno-narrowing
 
 LDFLAGS = -lemu
 
 CXX = i586-pc-msdosdjgpp-g++
 
-OBJS = Main.o Game.o LoadImageVGA.o NativeBitmap.o MusicDOS.o VGARenderer.o OPL2LPT/controller.o OPL2LPT/timer.o OPL2LPT/OPL2.o
+OBJS = src/Main.o src/Game.o src/LoadImageVGA.o src/NativeBitmap.o src/MusicDOS.o src/VGARenderer.o OPL2LPT/controller.o OPL2LPT/timer.o OPL2LPT/OPL2.o
 
 TARGET = vianavga.exe
 

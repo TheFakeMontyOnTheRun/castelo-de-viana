@@ -13,7 +13,7 @@
 
 #include <array>
 
-#include "Renderer.h"
+#include "../include/Renderer.h"
 
 clock_t timeRendering = 0;
 int desiredTimeSlice = 75;
