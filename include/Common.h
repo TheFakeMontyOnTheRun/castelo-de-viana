@@ -1,11 +1,19 @@
 //
-// Created by monty on 27/08/16.
+// Created by monty on 26/09/16.
 //
-#include <sg14/fixed_point>
 
-#ifndef BLANKSLATE_COMMON_H
-#define BLANKSLATE_COMMON_H
+#ifndef DUNGEONSOFNOUDAR_NDK_COMMON_H
+#define DUNGEONSOFNOUDAR_NDK_COMMON_H
+namespace odb {
 
-using FixP = sg14::fixed_point<int32_t, -16>;
+    int intFrom(std::string str);
 
-#endif //BLANKSLATE_COMMON_H
+    std::string filterComments(std::string input);
+
+    std::string readToString(FILE *fileDescriptor);
+
+    vector<char> readToBuffer(FILE *fileDescriptor);
+
+    std::string fileFromString( const std::string& path );
+}
+#endif //DUNGEONSOFNOUDAR_NDK_COMMON_H

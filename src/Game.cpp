@@ -4,10 +4,16 @@
 #include <memory>
 #include <vector>
 #include <algorithm>
+#include <unordered_map>
 
-#include "../include/Game.h"
-#include "../include/Renderer.h"
-#include "../include/LoadImage.h"
+#include "Game.h"
+#include "Renderer.h"
+
+using std::vector;
+
+#include "IFileLoaderDelegate.h"
+#include "CPackedFileReader.h"
+#include "LoadImage.h"
 
 int heroFrame = 0;
 Actor player;
@@ -557,17 +563,13 @@ void evalutePlayerAttack() {
 void prepareRoom(int room) {
     muteSound();
     char buffer[64];
+    odb::CPackedFileReader reader("gamedata.pfs");
 
-    snprintf(buffer, 64, "%s%d.bg", odb::getResPath().c_str(), room );
-    FILE *fd;
-    fd = fopen(buffer, "r");
-    auto bgmap = odb::readToBuffer(fd);
-    fclose( fd );
+    snprintf(buffer, 64, "%d.bg", room );
+    auto bgmap = reader.loadFileFromPath(buffer);
 
-    snprintf(buffer, 64, "%s%d.fg", odb::getResPath().c_str(), room );
-    fd = fopen(buffer, "r");
-    auto fgmap = odb::readToBuffer(fd);
-    fclose( fd );
+    snprintf(buffer, 64, "%d.fg", room );
+    auto fgmap = reader.loadFileFromPath(buffer);
 
     foes.clear();
     items.clear();
@@ -683,14 +685,12 @@ void prepareRoom(int room) {
         ++position; //\n
     }
 
-    snprintf(buffer, 64, "%s%d.lst", odb::getResPath().c_str(), room );
+    snprintf(buffer, 64, "%d.lst", room );
 
     std::vector<std::string> tilesToLoad;
 
-    fd = fopen(buffer, "r");
-    auto listBuffer = odb::readToBuffer(fd);
+    auto listBuffer = reader.loadFileFromPath(buffer);
     listBuffer.push_back('\n');
-    fclose(fd);
 
     int lastPoint = 0;
     int since = 0;

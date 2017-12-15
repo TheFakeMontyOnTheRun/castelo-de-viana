@@ -4,7 +4,11 @@ LDFLAGS = -lemu
 
 CXX = i586-pc-msdosdjgpp-g++
 
-OBJS = src/Main.o src/Game.o src/LoadImageVGA.o src/NativeBitmap.o src/MusicDOS.o src/VGARenderer.o OPL2LPT/controller.o OPL2LPT/timer.o OPL2LPT/OPL2.o
+OBJS = src/Main.o src/Game.o src/LoadImageVGA.o src/NativeBitmap.o src/MusicDOS.o src/VGARenderer.o OPL2LPT/controller.o OPL2LPT/timer.o OPL2LPT/OPL2.o \
+            src/CPackedFileReader.o\
+            src/IFileLoaderDelegate.o\
+            src/Common.o
+
 
 TARGET = vianavga.exe
 
@@ -16,3 +20,18 @@ all:	$(TARGET)
 clean:
 	rm -f $(OBJS) $(TARGET)
 	rm *~
+
+packager:
+	rm -f ./packer
+	g++ -std=c++14 -opacker src/packer.cpp
+
+res:	packager
+	rm -f ./vga.pfs
+	ls resVGA/*.*  | xargs ./packer
+	mv ./data.pfs ./vga.pfs
+
+gamedata:	packager
+	rm -f ./gamedata.pfs
+	ls data/*.*  | xargs ./packer
+	mv ./data.pfs ./gamedata.pfs
+

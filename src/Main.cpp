@@ -2,11 +2,16 @@
 #include <memory>
 #include <vector>
 #include <cstring>
+#include <unordered_map>
 #include "NativeBitmap.h"
-#include "LoadImage.h"
 #include "Game.h"
 #include "Renderer.h"
 
+using std::vector;
+
+#include "IFileLoaderDelegate.h"
+#include "CPackedFileReader.h"
+#include "LoadImage.h"
 #ifdef __EMSCRIPTEN__
 #include <emscripten.h>
 #include <emscripten/html5.h>
@@ -14,79 +19,30 @@
 
 bool enableSecret = false;
 
+std::shared_ptr<odb::CPackedFileReader> reader;
+
 std::vector<std::vector<std::shared_ptr<odb::NativeBitmap>>> tiles;
 
-std::shared_ptr<odb::NativeBitmap> pausedSign = {
-        odb::loadBitmap(odb::getResPath() + "paused.png")
-};
+std::shared_ptr<odb::NativeBitmap> pausedSign;
 
-std::shared_ptr<odb::NativeBitmap> arrowSprite[2] = {
-        odb::loadBitmap(odb::getResPath() + "arrow.png"),
-        odb::loadBitmap(odb::getResPath() + "arrowup.png")
-};
+std::shared_ptr<odb::NativeBitmap> arrowSprite[2];
 
-std::shared_ptr<odb::NativeBitmap> doorStates[2] = {
-        odb::loadBitmap(odb::getResPath() + "door0.png"),
-        odb::loadBitmap(odb::getResPath() + "door1.png"),
-};
+std::shared_ptr<odb::NativeBitmap> doorStates[2];
 
-std::shared_ptr<odb::NativeBitmap> foeSprites[2] = {
-        odb::loadBitmap(odb::getResPath() + "foe0.png"),
-        odb::loadBitmap(odb::getResPath() + "foe1.png"),
-};
+std::shared_ptr<odb::NativeBitmap> foeSprites[2];
 
-std::shared_ptr<odb::NativeBitmap> itemSprites[2] = {
-        odb::loadBitmap(odb::getResPath() + "meat.png"),
-        odb::loadBitmap(odb::getResPath() + "key.png"),
-};
+std::shared_ptr<odb::NativeBitmap> itemSprites[2];
 
-std::shared_ptr<odb::NativeBitmap> gargoyleSprites[2] = {
-        odb::loadBitmap(odb::getResPath() + "garg0.png"),
-        odb::loadBitmap(odb::getResPath() + "garg1.png"),
-};
+std::shared_ptr<odb::NativeBitmap> gargoyleSprites[2];
 
-std::shared_ptr<odb::NativeBitmap> capirotoSprites[2] = {
-        odb::loadBitmap(odb::getResPath() + "capi0.png"),
-        odb::loadBitmap(odb::getResPath() + "capi1.png"),
-};
+std::shared_ptr<odb::NativeBitmap> capirotoSprites[2];
 
-std::shared_ptr<odb::NativeBitmap> handSprites[2] = {
-        odb::loadBitmap(odb::getResPath() + "hand0.png"),
-        odb::loadBitmap(odb::getResPath() + "hand0.png"),
-};
+std::shared_ptr<odb::NativeBitmap> handSprites[2];
 
-std::shared_ptr<odb::NativeBitmap> tinhosoSprites[2] = {
-        odb::loadBitmap(odb::getResPath() + "tinhoso0.png"),
-        odb::loadBitmap(odb::getResPath() + "tinhoso1.png"),
-};
+std::shared_ptr<odb::NativeBitmap> tinhosoSprites[2];
 
 
-std::shared_ptr<odb::NativeBitmap> hero[6][2] = {
-        {
-                odb::loadBitmap( odb::getResPath() + "up0.png"),
-                odb::loadBitmap( odb::getResPath() + "up1.png"),
-        },
-        {
-                odb::loadBitmap( odb::getResPath() + "hero0.png"),
-                odb::loadBitmap( odb::getResPath() + "hero1.png"),
-        },
-        {
-                odb::loadBitmap( odb::getResPath() + "down0.png"),
-                odb::loadBitmap( odb::getResPath() + "down1.png"),
-        },
-        {
-                odb::loadBitmap( odb::getResPath() + "attack0.png"),
-                odb::loadBitmap( odb::getResPath() + "attack0.png"),
-        },
-        {
-                odb::loadBitmap( odb::getResPath() + "jump0.png"),
-                odb::loadBitmap( odb::getResPath() + "jump0.png"),
-        },
-        {
-                odb::loadBitmap( odb::getResPath() + "up0.png"),
-                odb::loadBitmap( odb::getResPath() + "up1.png"),
-        },
-};
+std::shared_ptr<odb::NativeBitmap> hero[6][2];
 
 std::array<unsigned int, 320 * 200> imageBuffer;
 std::shared_ptr<odb::NativeBitmap> currentScreen = nullptr;
@@ -100,7 +56,7 @@ void prepareScreenFor(EScreen screenState) {
     muteSound();
     switch (screenState) {
         case kIntro:
-            currentScreen = odb::loadBitmap( odb::getResPath() + (enableSecret ? "secret.dat" : "intro.png") );
+            currentScreen = odb::loadBitmap( (enableSecret ? "secret.dat" : "intro.png"), reader );
 //            playMusic(
 //                    "001|eefggfedccdeeddeefgg|eefggfedccdeeddeefgg|eefggfedccdeeddeefgg");
             break;
@@ -108,11 +64,11 @@ void prepareScreenFor(EScreen screenState) {
             currentScreen = nullptr;
             break;
         case kGameOver:
-            currentScreen = odb::loadBitmap( odb::getResPath() + "gameover.png");
+            currentScreen = odb::loadBitmap( "gameover.png", reader );
             playMusic("020|gggefffd|gggefffd|gggefffd");
             break;
         case kVictory:
-            currentScreen = odb::loadBitmap( odb::getResPath() + "victory.png");
+            currentScreen = odb::loadBitmap( "victory.png", reader );
 //            playMusic(
 //                    "e8e8f8g8g8f8e8d8c8c8d8e8e8d12d4e8e8f8g8g8f8e8d8c8c8d8e8d8c12c4d8d8e8c8d8e12f12e8c8d8e12f12e8d8c8d8p8e8e8f8g8g8f8e8d8c8c8d8e8d8c12c4");
             break;
@@ -130,9 +86,9 @@ void loadTiles(std::vector<std::string> tilesToLoad) {
     for (const auto &tile : tilesToLoad) {
 
         if (tile.substr(tile.length() - 4) == ".png") {
-            tiles.push_back({odb::loadBitmap( odb::getResPath() + tile)});
+            tiles.push_back({odb::loadBitmap( tile, reader )});
         } else {
-            tiles.push_back(odb::loadSpriteList( odb::getResPath() + tile));
+            tiles.push_back(odb::loadSpriteList( tile, reader));
         }
     }
 }
@@ -628,6 +584,51 @@ void sysTick() {
     doneWithFrame();
 }
 
+
+void loadGraphics() {
+    reader = std::make_shared<odb::CPackedFileReader>(getAssetsPath());
+
+    pausedSign = odb::loadBitmap("paused.png", reader);
+
+    arrowSprite[0] = odb::loadBitmap("arrow.png", reader);
+    arrowSprite[1] = odb::loadBitmap("arrowup.png", reader);
+
+    doorStates[0] = odb::loadBitmap("door0.png", reader);
+    doorStates[1] = odb::loadBitmap("door1.png", reader);
+
+    foeSprites[0] = odb::loadBitmap("foe0.png", reader);
+    foeSprites[1] = odb::loadBitmap("foe1.png", reader);
+
+    itemSprites[0] = odb::loadBitmap("meat.png", reader);
+    itemSprites[1] = odb::loadBitmap("key.png", reader);
+
+    gargoyleSprites[0] = odb::loadBitmap("garg0.png", reader);
+    gargoyleSprites[1] = odb::loadBitmap("garg1.png", reader);
+
+    capirotoSprites[0] = odb::loadBitmap("capi0.png", reader);
+    capirotoSprites[1] = odb::loadBitmap("capi1.png", reader);
+
+    handSprites[0] = odb::loadBitmap("hand0.png", reader);
+    handSprites[1] = odb::loadBitmap("hand0.png", reader);
+
+    tinhosoSprites[0] = odb::loadBitmap("tinhoso0.png", reader);
+    tinhosoSprites[1] = odb::loadBitmap("tinhoso1.png", reader);
+
+
+    hero[0][0] = odb::loadBitmap( "up0.png", reader);
+    hero[0][1] = odb::loadBitmap( "up1.png", reader);
+    hero[1][0] = odb::loadBitmap( "hero0.png", reader);
+    hero[1][1] = odb::loadBitmap( "hero1.png", reader);
+    hero[2][0] = odb::loadBitmap( "down0.png", reader);
+    hero[2][1] = odb::loadBitmap( "down1.png", reader);
+    hero[3][0] = odb::loadBitmap( "attack0.png", reader );
+    hero[3][1] = odb::loadBitmap( "attack0.png", reader );
+    hero[4][0] = odb::loadBitmap( "jump0.png", reader );
+    hero[4][1] = odb::loadBitmap( "jump0.png", reader);
+    hero[5][0] = odb::loadBitmap( "up0.png", reader);
+    hero[5][1] = odb::loadBitmap( "up1.png", reader);
+}
+
 int main(int argc, char **argv) {
 
     if ( argc >= 2 ) {
@@ -646,7 +647,7 @@ int main(int argc, char **argv) {
             enableSecret = true;
         }
     }
-
+    loadGraphics();
     init();
     prepareScreenFor(kIntro);
 

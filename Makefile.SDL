@@ -4,7 +4,11 @@ SDL_LIB = -L/usr/lib -lSDL -lSDL_gfx -lSDL_image -lSDL_mixer
 SDL_INCLUDE = -I/usr/local/include `sdl-config --cflags `
 
 CXXFLAGS = -std=c++14 -O2 -DSDL -Iinclude -ferror-limit=1 -c -g  $(SDL_INCLUDE) -Iinclude -Inoudar-core/noudar-core/include -Istb
-OBJS = Game.o Main.o SDLRenderer.o NativeBitmap.o LoadImageSDL.o MusicSDL.o
+OBJS = Game.o Main.o SDLRenderer.o NativeBitmap.o LoadImageSDL.o MusicSDL.o \
+            src/CPackedFileReader.o\
+            src/IFileLoaderDelegate.o\
+            src/Common.o
+
 LIBS = $(SDL_LIB)
 TARGET = game
 
@@ -15,3 +19,18 @@ all:   $(TARGET)
 
 clean:
 	rm -f $(OBJS) $(TARGET)
+
+packager:
+	rm -f ./packer
+	g++ -std=c++14 -opacker src/packer.cpp
+
+res:	packager
+	rm -f ./sdl.pfs
+	ls resSDL/*.*  | xargs ./packer
+	mv ./data.pfs ./sdl.pfs
+
+gamedata:	packager
+	rm -f ./gamedata.pfs
+	ls data/*.*  | xargs ./packer
+	mv ./data.pfs ./gamedata.pfs
+

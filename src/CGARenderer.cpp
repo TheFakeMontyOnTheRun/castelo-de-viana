@@ -240,3 +240,7 @@ void initVideo() {
     regs.h.al = 0x4;
     int86(0x10, &regs, &regs);
 }
+
+std::string getAssetsPath() {
+    return "cga.pfs";
+}

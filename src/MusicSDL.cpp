@@ -7,7 +7,13 @@
 #include <memory>
 #include <fstream>
 #include <sstream>
+#include <unordered_map>
 #include "NativeBitmap.h"
+
+using std::vector;
+
+#include "IFileLoaderDelegate.h"
+#include "CPackedFileReader.h"
 #include "LoadImage.h"
 
 

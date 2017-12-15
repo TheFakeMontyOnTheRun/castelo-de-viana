@@ -8,7 +8,13 @@
 #include <memory>
 #include <fstream>
 #include <sstream>
+#include <unordered_map>
+
+
+using std::vector;
 #include "NativeBitmap.h"
+#include "IFileLoaderDelegate.h"
+#include "CPackedFileReader.h"
 #include "LoadImage.h"
 
 #include "Game.h"
@@ -256,4 +262,8 @@ void initVideo() {
 #ifdef __EMSCRIPTEN__
     enterFullScreenMode();
 #endif
+}
+
+std::string getAssetsPath() {
+    return "sdl.pfs";
 }

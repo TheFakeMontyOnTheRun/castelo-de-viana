@@ -187,3 +187,7 @@ void initVideo() {
         }
     }
 }
+
+std::string getAssetsPath() {
+    return "vga.pfs";
+}

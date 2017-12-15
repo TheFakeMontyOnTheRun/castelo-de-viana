@@ -16,8 +16,16 @@
 #include <vector>
 #include <array>
 
-#include "../include/NativeBitmap.h"
-#include "../include/LoadImage.h"
+#include <unordered_map>
+
+
+using std::vector;
+#include "NativeBitmap.h"
+#include "IFileLoaderDelegate.h"
+#include "CPackedFileReader.h"
+#include "LoadImage.h"
+
+
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
@@ -25,42 +33,12 @@
 
 namespace odb {
 
-    std::vector<char> readToBuffer(FILE *fileDescriptor) {
-        const unsigned N = 1024;
+    std::vector<std::shared_ptr<odb::NativeBitmap>> loadSpriteList(std::string listName, std::shared_ptr<odb::IFileLoaderDelegate> fileLoader) {
 
-        fseek(fileDescriptor, 0, SEEK_END);
-        auto endPos = ftell(fileDescriptor);
-        rewind(fileDescriptor);
-        std::vector<char> total(endPos);
-        auto writeHead = std::begin(total);
 
-        for (int c = 0; c < endPos; ++c) {
-            char buffer[N];
-            size_t read = fread((void *) &buffer[0], 1, N, fileDescriptor);
-            if (read) {
-                for (int c = 0; c < read; ++c) {
-                    *writeHead = (buffer[c]);
-                    writeHead = std::next(writeHead);
-                }
-            }
-            if (read < N) {
-                break;
-            }
-        }
-
-        return total;
-    }
-
-    std::string getResPath() {
-        return "resCGA/";
-    }
-
-    std::vector<std::shared_ptr<odb::NativeBitmap>> loadSpriteList(std::string listName) {
-
-        FILE *fd = fopen(listName.c_str(), "r");
-        auto buffer = readToBuffer(fd);
+        auto buffer = fileLoader->loadFileFromPath(listName);
         buffer.push_back('\n');
-        fclose(fd);
+
         std::vector<std::shared_ptr<odb::NativeBitmap>> tilesToLoad;
         int lastPoint = 0;
         int since = 0;
@@ -71,7 +49,7 @@ namespace odb {
                 auto filename = std::string( bufferBegin + lastPoint, bufferBegin + lastPoint + since - 1 );
                 lastPoint += since;
                 if ( !filename.empty()) {
-                    tilesToLoad.push_back(odb::loadBitmap( getResPath() + filename));
+                    tilesToLoad.push_back(odb::loadBitmap( filename, fileLoader ));
                 }
                 since = 0;
             }
@@ -82,25 +60,11 @@ namespace odb {
         return tilesToLoad;
     }
 
+    std::shared_ptr<NativeBitmap> loadBitmap(std::string path, std::shared_ptr<odb::IFileLoaderDelegate> fileLoader) {
 
-    std::vector<char> loadBinaryFileFromPath(const std::string &path) {
-        FILE *fd;
+        //std::cout << "loading " << path << std::endl;
 
-        fd = fopen(path.c_str(), "rb");
-
-        if (fd == nullptr) {
-            exit(0);
-        }
-
-        std::vector<char> toReturn = readToBuffer(fd);
-        fclose(fd);
-
-        return toReturn;
-    }
-
-    std::shared_ptr<NativeBitmap> loadBitmap(std::string path) {
-
-        auto buffer = loadBinaryFileFromPath(path);
+        auto buffer = fileLoader->loadBinaryFileFromPath(path);
         int xSize;
         int ySize;
         int components;

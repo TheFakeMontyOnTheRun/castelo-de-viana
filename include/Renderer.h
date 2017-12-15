@@ -32,4 +32,5 @@ void initVideo();
 void setupOPL2(int instrument);
 void stopSounds();
 void soundTick();
+std::string getAssetsPath();
 #endif //CASTLEVANIA_RENDERER_H_H

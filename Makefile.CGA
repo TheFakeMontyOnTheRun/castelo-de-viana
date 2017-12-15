@@ -4,7 +4,11 @@ LDFLAGS = -lemu
 
 CXX = i586-pc-msdosdjgpp-g++
 
-OBJS = src/Main.o src/Game.o src/LoadImageCGA.o src/NativeBitmap.o src/MusicDOS.o src/CGARenderer.o OPL2LPT/controller.o OPL2LPT/timer.o OPL2LPT/OPL2.o
+OBJS = src/Main.o src/Game.o src/LoadImageCGA.o src/NativeBitmap.o src/MusicDOS.o src/CGARenderer.o OPL2LPT/controller.o OPL2LPT/timer.o OPL2LPT/OPL2.o \
+        src/CPackedFileReader.o\
+        src/IFileLoaderDelegate.o\
+        src/Common.o
+
 			
 TARGET = vianacga.exe
 
@@ -16,11 +20,17 @@ all:	$(TARGET)
 
 packager:
 	rm -f ./packer
-	g++ -std=c++14 -opacker packer.cpp
+	g++ -std=c++14 -opacker src/packer.cpp
 
-data:	packager
-	rm -f ./data.pfs
+res:	packager
+	rm -f ./cga.pfs
 	ls resCGA/*.*  | xargs ./packer
+	mv ./data.pfs ./cga.pfs
+
+gamedata:	packager
+	rm -f ./gamedata.pfs
+	ls data/*.*  | xargs ./packer
+	mv ./data.pfs ./gamedata.pfs
 
 clean:
 	rm -f $(OBJS) $(TARGET)

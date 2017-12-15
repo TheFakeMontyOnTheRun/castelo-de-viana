@@ -4,12 +4,8 @@
 
 namespace odb {
 
-    std::shared_ptr<NativeBitmap> loadBitmap(std::string path);
+    std::shared_ptr<NativeBitmap> loadBitmap(std::string path, std::shared_ptr<odb::IFileLoaderDelegate> fileLoader);
 
-    std::vector<char> readToBuffer(FILE *fileDescriptor);
-
-    std::string getResPath();
-
-    std::vector<std::shared_ptr<odb::NativeBitmap>> loadSpriteList(std::string listName);
+    std::vector<std::shared_ptr<odb::NativeBitmap>> loadSpriteList(std::string listName, std::shared_ptr<odb::IFileLoaderDelegate> fileLoader);
 }
 #endif
