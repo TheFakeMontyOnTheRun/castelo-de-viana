@@ -1,4 +1,4 @@
-CXXFLAGS = -g -c -DCGA -Istb -Iinclude -IOPL2LPT -O6 -Ofast  -funroll-loops -funroll-all-loops -fomit-frame-pointer -fno-exceptions -fno-rtti -ffast-math -mtune=i486 -march=i486 -fpermissive -Wno-narrowing
+CXXFLAGS = -g -c -DCGA -Istb -Iinclude -IOPL2LPT -O6 -Os  -funroll-loops -funroll-all-loops -fomit-frame-pointer -fno-exceptions -fno-rtti -ffast-math -mtune=i486 -march=i486 -fpermissive -Wno-narrowing
 
 LDFLAGS = -lemu
 
