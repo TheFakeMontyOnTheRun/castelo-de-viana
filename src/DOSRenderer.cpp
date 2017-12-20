@@ -20,8 +20,6 @@ int desiredTimeSlice = 75;
 clock_t t0;
 clock_t t1;
 clock_t ms;
-std::array<unsigned char, 320 * 200> mFinalBuffer;
-std::array<unsigned int, 320 * 200> buffer;
 
 std::array<uint8_t, 320 * 100 / 4> evenBuffer;
 std::array<uint8_t, 320 * 100 / 4> oddBuffer;
@@ -128,9 +126,6 @@ uint8_t getPaletteEntry( uint32_t origin ) {
 }
 
 void plot(int x, int y, int color) {
-    if (videoType == kVGA ) {
-        buffer[(320 * y) + x] = color;
-    } else {
         int b, m; /* bits and mask */
         unsigned char c;
         /* address section differs depending on odd/even scanline */
@@ -182,13 +177,13 @@ void plot(int x, int y, int color) {
         } else {
             evenBuffer[offset] = c;
         }
-    }
 }
 
 int frame = 0;
 
 void copyImageBufferToVideoMemory(const std::array<unsigned int, 320 * 200>& imageBuffer ) {
     if ( videoType == kVGA ) {
+        std::array<unsigned char, 320 * 200> mFinalBuffer;
         int origin = 0;
         int value = 0;
         int last = 0;
@@ -199,15 +194,7 @@ void copyImageBufferToVideoMemory(const std::array<unsigned int, 320 * 200>& ima
 
         for (int y = 0; y < 200; ++y) {
 
-            if (y < 0 || y >= 200) {
-                continue;
-            }
-
             for (int x = 0; x < 320; ++x) {
-
-                if (x < 0 || x >= 320) {
-                    continue;
-                }
 
                 origin = *currentImageBufferPos;
                 last = *currentBufferPos;
@@ -232,25 +219,13 @@ void copyImageBufferToVideoMemory(const std::array<unsigned int, 320 * 200>& ima
         int value = 0;
         int last = 0;
         auto currentImageBufferPos = std::begin(imageBuffer);
-        auto currentBufferPos = std::begin(buffer);
 
         for (int y = 0; y < 200; ++y) {
-
-            if (y < 0 || y >= 200) {
-                continue;
-            }
-
             for (int x = 0; x < 320; ++x) {
 
-                if (x < 0 || x >= 320) {
-                    continue;
-                }
-
                 origin = *currentImageBufferPos;
-                last = *currentBufferPos;
 
                 if (last == origin) {
-                    currentBufferPos = std::next(currentBufferPos);
                     currentImageBufferPos = std::next(currentImageBufferPos);
                     continue;
                 }
@@ -278,9 +253,7 @@ void copyImageBufferToVideoMemory(const std::array<unsigned int, 320 * 200>& ima
                 }
 
                 plot(x, y, value);
-                *currentBufferPos = origin;
 
-                currentBufferPos = std::next(currentBufferPos);
                 currentImageBufferPos = std::next(currentImageBufferPos);
             }
         }
