@@ -15,7 +15,7 @@ set(SOURCE_FILES
         src/Main.cpp
         src/Game.cpp
         src/MusicSDL.cpp
-        src/LoadImageSDL.cpp
+        src/LoadImageCGA.cpp
         include/LoadImage.h
         src/NativeBitmap.cpp
         src/CPackedFileReader.cpp

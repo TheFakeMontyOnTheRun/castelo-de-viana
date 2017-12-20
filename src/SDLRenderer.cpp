@@ -15,6 +15,7 @@ using std::vector;
 #include "NativeBitmap.h"
 #include "IFileLoaderDelegate.h"
 #include "CPackedFileReader.h"
+#include "Renderer.h"
 #include "LoadImage.h"
 
 #include "Game.h"
@@ -34,6 +35,7 @@ double t1;
 double ms;
 SDL_Surface *video;
 ControlState toReturn;
+EVideoType videoType = kVGA;
 
 ControlState getControlState() {
 
@@ -252,7 +254,7 @@ void enterFullScreenMode() {
 }
 #endif
 
-void initVideo() {
+void initVideoFor(EVideoType unused) {
   SDL_Init( SDL_INIT_VIDEO );
 
 

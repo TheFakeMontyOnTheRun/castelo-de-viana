@@ -20,6 +20,11 @@ public:
     bool enter = false;
 };
 
+enum EVideoType : uint8_t {
+    kCGA,
+    kVGA,
+};
+
 ControlState getControlState();
 void copyImageBufferToVideoMemory(const std::array<unsigned int, 320 * 200>& imageBuffer );
 void onQuit();
@@ -28,9 +33,12 @@ void doneWithFrame();
 void soundFrequency(int frequency);
 void muteSound();
 void onQuit();
-void initVideo();
+void initVideoFor(EVideoType videoType);
 void setupOPL2(int instrument);
 void stopSounds();
 void soundTick();
 std::string getAssetsPath();
+
+extern EVideoType videoType;
+
 #endif //CASTLEVANIA_RENDERER_H_H

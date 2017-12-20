@@ -14,6 +14,7 @@ using std::vector;
 
 #include "IFileLoaderDelegate.h"
 #include "CPackedFileReader.h"
+#include "Renderer.h"
 #include "LoadImage.h"
 
 

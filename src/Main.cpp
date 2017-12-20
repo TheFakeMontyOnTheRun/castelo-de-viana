@@ -47,7 +47,6 @@ std::shared_ptr<odb::NativeBitmap> hero[6][2];
 std::array<unsigned int, 320 * 200> imageBuffer;
 std::shared_ptr<odb::NativeBitmap> currentScreen = nullptr;
 
-
 void initOPL2(int instrument) {
     setupOPL2(instrument);
 }
@@ -56,7 +55,7 @@ void prepareScreenFor(EScreen screenState) {
     muteSound();
     switch (screenState) {
         case kIntro:
-            currentScreen = odb::loadBitmap( (enableSecret ? "secret.dat" : "intro.png"), reader );
+            currentScreen = odb::loadBitmap( (enableSecret ? "secret.dat" : "intro.png"), reader, videoType  );
 //            playMusic(
 //                    "001|eefggfedccdeeddeefgg|eefggfedccdeeddeefgg|eefggfedccdeeddeefgg");
             break;
@@ -64,11 +63,11 @@ void prepareScreenFor(EScreen screenState) {
             currentScreen = nullptr;
             break;
         case kGameOver:
-            currentScreen = odb::loadBitmap( "gameover.png", reader );
+            currentScreen = odb::loadBitmap( "gameover.png", reader, videoType );
             playMusic("020|gggefffd|gggefffd|gggefffd");
             break;
         case kVictory:
-            currentScreen = odb::loadBitmap( "victory.png", reader );
+            currentScreen = odb::loadBitmap( "victory.png", reader, videoType );
 //            playMusic(
 //                    "e8e8f8g8g8f8e8d8c8c8d8e8e8d12d4e8e8f8g8g8f8e8d8c8c8d8e8d8c12c4d8d8e8c8d8e12f12e8c8d8e12f12e8d8c8d8p8e8e8f8g8g8f8e8d8c8c8d8e8d8c12c4");
             break;
@@ -86,9 +85,9 @@ void loadTiles(std::vector<std::string> tilesToLoad) {
     for (const auto &tile : tilesToLoad) {
 
         if (tile.substr(tile.length() - 4) == ".png") {
-            tiles.push_back({odb::loadBitmap( tile, reader )});
+            tiles.push_back({odb::loadBitmap( tile, reader, videoType )});
         } else {
-            tiles.push_back(odb::loadSpriteList( tile, reader));
+            tiles.push_back(odb::loadSpriteList( tile, reader, videoType));
         }
     }
 }
@@ -437,15 +436,15 @@ void render() {
         }
     }
 
-#ifdef CGA
     int bossHealthColour = 10;
     int heroHealthColour = 9;
     int backgroundColour = 8;
-#else
-    int bossHealthColour = 0xFFFF0000;
-    int heroHealthColour = 0xFFFFFFFF;
-    int backgroundColour = 0xFFAAAAAA;
-#endif
+
+    if (videoType == kVGA ) {
+        bossHealthColour = 0xFFFF0000;
+        heroHealthColour = 0xFFFFFFFF;
+        backgroundColour = 0xFFAAAAAA;
+    }
 
     if (ticksToShowHealth > 0) {
         for ( int y = 192; y < 200; ++y ) {
@@ -588,45 +587,45 @@ void sysTick() {
 void loadGraphics() {
     reader = std::make_shared<odb::CPackedFileReader>(getAssetsPath());
 
-    pausedSign = odb::loadBitmap("paused.png", reader);
+    pausedSign = odb::loadBitmap("paused.png", reader, videoType);
 
-    arrowSprite[0] = odb::loadBitmap("arrow.png", reader);
-    arrowSprite[1] = odb::loadBitmap("arrowup.png", reader);
+    arrowSprite[0] = odb::loadBitmap("arrow.png",  reader, videoType);
+    arrowSprite[1] = odb::loadBitmap("arrowup.png",  reader, videoType);
 
-    doorStates[0] = odb::loadBitmap("door0.png", reader);
-    doorStates[1] = odb::loadBitmap("door1.png", reader);
+    doorStates[0] = odb::loadBitmap("door0.png",  reader, videoType);
+    doorStates[1] = odb::loadBitmap("door1.png",  reader, videoType);
 
-    foeSprites[0] = odb::loadBitmap("foe0.png", reader);
-    foeSprites[1] = odb::loadBitmap("foe1.png", reader);
+    foeSprites[0] = odb::loadBitmap("foe0.png",  reader, videoType);
+    foeSprites[1] = odb::loadBitmap("foe1.png",  reader, videoType);
 
-    itemSprites[0] = odb::loadBitmap("meat.png", reader);
-    itemSprites[1] = odb::loadBitmap("key.png", reader);
+    itemSprites[0] = odb::loadBitmap("meat.png",  reader, videoType);
+    itemSprites[1] = odb::loadBitmap("key.png",  reader, videoType);
 
-    gargoyleSprites[0] = odb::loadBitmap("garg0.png", reader);
-    gargoyleSprites[1] = odb::loadBitmap("garg1.png", reader);
+    gargoyleSprites[0] = odb::loadBitmap("garg0.png",  reader, videoType);
+    gargoyleSprites[1] = odb::loadBitmap("garg1.png",  reader, videoType);
 
-    capirotoSprites[0] = odb::loadBitmap("capi0.png", reader);
-    capirotoSprites[1] = odb::loadBitmap("capi1.png", reader);
+    capirotoSprites[0] = odb::loadBitmap("capi0.png",  reader, videoType);
+    capirotoSprites[1] = odb::loadBitmap("capi1.png",  reader, videoType);
 
-    handSprites[0] = odb::loadBitmap("hand0.png", reader);
-    handSprites[1] = odb::loadBitmap("hand0.png", reader);
+    handSprites[0] = odb::loadBitmap("hand0.png",  reader, videoType);
+    handSprites[1] = odb::loadBitmap("hand0.png",  reader, videoType);
 
-    tinhosoSprites[0] = odb::loadBitmap("tinhoso0.png", reader);
-    tinhosoSprites[1] = odb::loadBitmap("tinhoso1.png", reader);
+    tinhosoSprites[0] = odb::loadBitmap("tinhoso0.png",  reader, videoType);
+    tinhosoSprites[1] = odb::loadBitmap("tinhoso1.png",  reader, videoType);
 
 
-    hero[0][0] = odb::loadBitmap( "up0.png", reader);
-    hero[0][1] = odb::loadBitmap( "up1.png", reader);
-    hero[1][0] = odb::loadBitmap( "hero0.png", reader);
-    hero[1][1] = odb::loadBitmap( "hero1.png", reader);
-    hero[2][0] = odb::loadBitmap( "down0.png", reader);
-    hero[2][1] = odb::loadBitmap( "down1.png", reader);
-    hero[3][0] = odb::loadBitmap( "attack0.png", reader );
-    hero[3][1] = odb::loadBitmap( "attack0.png", reader );
-    hero[4][0] = odb::loadBitmap( "jump0.png", reader );
-    hero[4][1] = odb::loadBitmap( "jump0.png", reader);
-    hero[5][0] = odb::loadBitmap( "up0.png", reader);
-    hero[5][1] = odb::loadBitmap( "up1.png", reader);
+    hero[0][0] = odb::loadBitmap( "up0.png",  reader, videoType);
+    hero[0][1] = odb::loadBitmap( "up1.png",  reader, videoType);
+    hero[1][0] = odb::loadBitmap( "hero0.png",  reader, videoType);
+    hero[1][1] = odb::loadBitmap( "hero1.png",  reader, videoType);
+    hero[2][0] = odb::loadBitmap( "down0.png",  reader, videoType);
+    hero[2][1] = odb::loadBitmap( "down1.png",  reader, videoType);
+    hero[3][0] = odb::loadBitmap( "attack0.png", reader, videoType);
+    hero[3][1] = odb::loadBitmap( "attack0.png", reader, videoType);
+    hero[4][0] = odb::loadBitmap( "jump0.png", reader, videoType);
+    hero[4][1] = odb::loadBitmap( "jump0.png",  reader, videoType);
+    hero[5][0] = odb::loadBitmap( "up0.png",  reader, videoType);
+    hero[5][1] = odb::loadBitmap( "up1.png",  reader, videoType);
 }
 
 int main(int argc, char **argv) {
@@ -646,13 +645,18 @@ int main(int argc, char **argv) {
         if ( !std::strcmp(argv[1], "secret")) {
             enableSecret = true;
         }
+
+        if ( !std::strcmp(argv[1], "vga")) {
+            videoType = kVGA;
+        }
     }
+    initVideoFor(videoType);
     loadGraphics();
     init();
     prepareScreenFor(kIntro);
 
 
-    initVideo();
+
 
 #ifndef __EMSCRIPTEN__
     while (!done) {

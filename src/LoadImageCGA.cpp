@@ -1,3 +1,4 @@
+#ifdef __DJGPP__
 #include <sys/movedata.h>
 #include <sys/farptr.h>
 #include <sys/nearptr.h>
@@ -6,6 +7,7 @@
 #include <pc.h>
 #include <bios.h>
 #include <conio.h>
+#endif
 
 #include <cstdlib>
 #include <cstdio>
@@ -23,8 +25,8 @@ using std::vector;
 #include "NativeBitmap.h"
 #include "IFileLoaderDelegate.h"
 #include "CPackedFileReader.h"
+#include "Renderer.h"
 #include "LoadImage.h"
-
 
 
 #define STB_IMAGE_IMPLEMENTATION
@@ -33,7 +35,7 @@ using std::vector;
 
 namespace odb {
 
-    std::vector<std::shared_ptr<odb::NativeBitmap>> loadSpriteList(std::string listName, std::shared_ptr<odb::IFileLoaderDelegate> fileLoader) {
+    std::vector<std::shared_ptr<odb::NativeBitmap>> loadSpriteList(std::string listName, std::shared_ptr<odb::IFileLoaderDelegate> fileLoader, EVideoType videoType) {
 
 
         auto buffer = fileLoader->loadFileFromPath(listName);
@@ -49,7 +51,7 @@ namespace odb {
                 auto filename = std::string( bufferBegin + lastPoint, bufferBegin + lastPoint + since - 1 );
                 lastPoint += since;
                 if ( !filename.empty()) {
-                    tilesToLoad.push_back(odb::loadBitmap( filename, fileLoader ));
+                    tilesToLoad.push_back(odb::loadBitmap( filename, fileLoader, videoType ));
                 }
                 since = 0;
             }
@@ -60,64 +62,83 @@ namespace odb {
         return tilesToLoad;
     }
 
-    std::shared_ptr<NativeBitmap> loadBitmap(std::string path, std::shared_ptr<odb::IFileLoaderDelegate> fileLoader) {
-
-        //std::cout << "loading " << path << std::endl;
-
+    std::shared_ptr<NativeBitmap> loadBitmap(std::string path, std::shared_ptr<odb::IFileLoaderDelegate> fileLoader, EVideoType videoType) {
         auto buffer = fileLoader->loadBinaryFileFromPath(path);
         int xSize;
         int ySize;
         int components;
+        int *rawData;
+        if (videoType == kVGA ) {
+            auto image = stbi_load_from_memory((const stbi_uc *) buffer.data(), buffer.size(), &xSize, &ySize, &components, 4);
+            rawData = new int[xSize * ySize];
 
-        auto image = stbi_load_from_memory((const stbi_uc *) buffer.data(), buffer.size(), &xSize, &ySize, &components,
-                                           1);
-        auto rawData = new int[xSize * ySize];
+            std::memcpy( rawData, image, xSize * ySize * sizeof( int ) );
 
-        for (int y = 0; y < ySize; ++y) {
-            for (int x = 0; x < xSize; ++x) {
-                int pixel = image[(y * xSize) + x];
-                switch (pixel) {
-                    case 154:
-                        pixel = 10;
-                        break;
-                    case 103:
-                        pixel = 6;
-                        break;
-                    case 51:
-                        pixel = 2;
-                        break;
-                    case 34:
-                        pixel = 1;
-                        break;
-                    case 108:
-                        pixel = 9;
-                        break;
-                    case 68:
-                        pixel = 5;
-                        break;
-                    case 0:
-                    case 102:
-                    case 101:
-                        pixel = 4;
-                        break;
-                    case 85:
-                        pixel = 3;
-                        break;
-                    case 255:
-                        pixel = 11;
-                        break;
-                    case 149:
-                        pixel = 0;
-                        break;
-                    default:
-                        pixel = 0;
-                        break;
+            for ( int c = 0; c < xSize * ySize; ++c  ) {
+                int origin = rawData[ c ];
+
+                int a = (origin & 0xFF000000) >> 24;
+                int r = (origin & 0x00FF0000) >> 16;
+                int g = (origin & 0x0000FF00) >> 8;
+                int b = (origin & 0x000000FF);
+
+                if ( a < 128 ) {
+                    origin = 0;
                 }
-                rawData[(y * xSize) + x] = pixel;
+
+                rawData[ c ] = origin;
             }
+            stbi_image_free(image);
+        } else {
+            auto image = stbi_load_from_memory((const stbi_uc *) buffer.data(), buffer.size(), &xSize, &ySize, &components, 1);
+            rawData = new int[xSize * ySize];
+
+            for (int y = 0; y < ySize; ++y) {
+                for (int x = 0; x < xSize; ++x) {
+                    int pixel = image[(y * xSize) + x];
+                    switch (pixel) {
+                        case 154:
+                            pixel = 10;
+                            break;
+                        case 103:
+                            pixel = 6;
+                            break;
+                        case 51:
+                            pixel = 2;
+                            break;
+                        case 34:
+                            pixel = 1;
+                            break;
+                        case 108:
+                            pixel = 9;
+                            break;
+                        case 68:
+                            pixel = 5;
+                            break;
+                        case 0:
+                        case 102:
+                        case 101:
+                            pixel = 4;
+                            break;
+                        case 85:
+                            pixel = 3;
+                            break;
+                        case 255:
+                            pixel = 11;
+                            break;
+                        case 149:
+                            pixel = 0;
+                            break;
+                        default:
+                            pixel = 0;
+                            break;
+                    }
+                    rawData[(y * xSize) + x] = pixel;
+                }
+            }
+            stbi_image_free(image);
         }
 
-        stbi_image_free(image);
 
         return (std::make_shared<odb::NativeBitmap>(xSize, ySize, rawData));
     }

@@ -4,7 +4,7 @@ LDFLAGS = -lemu
 
 CXX = i586-pc-msdosdjgpp-g++
 
-OBJS = src/Main.o src/Game.o src/LoadImageCGA.o src/NativeBitmap.o src/MusicDOS.o src/CGARenderer.o OPL2LPT/controller.o OPL2LPT/timer.o OPL2LPT/OPL2.o \
+OBJS = src/Main.o src/Game.o src/LoadImageCGA.o src/NativeBitmap.o src/MusicDOS.o src/DOSRenderer.o OPL2LPT/controller.o OPL2LPT/timer.o OPL2LPT/OPL2.o \
         src/CPackedFileReader.o\
         src/IFileLoaderDelegate.o\
         src/Common.o
