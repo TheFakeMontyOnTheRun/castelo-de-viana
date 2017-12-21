@@ -44,7 +44,7 @@ vector<char> odb::CPackedFileReader::loadBinaryFileFromPath(const std::string &p
     mDataPack = fopen(mPackPath.c_str(), "rb");
     uint32_t offset = mOffsets[ path ];
     if ( offset == 0 ) {
-        printf("failed to load %s", path.c_str());
+        printf("failed to load %s from offset %d", path.c_str(), offset );
         exit(-1);
     }
 

@@ -1,6 +1,9 @@
-#include <time.h>
+#include <ctime>
 #include <unistd.h>
 #include <array>
+#include <string>
+#include <cstdlib>
+#include <cmath>
 #include <memory>
 #include <vector>
 #include <algorithm>

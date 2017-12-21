@@ -1,3 +1,6 @@
+#include <string>
+#include <cstdlib>
+#include <cmath>
 #include <array>
 #include <memory>
 #include <vector>

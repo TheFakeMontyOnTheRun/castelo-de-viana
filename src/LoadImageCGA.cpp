@@ -1,13 +1,4 @@
-#ifdef __DJGPP__
-#include <sys/movedata.h>
-#include <sys/farptr.h>
-#include <sys/nearptr.h>
-#include <dpmi.h>
-#include <go32.h>
-#include <pc.h>
-#include <bios.h>
-#include <conio.h>
-#endif
+
 
 #include <cstdlib>
 #include <cstdio>
