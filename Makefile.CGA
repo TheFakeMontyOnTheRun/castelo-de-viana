@@ -10,7 +10,7 @@ OBJS = src/Main.o src/Game.o src/LoadImageCGA.o src/NativeBitmap.o src/MusicDOS.
         src/Common.o
 
 			
-TARGET = vianacga.exe
+TARGET = viana.exe
 
 $(TARGET):	$(OBJS)
 	$(CXX) -o $(TARGET) $(OBJS) $(LDFLAGS)
