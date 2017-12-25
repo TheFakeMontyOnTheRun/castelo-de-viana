@@ -20,26 +20,16 @@ _go32_dpmi_seginfo OldISR, NewISR;
 
 static volatile unsigned long timer_ticks;
 static unsigned timer_counter;
-static unsigned timer_sum;
 
 void timer_handler() {
-    unsigned short old_sum = timer_sum;
     ++timer_ticks;
 
-    timer_sum += timer_counter;
-
-
-    if (timer_sum < old_sum) {
-        _go32_dpmi_chain_protected_mode_interrupt_vector(TIMER, &OldISR);
-    } else {
-        outp(0x20, 0x20);
-    }
+    outp(0x20, 0x20);
 }
 
 void timer_reset(unsigned short frequency) {
     timer_ticks = 0;
     timer_counter = 0x1234DD / frequency;
-    timer_sum = 0;
 }
 
 void timer_setup(unsigned short frequency) {
@@ -47,7 +37,6 @@ void timer_setup(unsigned short frequency) {
 
     LOCK_FUNCTION(timer_handler);
     LOCK_VARIABLE(timer_ticks);
-    LOCK_VARIABLE(timer_sum);
 
     _go32_dpmi_get_protected_mode_interrupt_vector(TIMER, &OldISR);
     NewISR.pm_offset = (int) timer_handler;
