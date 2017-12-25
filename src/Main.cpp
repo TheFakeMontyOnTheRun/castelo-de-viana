@@ -20,6 +20,8 @@ using std::vector;
 #include <emscripten/html5.h>
 #endif
 
+#include "../OPL2LPT/controller.h"
+
 bool enableSecret = false;
 
 std::shared_ptr<odb::CPackedFileReader> reader;
@@ -59,6 +61,7 @@ void prepareScreenFor(EScreen screenState) {
     switch (screenState) {
         case kIntro:
             currentScreen = odb::loadBitmap( (enableSecret ? "secret.dat" : "intro.png"), reader, videoType  );
+            hackTune();
 //            playMusic(
 //                    "001|eefggfedccdeeddeefgg|eefggfedccdeeddeefgg|eefggfedccdeeddeefgg");
             break;
@@ -71,8 +74,9 @@ void prepareScreenFor(EScreen screenState) {
             break;
         case kVictory:
             currentScreen = odb::loadBitmap( "victory.png", reader, videoType );
-            playMusic(
-                    "e8e8f8g8g8f8e8d8c8c8d8e8e8d12d4e8e8f8g8g8f8e8d8c8c8d8e8d8c12c4d8d8e8c8d8e12f12e8c8d8e12f12e8d8c8d8p8e8e8f8g8g8f8e8d8c8c8d8e8d8c12c4");
+            hackTune();
+//            playMusic(
+//                    "e8e8f8g8g8f8e8d8c8c8d8e8e8d12d4e8e8f8g8g8f8e8d8c8c8d8e8d8c12c4d8d8e8c8d8e12f12e8c8d8e12f12e8d8c8d8p8e8e8f8g8g8f8e8d8c8c8d8e8d8c12c4");
             break;
 
     }
@@ -568,8 +572,9 @@ void sysTick() {
                 isPausePressed = true;
                 break;
             case kGameOver:
-                screen = kIntro;
+                screen = kGame;
                 prepareScreenFor(screen);
+                init();
                 break;
             case kVictory:
                 screen = kIntro;

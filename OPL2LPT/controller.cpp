@@ -179,11 +179,21 @@ struct Tune {
     int index;
 };
 
+const char *tune = "eefggfedccdeeddeefgg";
+
 const char *tuneData[3] = {
-        "eefggfedccdeeddeefgg",
-        "eefggfedccdeeddeefgg",
-        "eefggfedccdeeddeefgg"
+        "",
+        "",
+        ""
 };
+
+void hackTune() {
+    music_shutdown();
+    tuneData[0] = tune;
+    tuneData[1] = tune;
+    tuneData[2] = tune;
+    music_setup();
+}
 
 
 OPL2 opl2;
