@@ -87,7 +87,7 @@ void playSound(const std::vector<int> &sound) {
 }
 
 
-void playMusic(const std::string &musicTrack) {
+void playMusic(int instrument, const std::string &musicTrack) {
     if (enableOPL2) {
         if (musicTrack.empty()) {
             music_set("", "", "");
@@ -151,7 +151,15 @@ void muteSound() {
         nosound();
         melody.clear();
     } else {
-        playMusic("");
+        playMusic(0, "");
+    }
+}
+
+void playTune(const std::string &music) {
+    if (enableOPL2) {
+        hackTune(music.c_str());
+    } else {
+        playMusic(1, "001|" + music + "|" + music + "|" + music );
     }
 }
 

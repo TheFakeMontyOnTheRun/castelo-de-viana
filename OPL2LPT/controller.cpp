@@ -179,19 +179,21 @@ struct Tune {
     int index;
 };
 
-const char *tune = "eefggfedccdeeddeefgg";
-
 const char *tuneData[3] = {
         "",
         "",
         ""
 };
 
-void hackTune() {
+
+char tuneBuffer[255];
+void hackTune(const char *tune) {
     music_shutdown();
-    tuneData[0] = tune;
-    tuneData[1] = tune;
-    tuneData[2] = tune;
+    music_instrument = 20;
+    snprintf(tuneBuffer,255, "%s", tune);
+    tuneData[0] = tuneBuffer;
+    tuneData[1] = tuneBuffer;
+    tuneData[2] = tuneBuffer;
     music_setup();
 }
 

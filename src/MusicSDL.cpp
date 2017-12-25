@@ -22,7 +22,7 @@ using std::vector;
 #include <vector>
 #include "Game.h"
 
-void playMusic(const std::string &music) {
+void playMusic(int instrument, const std::string &music) {
 }
 
 void setupOPL2(int instrument) {

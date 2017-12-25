@@ -89,6 +89,8 @@ void enforceScreenLimits();
 
 void prepareScreenFor(EScreen screenState);
 
-void playMusic(const std::string &music);
+void playMusic(int instrument, const std::string &music);
+
+void playTune(const std::string &music);
 
 #endif

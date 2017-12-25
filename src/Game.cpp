@@ -70,7 +70,7 @@ updateHero(bool isOnGround, bool isJumping, bool isUpPressed, bool isDownPressed
     if (isJumping) {
         if (isOnGround) {
             player.mSpeed.mY = -12;
-            playMusic(jumpSound);
+            playMusic(46, jumpSound);
         }
         player.mStance = kJumping;
     }
@@ -89,7 +89,7 @@ updateHero(bool isOnGround, bool isJumping, bool isUpPressed, bool isDownPressed
                 arrows.push_back(a);
                 player.mStance = kUp;
                 arrowCooldown = 4;
-                playMusic(arrowSound);
+                playMusic(44, arrowSound);
             }
         }
     }
@@ -130,7 +130,7 @@ updateHero(bool isOnGround, bool isJumping, bool isUpPressed, bool isDownPressed
 
     if (isAttacking) {
         player.mStance = kAttacking;
-        playMusic(swordSound);
+        playMusic(44, swordSound);
     }
 
     if (isUsingSpecial && arrowCooldown <= 0) {
@@ -142,7 +142,7 @@ updateHero(bool isOnGround, bool isJumping, bool isUpPressed, bool isDownPressed
         arrows.push_back(a);
         player.mStance = kAltAttacking;
         arrowCooldown = 4;
-        playMusic(arrowSound);
+        playMusic(44, arrowSound);
     }
 
     if (isPausePressed) {
@@ -245,7 +245,7 @@ void hurtPlayer(int ammount) {
     player.mHealth -= ammount;
     ticksUntilVulnerable = 14;
     ticksToShowHealth = 14;
-    playMusic(hurtSound);
+    playMusic(53, hurtSound);
 }
 
 bool isOnDoor(const Actor &actor) {
@@ -425,16 +425,16 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
             if (item.mType == kKey && !hasKey) {
                 hasKey = true;
                 itemsToRemove.push_back(item);
-                playMusic(pickSound);
+                playMusic(54, pickSound);
                 for (auto &door : doors) {
                     door.mType = EActorType::kOpenDoor;
                 }
             } else if (item.mType == kMeat) {
                 if (player.mHealth < 10) {
-                    playMusic(pickSound);
+                    playMusic(54, pickSound);
                     itemsToRemove.push_back(item);
                     player.mHealth = 10;
-                    playMusic(pickSound);
+                    playMusic(54, pickSound);
                 }
                 ticksToShowHealth = 14;
             }
