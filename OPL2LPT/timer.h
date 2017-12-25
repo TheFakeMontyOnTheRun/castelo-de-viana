@@ -7,6 +7,4 @@ unsigned long timer_get();
 void timer_reset(unsigned short frequency);
 
 void hlt(void);
-#pragma aux hlt = "hlt";
-
 #endif

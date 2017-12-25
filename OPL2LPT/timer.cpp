@@ -72,6 +72,3 @@ unsigned long timer_get() {
     enable();
     return result;
 }
-
-void hlt() {
-}

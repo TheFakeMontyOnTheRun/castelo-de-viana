@@ -71,8 +71,8 @@ void prepareScreenFor(EScreen screenState) {
             break;
         case kVictory:
             currentScreen = odb::loadBitmap( "victory.png", reader, videoType );
-//            playMusic(
-//                    "e8e8f8g8g8f8e8d8c8c8d8e8e8d12d4e8e8f8g8g8f8e8d8c8c8d8e8d8c12c4d8d8e8c8d8e12f12e8c8d8e12f12e8d8c8d8p8e8e8f8g8g8f8e8d8c8c8d8e8d8c12c4");
+            playMusic(
+                    "e8e8f8g8g8f8e8d8c8c8d8e8e8d12d4e8e8f8g8g8f8e8d8c8c8d8e8d8c12c4d8d8e8c8d8e12f12e8c8d8e12f12e8d8c8d8p8e8e8f8g8g8f8e8d8c8c8d8e8d8c12c4");
             break;
 
     }
@@ -634,7 +634,7 @@ void loadGraphics() {
 int main(int argc, char **argv) {
 
     if ( argc >= 2 ) {
-      //  enableSecret = true;
+
         if ( !std::strcmp(argv[1], "opl2lpt")) {
             int instrument = 80;
 
@@ -663,6 +663,7 @@ int main(int argc, char **argv) {
 
 #ifndef __EMSCRIPTEN__
     while (!done) {
+        soundTick();
         sysTick();
     }
 #else

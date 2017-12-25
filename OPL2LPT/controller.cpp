@@ -180,9 +180,9 @@ struct Tune {
 };
 
 const char *tuneData[3] = {
-        "",
-        "",
-        ""
+        "eefggfedccdeeddeefgg",
+        "eefggfedccdeeddeefgg",
+        "eefggfedccdeeddeefgg"
 };
 
 
@@ -232,7 +232,6 @@ void music_set(const char* melody1, const char* melody2, const char* melody3) {
 }
 
 void music_setup() {
-    std::cout << "instrument " << music_instrument << std::endl;
     tempo = 200;
 
     // Initialize 3 channels of the tune.
@@ -286,8 +285,6 @@ void music_loop() {
     if (!busy) {
         music_set("", "", "");
     }
-
-    hlt();
 }
 
 
