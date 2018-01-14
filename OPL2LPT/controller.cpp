@@ -11,6 +11,7 @@
  */
 #include <cstring>
 #include <iostream>
+#include <string>
 #include "OPL2.h"
 #include "midi_instruments.h"
 #include "timer.h"

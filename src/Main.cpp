@@ -47,7 +47,7 @@ std::shared_ptr<odb::NativeBitmap> tinhosoSprites[2];
 
 std::shared_ptr<odb::NativeBitmap> hero[6][2];
 
-std::array<unsigned int, 320 * 200> imageBuffer;
+std::array<uint8_t, 320 * 200> imageBuffer;
 std::shared_ptr<odb::NativeBitmap> currentScreen = nullptr;
 
 void initOPL2(int instrument) {
@@ -94,7 +94,17 @@ void loadTiles(std::vector<std::string> tilesToLoad) {
 }
 
 void render() {
-    std::fill(std::begin(imageBuffer), std::end(imageBuffer), 4);
+
+    uint8_t transparency;
+
+    if ( videoType == kCGA ) {
+        std::fill(std::begin(imageBuffer), std::end(imageBuffer), 4);
+        transparency = 0;
+    } else {
+        std::fill(std::begin(imageBuffer), std::end(imageBuffer), 0);
+        transparency = getPaletteEntry(0x00FF00);
+    }
+
 
     if (currentScreen != nullptr) {
 
@@ -118,7 +128,7 @@ void render() {
     for (int ty = 0; ty < 6; ++ty) {
         for (int tx = 0; tx < 10; ++tx) {
             std::shared_ptr<odb::NativeBitmap> tile;
-            int *pixelData;
+            uint8_t *pixelData;
             y0 = (ty * 32);
             y1 = 32 + (ty * 32);
             x0 = (tx * 32);
@@ -133,23 +143,20 @@ void render() {
 
                 pixel = 4;
                 for (int y = y0; y < y1; ++y) {
-                    if (y < 0 || y >= 200) {
-                        continue;
-                    }
+
+                    auto sourceLine = pixelData + (32 * (y - y0));
+                    auto destLine = &imageBuffer[0] + (320 * y) + x0;
 
                     for (int x = x0; x < x1; ++x) {
 
-                        if (x < 0 || x >= 320) {
-                            continue;
+                        pixel = *sourceLine;
+
+                        if (pixel != transparency) {
+                            *destLine = pixel;
                         }
 
-                        pixel = (pixelData[(32 * (y - y0)) + (x - x0)]);
-
-                        if (pixel == 0) {
-                            continue;
-                        }
-
-                        imageBuffer[(320 * y) + x] = pixel;
+                        ++sourceLine;
+                        ++destLine;
                     }
                 }
             }
@@ -163,30 +170,26 @@ void render() {
                 pixel = 4;
                 for (int y = y0; y < y1; ++y) {
 
-                    if (y < 0 || y >= 200) {
-                        continue;
-                    }
+                    auto sourceLine = pixelData + (32 * (y - y0));
+                    auto destLine = &imageBuffer[0] + (320 * y) + x0;
 
                     for (int x = x0; x < x1; ++x) {
 
-                        if (x < 0 || x >= 320) {
-                            continue;
+                        pixel = *sourceLine;
+
+                        if (pixel != transparency) {
+                            *destLine = pixel;
                         }
 
-                        pixel = (pixelData[(32 * (y - y0)) + (x - x0)]);
-
-                        if (pixel == 0) {
-                            continue;
-                        }
-
-                        imageBuffer[(320 * y) + x] = pixel;
+                        ++sourceLine;
+                        ++destLine;
                     }
                 }
             }
         }
     }
 
-    int *pixelData;
+    uint8_t *pixelData;
 
     for (const auto &door : doors) {
         pixelData = doorStates[door.mType - EActorType::kClosedDoor]->getPixelData();
@@ -205,7 +208,7 @@ void render() {
             for (int x = x0; x < x1; ++x) {
                 pixel = (pixelData[(32 * (y - y0)) + ((x - x0))]);
 
-                if (pixel == 0) {
+                if (pixel == transparency) {
                     continue;
                 }
 
@@ -247,7 +250,7 @@ void render() {
                     pixel = (pixelData[(spriteWidth * (y - y0)) + ((spriteWidth - 1) - (x - x0))]);
                 }
 
-                if (pixel == 0) {
+                if (pixel == transparency) {
                     continue;
                 }
 
@@ -289,7 +292,7 @@ void render() {
                 }
 
 
-                if (pixel == 0) {
+                if (pixel == transparency) {
                     continue;
                 }
 
@@ -348,7 +351,7 @@ void render() {
                 }
 
 
-                if (pixel == 0) {
+                if (pixel == transparency) {
                     continue;
                 }
 
@@ -377,7 +380,7 @@ void render() {
             for (int x = x0; x < x1; ++x) {
                 pixel = (pixelData[(32 * (y - y0)) + ((x - x0))]);
 
-                if (pixel == 0) {
+                if (pixel == transparency) {
                     continue;
                 }
 
@@ -406,7 +409,7 @@ void render() {
             for (int x = x0; x < x1; ++x) {
                 pixel = (pixelData[(32 * (y - y0)) + ((x - x0))]);
 
-                if (pixel == 0) {
+                if (pixel == transparency) {
                     continue;
                 }
 

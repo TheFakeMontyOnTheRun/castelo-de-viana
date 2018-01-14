@@ -26,7 +26,7 @@ enum EVideoType : uint8_t {
 };
 
 ControlState getControlState();
-void copyImageBufferToVideoMemory(const std::array<unsigned int, 320 * 200>& imageBuffer );
+void copyImageBufferToVideoMemory(const std::array<uint8_t , 320 * 200>& imageBuffer );
 void onQuit();
 void beginFrame();
 void doneWithFrame();
@@ -37,6 +37,7 @@ void initVideoFor(EVideoType videoType);
 void setupOPL2(int instrument);
 void stopSounds();
 void soundTick();
+uint8_t getPaletteEntry( uint32_t origin );
 std::string getAssetsPath();
 
 extern EVideoType videoType;

@@ -4,20 +4,23 @@
 
 #ifndef LESSON10_NATIVEBITMAP_H
 #define LESSON10_NATIVEBITMAP_H
+
+#include <cstdint>
+
 namespace odb {
     class NativeBitmap {
         int mWidth;
         int mHeight;
-        int *mRawData;
+        uint8_t *mRawData;
 
     public:
-        NativeBitmap(int aWidth, int aHeight, int *aRawData);
+        NativeBitmap(int aWidth, int aHeight, uint8_t *aRawData);
 
         int getWidth() const;
 
         int getHeight() const;
 
-        int *getPixelData() const;
+        uint8_t *getPixelData() const;
 
         ~NativeBitmap();
     };

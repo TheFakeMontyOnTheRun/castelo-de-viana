@@ -59,10 +59,12 @@ namespace odb {
         int ySize;
         int components;
         int *rawData;
+        uint8_t *data8;
+
         if (videoType == kVGA ) {
             auto image = stbi_load_from_memory((const stbi_uc *) buffer.data(), buffer.size(), &xSize, &ySize, &components, 4);
             rawData = new int[xSize * ySize];
-
+            data8 = new uint8_t[ xSize * ySize ];
             std::memcpy( rawData, image, xSize * ySize * sizeof( int ) );
 
             for ( int c = 0; c < xSize * ySize; ++c  ) {
@@ -74,16 +76,19 @@ namespace odb {
                 int b = (origin & 0x000000FF);
 
                 if ( a < 128 ) {
-                    origin = 0;
+                    origin = 0x00FF00;
                 }
 
                 rawData[ c ] = origin;
             }
             stbi_image_free(image);
+            for ( auto c = 0; c < ( xSize * ySize ); ++c ) {
+                data8[ c ] = getPaletteEntry( rawData[ c ] );
+            }
         } else {
             auto image = stbi_load_from_memory((const stbi_uc *) buffer.data(), buffer.size(), &xSize, &ySize, &components, 1);
             rawData = new int[xSize * ySize];
-
+            data8 = new uint8_t[ xSize * ySize ];
             for (int y = 0; y < ySize; ++y) {
                 for (int x = 0; x < xSize; ++x) {
                     int pixel = image[(y * xSize) + x];
@@ -128,9 +133,17 @@ namespace odb {
                 }
             }
             stbi_image_free(image);
+
+            for ( auto c = 0; c < ( xSize * ySize ); ++c ) {
+                data8[ c ] = ( rawData[ c ] );
+            }
         }
 
 
-        return (std::make_shared<odb::NativeBitmap>(xSize, ySize, rawData));
+
+
+
+
+        return (std::make_shared<odb::NativeBitmap>(xSize, ySize, data8));
     }
 }

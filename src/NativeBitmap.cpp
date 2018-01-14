@@ -12,11 +12,11 @@ namespace odb {
         return this->mHeight;
     }
 
-    int *NativeBitmap::getPixelData() const {
+    uint8_t *NativeBitmap::getPixelData() const {
         return this->mRawData;
     }
 
-    NativeBitmap::NativeBitmap(int aWidth, int aHeight, int *aRawData) :
+    NativeBitmap::NativeBitmap(int aWidth, int aHeight, uint8_t *aRawData) :
             mWidth(aWidth), mHeight(aHeight), mRawData(aRawData) {
     }
 

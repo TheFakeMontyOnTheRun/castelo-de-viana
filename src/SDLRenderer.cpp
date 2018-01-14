@@ -36,6 +36,7 @@ double ms;
 SDL_Surface *video;
 ControlState toReturn;
 EVideoType videoType = kVGA;
+std::array< uint32_t , 256 > mPalette;
 
 ControlState getControlState() {
 
@@ -206,7 +207,7 @@ void putpixel(SDL_Surface *surface, int x, int y, Uint32 pixel)
     }
 }
 
-void copyImageBufferToVideoMemory(const std::array<unsigned int, 320 * 200>& imageBuffer ) {
+void copyImageBufferToVideoMemory(const std::array<uint8_t , 320 * 200>& imageBuffer ) {
 
   SDL_Rect rect;
   int pos = 0;
@@ -233,7 +234,7 @@ void copyImageBufferToVideoMemory(const std::array<unsigned int, 320 * 200>& ima
 
       pos = ( 320 * y ) + x;
 
-        putpixel(video, x, y, imageBuffer[ pos ]);
+        putpixel(video, x, y, mPalette[imageBuffer[ pos ]]);
 
     }
   }
@@ -254,6 +255,21 @@ void enterFullScreenMode() {
 }
 #endif
 
+
+
+uint8_t getPaletteEntry( uint32_t origin ) {
+
+    uint8_t shade = 0;
+
+
+    shade += (((((origin & 0x0000FF)      ) << 2) >> 8)) << 6;
+    shade += (((((origin & 0x00FF00)  >> 8) << 3) >> 8)) << 3;
+    shade += (((((origin & 0xFF0000) >> 16) << 3) >> 8)) << 0;
+
+    return shade;
+}
+
+
 void initVideoFor(EVideoType unused) {
   SDL_Init( SDL_INIT_VIDEO );
 
@@ -264,6 +280,17 @@ void initVideoFor(EVideoType unused) {
 #ifdef __EMSCRIPTEN__
     enterFullScreenMode();
 #endif
+
+    for (int r = 0; r < 256; r += 16) {
+        for (int g = 0; g < 256; g += 8) {
+            for (int b = 0; b < 256; b += 8) {
+                auto pixel = 0xFF000000 + (r << 16) + (g << 8) + (b);
+                auto paletteEntry = getPaletteEntry(pixel);
+                mPalette[paletteEntry] = pixel;
+            }
+        }
+    }
+
 }
 
 std::string getAssetsPath() {

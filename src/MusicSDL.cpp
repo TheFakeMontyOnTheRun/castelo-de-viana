@@ -30,3 +30,11 @@ void setupOPL2(int instrument) {
 
 void stopSounds() {
 }
+
+void playTune(const std::string &music) {
+
+}
+
+void soundTick() {
+
+}

@@ -118,9 +118,9 @@ void onQuit() {
 uint8_t getPaletteEntry( uint32_t origin ) {
     uint8_t shade = 0;
 
-        shade += (((((origin & 0x0000FF)      ) << 2  ) >> 8 ) ) << 6;
-        shade += (((((origin & 0x00FF00) >> 8 ) << 3  ) >> 8 ) ) << 3;
-        shade += (((((origin & 0xFF0000) >> 16) << 3  ) >> 8 ) ) << 0;
+    shade += (((((origin & 0x0000FF)      ) << 2) >> 8)) << 6;
+    shade += (((((origin & 0x00FF00)  >> 8) << 3) >> 8)) << 3;
+    shade += (((((origin & 0xFF0000) >> 16) << 3) >> 8)) << 0;
 
     return shade;
 }
@@ -181,36 +181,17 @@ void plot(int x, int y, int color) {
 
 int frame = 0;
 
-void copyImageBufferToVideoMemory(const std::array<unsigned int, 320 * 200>& imageBuffer ) {
+void copyImageBufferToVideoMemory(const std::array<uint8_t, 320 * 200>& imageBuffer ) {
     if ( videoType == kVGA ) {
-        std::array<unsigned char, 320 * 200> mFinalBuffer;
-        int origin = 0;
-        int value = 0;
-        int last = 0;
+        std::array<uint8_t , 320 * 200> mFinalBuffer;
         auto currentImageBufferPos = std::begin(imageBuffer);
         auto currentBufferPos = std::begin(mFinalBuffer);
 
         std::fill( std::begin(mFinalBuffer), std::end(mFinalBuffer), 0);
 
         for (int y = 0; y < 200; ++y) {
-
             for (int x = 0; x < 320; ++x) {
-
-                origin = *currentImageBufferPos;
-                last = *currentBufferPos;
-
-                if (last == origin) {
-                    currentBufferPos = std::next(currentBufferPos);
-                    currentImageBufferPos = std::next(currentImageBufferPos);
-                    continue;
-                }
-
-                value = origin;
-
-                *currentBufferPos = getPaletteEntry(value);
-
-                currentBufferPos = std::next(currentBufferPos);
-                currentImageBufferPos = std::next(currentImageBufferPos);
+                *currentBufferPos++ = *currentImageBufferPos++;
             }
         }
         dosmemput(&mFinalBuffer[0], 64000, 0xa0000);
