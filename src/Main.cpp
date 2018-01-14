@@ -632,23 +632,19 @@ void loadGraphics() {
 
 int main(int argc, char **argv) {
 
-    if ( argc >= 2 ) {
+    for ( int c = 1; c < argc; ++c ) {
+        auto parm = argv[ c ];
 
-        if ( !std::strcmp(argv[1], "opl2lpt")) {
+        if ( !std::strcmp(parm, "opl2lpt")) {
             int instrument = 80;
-
-            if (argc >= 3 ) {
-                instrument = atoi(argv[2]);
-            }
-
             initOPL2(instrument);
         }
 
-        if ( !std::strcmp(argv[1], "secret")) {
+        if ( !std::strcmp(parm, "secret")) {
             enableSecret = true;
         }
 
-        if ( !std::strcmp(argv[1], "vga")) {
+        if ( !std::strcmp(parm, "vga")) {
             videoType = kVGA;
         }
     }
