@@ -36,7 +36,7 @@ std::vector<Actor> doors;
 std::vector<Item> items;
 std::vector<Actor> arrows;
 
-auto hurtSound = "053|dca|dca|";
+auto hurtSound = "053|dca|dca|dca";
 auto swordSound = "044|dgd|dgd|dgd";
 auto arrowSound = "044|abc|abc|abc";
 auto jumpSound = "046|cdefedc|cdefedc|cdefedc";
