@@ -27,6 +27,7 @@ std::vector<int> noSound;
 std::vector<int> melody;
 std::vector<int>::const_iterator currentSoundPosition;
 
+int currentNote = 0;
 
 short get_lpt_port(int i) {
     return _farpeekw(_dos_ds, 0x0408 + (2 * (i - 1)));
@@ -150,6 +151,7 @@ void muteSound() {
     if ( !enableOPL2 ) {
         nosound();
         melody.clear();
+        currentNote = 0;
     } else {
         playMusic(0, "");
     }
@@ -173,7 +175,10 @@ void setupOPL2(int instrument) {
 
 void soundFrequency(int frequency) {
     if (!enableOPL2) {
-        sound( frequency );
+        if (frequency != 0 && currentNote != frequency ) {
+            sound( frequency );
+            currentNote = frequency;
+        }
     }
 }
 
