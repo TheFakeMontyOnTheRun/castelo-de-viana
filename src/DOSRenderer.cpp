@@ -29,65 +29,50 @@ EVideoType videoType = kCGA;
 ControlState getControlState() {
     ControlState toReturn;
 
-    auto extendedKeys = bioskey(0x12);
+    while (kbhit()) {
+        auto getched = getch();
+        switch (getched) {
+            case 's':
+                toReturn.secret = true;
+                break;
+            case 27:
+                toReturn.escape = true;
+                break;
+            case 'z':
+                toReturn.jump = true;
+                break;
+            case 'x':
+                toReturn.fireArrow = true;
+                break;
+            case 'c':
+            case ' ':
+                toReturn.sword= true;
+                break;
+            case 13:
+                toReturn.enter = true;
+                break;
+            case 224:
+            case 0:
+                auto arrow = getch();
+                switch(arrow) {
+                    case 75:
+                        toReturn.moveLeft = true;
+                        break;
+                    case 72:
+                        toReturn.moveUp = true;
+                        break;
+                    case 77:
+                        toReturn.moveRight = true;
+                        break;
+                    case 80:
+                        toReturn.moveDown = true;
+                        break;
+                }
+                break;
 
-    if (extendedKeys & (0b0000000000000100) ||
-        extendedKeys & (0b0000000100000000)
-            ) {
-        toReturn.sword = true;
+        }
     }
-
-    if (extendedKeys & (0b0000000000000001) ||
-        extendedKeys & (0b0000000000000010)
-            ) {
-        toReturn.jump = true;
-    }
-
-    auto lastKey = bioskey(0x11);
     bdos(0xC, 0, 0);
-
-    switch (lastKey) {
-        case 9836:
-            toReturn.secret = true;
-            break;
-        case 27:
-        case 283:
-            toReturn.escape = true;
-            break;
-        case 'q':
-            toReturn.jump = true;
-            break;
-        case 'w':
-        case 4471:
-        case 18656:
-            toReturn.moveUp = true;
-            break;
-        case 's':
-        case 8051:
-        case 20704:
-            toReturn.moveDown = true;
-            break;
-        case 'a':
-        case 7777:
-        case 19424:
-            toReturn.moveLeft = true;
-            break;
-        case 'd':
-        case 8292:
-        case 19936:
-            toReturn.moveRight = true;
-            break;
-        case ' ':
-        case 3849:
-        case 14624:
-            toReturn.fireArrow = true;
-            break;
-        case 7181:
-            toReturn.enter = true;
-            break;
-    }
-
-
     return toReturn;
 }
 
