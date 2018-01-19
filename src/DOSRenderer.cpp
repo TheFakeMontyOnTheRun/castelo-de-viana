@@ -93,7 +93,7 @@ void doneWithFrame() {
 }
 
 void onQuit() {
-    nosound();
+    stopSounds();
     textmode(C80);
     clrscr();
     puts("Thanks for playing!\n\r\n");
