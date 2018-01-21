@@ -36,11 +36,11 @@ std::vector<Actor> doors;
 std::vector<Item> items;
 std::vector<Actor> arrows;
 
-auto hurtSound = "053|dca|dca|dca";
-auto swordSound = "044|dgd|dgd|dgd";
-auto arrowSound = "044|abc|abc|abc";
-auto jumpSound = "046|cdefedc|cdefedc|cdefedc";
-auto pickSound = "054|abfc|abfc|abfc";
+auto hurtSound = "t240m60i53l8dca";
+auto swordSound = "t240m60i44l8dgd";
+auto arrowSound = "t240m60i44l8abc";
+auto jumpSound = "t240m60i46l8cdefedc";
+auto pickSound = "t240m60i54l8abfc";
 
 int totalBossHealth = 0;
 std::string currentBossName;
@@ -70,7 +70,7 @@ updateHero(bool isOnGround, bool isJumping, bool isUpPressed, bool isDownPressed
     if (isJumping) {
         if (isOnGround) {
             player.mSpeed.mY = -12;
-            playMusic(46, jumpSound);
+            playTune(jumpSound);
         }
         player.mStance = kJumping;
     }
@@ -89,7 +89,7 @@ updateHero(bool isOnGround, bool isJumping, bool isUpPressed, bool isDownPressed
                 arrows.push_back(a);
                 player.mStance = kUp;
                 arrowCooldown = 4;
-                playMusic(44, arrowSound);
+                playTune(arrowSound);
             }
         }
     }
@@ -130,7 +130,7 @@ updateHero(bool isOnGround, bool isJumping, bool isUpPressed, bool isDownPressed
 
     if (isAttacking) {
         player.mStance = kAttacking;
-        playMusic(44, swordSound);
+        playTune(swordSound);
     }
 
     if (isUsingSpecial && arrowCooldown <= 0) {
@@ -142,7 +142,7 @@ updateHero(bool isOnGround, bool isJumping, bool isUpPressed, bool isDownPressed
         arrows.push_back(a);
         player.mStance = kAltAttacking;
         arrowCooldown = 4;
-        playMusic(44, arrowSound);
+        playTune(arrowSound);
     }
 
     if (isPausePressed) {
@@ -245,7 +245,7 @@ void hurtPlayer(int ammount) {
     player.mHealth -= ammount;
     ticksUntilVulnerable = 14;
     ticksToShowHealth = 14;
-    playMusic(53, hurtSound);
+    playTune(hurtSound);
 }
 
 bool isOnDoor(const Actor &actor) {
@@ -327,7 +327,7 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
 
     enforceScreenLimits();
 
-    if (player.mSpeed.mX == 0 && player.mSpeed.mY == 0 ) {
+    if (player.mSpeed.mX == 0 && player.mSpeed.mY == 0 && player.mStance != kAltAttacking ) {
         heroFrame = 0;
     }
 
@@ -359,7 +359,7 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
         heroFrame = (heroFrame + 1) % 2;
     }
 
-    if ((player.mSpeed.mX != 0 && isOnGround)) {
+    if ((player.mSpeed.mX != 0 && isOnGround) || player.mStance == kAltAttacking ) {
         heroFrame = (heroFrame + 1) % 2;
     }
 
@@ -425,16 +425,16 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
             if (item.mType == kKey && !hasKey) {
                 hasKey = true;
                 itemsToRemove.push_back(item);
-                playMusic(54, pickSound);
+                playTune(pickSound);
                 for (auto &door : doors) {
                     door.mType = EActorType::kOpenDoor;
                 }
             } else if (item.mType == kMeat) {
                 if (player.mHealth < 10) {
-                    playMusic(54, pickSound);
+                    playTune(pickSound);
                     itemsToRemove.push_back(item);
                     player.mHealth = 10;
-                    playMusic(54, pickSound);
+                    playTune(pickSound);
                 }
                 ticksToShowHealth = 14;
             }

@@ -34,7 +34,7 @@ void soundFrequency(int frequency);
 void muteSound();
 void onQuit();
 void initVideoFor(EVideoType videoType);
-void setupOPL2(int instrument);
+void setupOPL2();
 void stopSounds();
 void soundTick();
 uint8_t getPaletteEntry( uint32_t origin );

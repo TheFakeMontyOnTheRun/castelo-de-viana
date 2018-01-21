@@ -50,8 +50,8 @@ std::shared_ptr<odb::NativeBitmap> hero[6][2];
 std::array<uint8_t, 320 * 200> imageBuffer;
 std::shared_ptr<odb::NativeBitmap> currentScreen = nullptr;
 
-void initOPL2(int instrument) {
-    setupOPL2(instrument);
+void initOPL2() {
+    setupOPL2();
 }
 
 void prepareScreenFor(EScreen screenState) {
@@ -59,11 +59,10 @@ void prepareScreenFor(EScreen screenState) {
     switch (screenState) {
         case kIntro:
             currentScreen = odb::loadBitmap( (enableSecret ? "secret.dat" : "intro.png"), reader, videoType  );
-            playTune("eefggfedccdeed12d4eefggfedccdedc12c4ddecde12f12ecde12f12edcdpeefggfedccdedc12c4");
+            playTune("eefggfedccdeedd");
             break;
         case kGame:
             currentScreen = nullptr;
-            playMusic(1, "001|cba|cba|cba");
             break;
         case kGameOver:
             currentScreen = odb::loadBitmap( "gameover.png", reader, videoType );
@@ -71,7 +70,7 @@ void prepareScreenFor(EScreen screenState) {
             break;
         case kVictory:
             currentScreen = odb::loadBitmap( "victory.png", reader, videoType );
-            playTune("eefggfedccdeeddeefgg");
+            playTune("eefggfedccdeed12d4eefggfedccdedc12c4ddecde12f12ecde12f12edcdpeefggfedccdedc12c4");
             break;
     }
 }
@@ -506,8 +505,6 @@ void sysTick() {
 
     if (!paused) {
         gameTick(isOnGround, isOnStairs);
-    } else {
-        muteSound();
     }
 
 
@@ -639,8 +636,7 @@ int main(int argc, char **argv) {
         auto parm = argv[ c ];
 
         if ( !std::strcmp(parm, "opl2lpt")) {
-            int instrument = 80;
-            initOPL2(instrument);
+            initOPL2();
         }
 
         if ( !std::strcmp(parm, "secret")) {
