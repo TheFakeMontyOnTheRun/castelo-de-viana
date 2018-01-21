@@ -32,9 +32,6 @@ ControlState getControlState() {
     while (kbhit()) {
         auto getched = getch();
         switch (getched) {
-            case 's':
-                toReturn.secret = true;
-                break;
             case 27:
                 toReturn.escape = true;
                 break;
