@@ -626,8 +626,8 @@ void loadGraphics() {
     hero[3][1] = odb::loadBitmap( "attack0.png", reader, videoType);
     hero[4][0] = odb::loadBitmap( "jump0.png", reader, videoType);
     hero[4][1] = odb::loadBitmap( "jump0.png",  reader, videoType);
-    hero[5][0] = odb::loadBitmap( "up0.png",  reader, videoType);
-    hero[5][1] = odb::loadBitmap( "up1.png",  reader, videoType);
+    hero[5][0] = odb::loadBitmap( "arrow0.png",  reader, videoType);
+    hero[5][1] = odb::loadBitmap( "arrow1.png",  reader, videoType);
 }
 
 int main(int argc, char **argv) {
