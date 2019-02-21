@@ -25,7 +25,7 @@ using std::vector;
 void playMusic(int instrument, const std::string &music) {
 }
 
-void setupOPL2(int instrument) {
+void setupOPL2() {
 }
 
 void stopSounds() {
