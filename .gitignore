@@ -80,3 +80,7 @@
 /packer
 /sdl.pfs
 /vga.pfs
+/game.data
+/game.html
+/game.js
+/game.wasm
