@@ -644,7 +644,7 @@ int main(int argc, char **argv) {
         }
 
         if ( !std::strcmp(parm, "vga")) {
-//            videoType = kVGA;
+            videoType = kVGA;
         }
     }
     initVideoFor(videoType);
