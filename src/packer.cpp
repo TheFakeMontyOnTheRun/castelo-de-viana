@@ -1,9 +1,10 @@
+#include <stdio.h>
+#include <stdint.h>
+#include <string.h>
+
 #include <fstream>
 #include <iostream>
 #include <string>
-#include <cstdio>
-#include <stdint.h>
-#include <cstring>
 #include <vector>
 #include <iterator>
 using std::vector;

@@ -1,9 +1,10 @@
+#include <time.h>
+#include <unistd.h>
+
 #include <algorithm>
 #include <array>
 #include <random>
 #include <iostream>
-#include <time.h>
-#include <unistd.h>
 #include <fstream>
 #include <sstream>
 #include <unordered_map>

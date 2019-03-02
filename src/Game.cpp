@@ -1,12 +1,14 @@
-#include <ctime>
+#include <time.h>
 #include <unistd.h>
+#include <stdlib.h>
+#include <math.h>
+
 #include <array>
 #include <string>
-#include <cstdlib>
-#include <cmath>
 #include <vector>
 #include <algorithm>
 #include <unordered_map>
+
 #include "NativeBitmap.h"
 #include "Game.h"
 #include "Renderer.h"

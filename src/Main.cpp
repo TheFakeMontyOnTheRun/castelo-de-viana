@@ -1,12 +1,12 @@
 #include <stdint.h>
+#include <math.h>
+#include <stdlib.h>
+#include <string.h>
 
 #include <string>
-#include <cstdlib>
-#include <cmath>
-#include <array>
 #include <vector>
-#include <cstring>
 #include <unordered_map>
+
 #include "NativeBitmap.h"
 #include "Game.h"
 #include "Renderer.h"
@@ -636,15 +636,15 @@ int main(int argc, char **argv) {
     for ( int c = 1; c < argc; ++c ) {
         auto parm = argv[ c ];
 
-        if ( !std::strcmp(parm, "opl2lpt")) {
+        if ( !strcmp(parm, "opl2lpt")) {
             initOPL2();
         }
 
-        if ( !std::strcmp(parm, "secret")) {
+        if ( !strcmp(parm, "secret")) {
             enableSecret = true;
         }
 
-        if ( !std::strcmp(parm, "vga")) {
+        if ( !strcmp(parm, "vga")) {
             videoType = kVGA;
         }
     }
