@@ -2,9 +2,8 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <math.h>
+#include <string.h>
 
-#include <array>
-#include <string>
 #include <vector>
 #include <algorithm>
 #include <unordered_map>
@@ -44,7 +43,7 @@ auto jumpSound = "t240m60i46l8cdefedc";
 auto pickSound = "t240m60i54l8abfc";
 
 int totalBossHealth = 0;
-std::string currentBossName;
+const char* currentBossName;
 EScreen screen = kIntro;
 
 void initVec2i( Vec2i& vec, int x, int y ) {
@@ -589,10 +588,10 @@ void prepareRoom(int room) {
         for (int x = 0; x < 10; ++x) {
             char ch = '0';
 
-            ch = bgmap[ position ];
+            ch = bgmap.data[ position ];
             backgroundTiles[y][x] = ch - '0';
 
-            ch = fgmap[ position ];
+            ch = fgmap.data[ position ];
             ++position;
 
             if (ch == 'm') {
@@ -696,20 +695,28 @@ void prepareRoom(int room) {
 
     snprintf(buffer, 64, "%d.lst", room );
 
-    std::vector<std::string> tilesToLoad;
+    std::vector<char*> tilesToLoad;
 
     auto listBuffer = reader.loadFileFromPath(buffer);
-    listBuffer.push_back('\n');
 
     int lastPoint = 0;
     int since = 0;
-    auto bufferBegin = std::begin( listBuffer );
-    for (const auto& c : listBuffer ) {
+    auto bufferBegin = listBuffer.data;
+
+    for ( size_t pos = 0; pos < listBuffer.size; ++pos ) {
+        char c = listBuffer.data[ pos ];
         ++since;
-        if ( c == '\n' ) {
-            auto filename = std::string( bufferBegin + lastPoint, bufferBegin + lastPoint + since - 1 );
+
+        if ( pos == listBuffer.size - 1 || c == '\n') {
+
+            if ( pos == listBuffer.size - 1 ) {
+                since++;
+            }
+
+            char* filename = (char *)(calloc(since - 1 + 1, 1 ));
+            memcpy( filename,  bufferBegin + lastPoint, since -1  );
             lastPoint += since;
-            if ( !filename.empty()) {
+            if ( strlen(filename) > 0 ) {
                 tilesToLoad.push_back(filename);
             }
             since = 0;

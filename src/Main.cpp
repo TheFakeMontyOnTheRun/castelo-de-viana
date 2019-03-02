@@ -3,7 +3,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <string>
 #include <vector>
 #include <unordered_map>
 
@@ -80,12 +79,12 @@ void clearBuffers() {
     std::fill(std::begin(imageBuffer), std::end(imageBuffer), 4);
 }
 
-void loadTiles(std::vector<std::string> tilesToLoad) {
+void loadTiles(std::vector<char*> tilesToLoad) {
     tiles.clear();
 
     for (const auto &tile : tilesToLoad) {
 
-        if (tile.substr(tile.length() - 4) == ".png") {
+        if ( !strcmp( tile + (strlen(tile) - 4), ".png" ) ) {
             tiles.push_back({odb::loadBitmap( tile, reader, videoType )});
         } else {
             tiles.push_back(odb::loadSpriteList( tile, reader, videoType));

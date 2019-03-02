@@ -254,7 +254,7 @@ void initVideoFor( EVideoType videoType ) {
     }
 }
 
-std::string getAssetsPath() {
+const char* getAssetsPath() {
     if ( videoType == kVGA ) {
         return "vga.pfs";
     } else {

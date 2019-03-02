@@ -1,8 +1,9 @@
 //
 // Created by monty on 26/09/16.
 //
+#include <string.h>
+
 #include <functional>
-#include <string>
 #include <iterator>
 #include <vector>
 
@@ -12,10 +13,10 @@ using std::vector;
 
 namespace odb {
 
-	std::string fileFromString( const std::string& path ) {
+	char* fileFromString( const char* path ) {
 		char * buffer = 0;
 		long length;
-		FILE * f = fopen (path.c_str(), "r");
+		FILE * f = fopen (path, "r");
 
 		if (f)
 		{
@@ -30,10 +31,7 @@ namespace odb {
 			fclose (f);
 		}
 
-		std::string toReturn(buffer);
-
-		return toReturn;
-
+		return buffer;
 	}
 
 	vector<char> readToBuffer(FILE *fileDescriptor) {
@@ -56,30 +54,6 @@ namespace odb {
 			}
 			if (read < N) {
 				break;
-			}
-		}
-
-		return total;
-	}
-
-	std::string readToString(FILE *fileDescriptor) {
-
-		fseek(fileDescriptor, 0, SEEK_END);
-		long fileSize = ftell(fileDescriptor);
-		rewind(fileDescriptor);
-		std::string total;
-		total.assign(fileSize, 0);
-
-		for (auto pos = 0; pos < fileSize; ++pos) {
-			char buffer[1];
-			size_t read = fread((void *) &buffer[0], 1, 1, fileDescriptor);
-			if (read) {
-				for (unsigned int c = 0; c < read; ++c) {
-					total[pos] = buffer[c];
-				}
-			}
-			if (read < 1) {
-				return "total not met";
 			}
 		}
 

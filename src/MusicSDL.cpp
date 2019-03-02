@@ -2,12 +2,12 @@
 #include <unistd.h>
 
 #include <algorithm>
-#include <array>
 #include <random>
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include <unordered_map>
+
 #include "NativeBitmap.h"
 
 using std::vector;
@@ -22,7 +22,7 @@ using std::vector;
 #include <vector>
 #include "Game.h"
 
-void playMusic(int instrument, const std::string &music) {
+void playMusic(int instrument, const char* music) {
 }
 
 void setupOPL2() {
@@ -31,7 +31,7 @@ void setupOPL2() {
 void stopSounds() {
 }
 
-void playTune(const std::string &music) {
+void playTune(const char* music) {
 
 }
 

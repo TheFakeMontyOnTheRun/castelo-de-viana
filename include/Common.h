@@ -6,14 +6,8 @@
 #define DUNGEONSOFNOUDAR_NDK_COMMON_H
 namespace odb {
 
-    int intFrom(std::string str);
-
-    std::string filterComments(std::string input);
-
-    std::string readToString(FILE *fileDescriptor);
-
     vector<char> readToBuffer(FILE *fileDescriptor);
 
-    std::string fileFromString( const std::string& path );
+    char* fileFromString( const char* path );
 }
 #endif //DUNGEONSOFNOUDAR_NDK_COMMON_H

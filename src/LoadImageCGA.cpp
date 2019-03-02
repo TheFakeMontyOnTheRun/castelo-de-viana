@@ -1,15 +1,10 @@
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#include <math.h>
 
-
-#include <cstdlib>
-#include <cstdio>
-#include <cstring>
-#include <cmath>
-#include <string>
 #include <vector>
-#include <array>
-
 #include <unordered_map>
-
 
 using std::vector;
 #include "NativeBitmap.h"
@@ -25,22 +20,33 @@ using std::vector;
 
 namespace odb {
 
-    std::vector<odb::NativeBitmap*> loadSpriteList(std::string listName, odb::IFileLoaderDelegate* fileLoader, EVideoType videoType) {
+    std::vector<odb::NativeBitmap*> loadSpriteList(const char* listName, odb::IFileLoaderDelegate* fileLoader, EVideoType videoType) {
 
 
         auto buffer = fileLoader->loadFileFromPath(listName);
-        buffer.push_back('\n');
 
         std::vector<odb::NativeBitmap*> tilesToLoad;
         int lastPoint = 0;
         int since = 0;
-        auto bufferBegin = std::begin( buffer );
-        for (const auto& c : buffer ) {
+
+        auto bufferBegin = buffer.data;
+        for ( size_t pos = 0; pos < buffer.size; ++pos ) {
+            const char c = buffer.data[ pos ];
+
             ++since;
-            if ( c == '\n' ) {
-                auto filename = std::string( bufferBegin + lastPoint, bufferBegin + lastPoint + since - 1 );
+            if ( pos == buffer.size - 1 || c == '\n' ) {
+
+                if ( pos == buffer.size - 1 ) {
+                    since++;
+                }
+
+                char *filename = (char*)calloc(since - 1 + 1, 1 );
+                auto diff = (bufferBegin + lastPoint + since - 1) - (bufferBegin + lastPoint);
+                memcpy( &filename[0], bufferBegin + lastPoint, diff );
+
                 lastPoint += since;
-                if ( !filename.empty()) {
+
+                if ( strlen(filename) > 0 ) {
                     tilesToLoad.push_back(odb::loadBitmap( filename, fileLoader, videoType ));
                 }
                 since = 0;
@@ -52,7 +58,7 @@ namespace odb {
         return tilesToLoad;
     }
 
-    NativeBitmap* loadBitmap(std::string path, odb::IFileLoaderDelegate* fileLoader, EVideoType videoType) {
+    NativeBitmap* loadBitmap(const char* path, odb::IFileLoaderDelegate* fileLoader, EVideoType videoType) {
         auto buffer = fileLoader->loadBinaryFileFromPath(path);
         int xSize;
         int ySize;
@@ -64,7 +70,7 @@ namespace odb {
             auto image = stbi_load_from_memory((const stbi_uc *) buffer.data(), buffer.size(), &xSize, &ySize, &components, 4);
             rawData = new int[xSize * ySize];
             data8 = new uint8_t[ xSize * ySize ];
-            std::memcpy( rawData, image, xSize * ySize * sizeof( int ) );
+            memcpy( rawData, image, xSize * ySize * sizeof( int ) );
 
             for ( int c = 0; c < xSize * ySize; ++c  ) {
                 int origin = rawData[ c ];

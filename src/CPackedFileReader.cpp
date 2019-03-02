@@ -1,7 +1,6 @@
 //
 // Created by monty on 06-12-2017.
 //
-#include <string>
 #include <unordered_map>
 #include <vector>
 
@@ -11,10 +10,9 @@ using std::vector;
 #include "IFileLoaderDelegate.h"
 #include "CPackedFileReader.h"
 
-#include <iostream>
-
-odb::CPackedFileReader::CPackedFileReader(std::string dataFilePath) : mPackPath(dataFilePath) {
-    mDataPack = fopen(dataFilePath.c_str(), "rb");
+odb::CPackedFileReader::CPackedFileReader(const char* dataFilePath) : mPackPath(
+        const_cast<char *>(dataFilePath)) {
+    mDataPack = fopen(dataFilePath, "rb");
     uint16_t entries = 0;
     fread(&entries, 2, 1, mDataPack);
 
@@ -39,12 +37,12 @@ odb::CPackedFileReader::CPackedFileReader(std::string dataFilePath) : mPackPath(
     fclose(mDataPack);
 }
 
-vector<char> odb::CPackedFileReader::loadBinaryFileFromPath(const std::string &path) {
+vector<char> odb::CPackedFileReader::loadBinaryFileFromPath(const char* path) {
     vector<char> toReturn;
-    mDataPack = fopen(mPackPath.c_str(), "rb");
+    mDataPack = fopen(mPackPath, "rb");
     uint32_t offset = mOffsets[ path ];
     if ( offset == 0 ) {
-        printf("failed to load %s from offset %d", path.c_str(), offset );
+        printf("failed to load %s from offset %d", path, offset );
         exit(-1);
     }
 
@@ -63,29 +61,27 @@ vector<char> odb::CPackedFileReader::loadBinaryFileFromPath(const std::string &p
     return toReturn;
 }
 
-std::string odb::CPackedFileReader::loadFileFromPath(const std::string &path) {
-    std::string toReturn;
-    mDataPack = fopen(mPackPath.c_str(), "r");
+odb::StaticBuffer odb::CPackedFileReader::loadFileFromPath(const char* path) {
+    odb::StaticBuffer toReturn;
+    mDataPack = fopen(mPackPath, "r");
     uint32_t offset = mOffsets[ path ];
+
     if ( offset == 0 ) {
-        printf("failed to load %s", path.c_str());
+        printf("failed to load %s", path);
         exit(-1);
     }
     auto result = fseek( mDataPack, offset, SEEK_SET );
 
     uint32_t size = 0;
-    char data;
     fread(&size, 4, 1, mDataPack );
-
-    for ( int c = 0; c < size; ++c ) {
-        fread(&data, 1, 1, mDataPack );
-        toReturn.push_back(data);
-    }
+    toReturn.data = (uint8_t *)(calloc(size, 1));
+    toReturn.size = size;
+    fread(toReturn.data, 1, size, mDataPack );
     fclose(mDataPack);
 
     return toReturn;
 }
 
-std::string odb::CPackedFileReader::getFilePathPrefix() {
+const char* odb::CPackedFileReader::getFilePathPrefix() {
     return "";
 }

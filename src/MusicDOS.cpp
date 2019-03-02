@@ -10,9 +10,7 @@
 #include <unistd.h>
 
 #include <iterator>
-#include <string>
 #include <vector>
-#include <array>
 
 #include "OPL2.h"
 #include "controller.h"
@@ -87,7 +85,7 @@ void playSound(const std::vector<int> &sound) {
 }
 
 
-void playMusic(const std::string &music) {
+void playMusic(const char* music) {
     if (enableOPL2) {
         if (music.empty()) {
             music_set("", "", "");
@@ -157,7 +155,7 @@ void muteSound() {
     }
 }
 
-void playTune(const std::string &music) {
+void playTune(const char* music) {
     if ( enableOPL2 ) {
         buffer[0] = music + ";" + music + ";" + music;
         hackTune( music.c_str() );

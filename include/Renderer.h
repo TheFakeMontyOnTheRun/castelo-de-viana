@@ -38,7 +38,7 @@ void setupOPL2();
 void stopSounds();
 void soundTick();
 uint8_t getPaletteEntry( uint32_t origin );
-std::string getAssetsPath();
+const char* getAssetsPath();
 
 extern EVideoType videoType;
 

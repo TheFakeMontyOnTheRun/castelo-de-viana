@@ -3,14 +3,13 @@
 //
 
 #include <algorithm>
-#include <array>
 #include <random>
 #include <fstream>
 #include <sstream>
 #include <unordered_map>
 
-
 using std::vector;
+
 #include "NativeBitmap.h"
 #include "IFileLoaderDelegate.h"
 #include "CPackedFileReader.h"
@@ -292,6 +291,6 @@ void initVideoFor(EVideoType unused) {
 
 }
 
-std::string getAssetsPath() {
+const char* getAssetsPath() {
     return "sdl.pfs";
 }
