@@ -46,6 +46,11 @@ int totalBossHealth = 0;
 std::string currentBossName;
 EScreen screen = kIntro;
 
+void initVec2i( Vec2i& vec, int x, int y ) {
+	vec.mX = x;
+	vec.mY = y;
+}
+
 void evalutePlayerAttack();
 
 void init() {
@@ -84,7 +89,7 @@ updateHero(bool isOnGround, bool isJumping, bool isUpPressed, bool isDownPressed
                 Actor a;
                 a.mType = kArrow;
                 a.mPosition = player.mPosition;
-                a.mSpeed = {0, -16};
+                initVec2i( a.mSpeed, 0, -16 );
                 a.mDirection = player.mDirection;
                 arrows.push_back(a);
                 player.mStance = kUp;
@@ -137,7 +142,7 @@ updateHero(bool isOnGround, bool isJumping, bool isUpPressed, bool isDownPressed
         Actor a;
         a.mType = kArrow;
         a.mPosition = player.mPosition;
-        a.mSpeed = {player.mDirection == kRight ? 16 : -16, 0};
+        initVec2i( a.mSpeed, player.mDirection == kRight ? 16 : -16, 0);
         a.mDirection = player.mDirection;
         arrows.push_back(a);
         player.mStance = kAltAttacking;
@@ -593,21 +598,21 @@ void prepareRoom(int room) {
                 foregroundTiles[y][x] = 0;
                 Item item;
                 item.mType = kMeat;
-                item.mPosition = Vec2i{x * 32, y * 32};
+                initVec2i(item.mPosition, x * 32, y * 32 );
                 items.push_back(item);
             } else if (ch == 'k') {
                 if (!hasKey) {
                     foregroundTiles[y][x] = 0;
                     Item item;
                     item.mType = kKey;
-                    item.mPosition = Vec2i{x * 32, y * 32};
+					initVec2i(item.mPosition, x * 32, y * 32);
                     items.push_back(item);
                 }
             } else if (ch == 'a') {
                 foregroundTiles[y][x] = 0;
                 Actor a;
                 a.mType = EActorType::kSkeleton;
-                a.mPosition = Vec2i{x * 32, y * 32};
+				initVec2i( a.mPosition, x * 32, y * 32);
                 a.mSpeed.mX = 8;
                 a.mHealth = 2;
                 foes.push_back(a);
@@ -616,7 +621,7 @@ void prepareRoom(int room) {
                 currentBossName = "CAPIROTO";
                 Actor a;
                 a.mType = EActorType::kCapiroto;
-                a.mPosition = Vec2i{x * 32, y * 32};
+				initVec2i( a.mPosition, x * 32, y * 32);
                 a.mHealth = 25;
                 totalBossHealth = 25;
                 hasBossOnScreen = true;
@@ -626,7 +631,7 @@ void prepareRoom(int room) {
                     foregroundTiles[y + 2][ x + 2] = 0;
                     Actor a;
                     a.mType = EActorType::kHand;
-                    a.mPosition = Vec2i{(x + 2 ) * 32, (y + 2) * 32};
+					initVec2i( a.mPosition, (x + 2 ) * 32, (y + 2) * 32 );
                     a.mDirection = kLeft;
                     a.mHealth = 100000;
                     foes.push_back(a);
@@ -636,7 +641,7 @@ void prepareRoom(int room) {
                     Actor a;
                     a.mType = EActorType::kHand;
                     a.mDirection = kRight;
-                    a.mPosition = Vec2i{(x - 2) * 32, (y + 2) * 32};
+					initVec2i( a.mPosition, (x - 2) * 32, (y + 2) * 32 );
                     a.mHealth = 100000;
                     foes.push_back(a);
                 }
@@ -648,7 +653,7 @@ void prepareRoom(int room) {
                 totalBossHealth = 5;
                 Actor a;
                 a.mType = EActorType::kTinhoso;
-                a.mPosition = Vec2i{x * 32, y * 32};
+                initVec2i(a.mPosition, x * 32, y * 32 );
                 a.mHealth = 5;
                 hasBossOnScreen = true;
                 foes.push_back(a);
@@ -656,14 +661,14 @@ void prepareRoom(int room) {
                 foregroundTiles[y][x] = 0;
                 Actor a;
                 a.mType = EActorType::kSpawner;
-                a.mPosition = Vec2i{x * 32, y * 32};
+				initVec2i( a.mPosition, x * 32, y * 32);
                 a.mHealth = 20;
                 foes.push_back(a);
             } else if (ch == 'g') {
                 foregroundTiles[y][x] = 0;
                 Actor a;
                 a.mType = EActorType::kGargoyle;
-                a.mPosition = Vec2i{x * 32, y * 32};
+				initVec2i( a.mPosition, x * 32, y * 32 );
                 a.mSpeed.mX = 8;
                 a.mHealth = 1;
                 foes.push_back(a);
@@ -671,14 +676,14 @@ void prepareRoom(int room) {
                 foregroundTiles[y][x] = 0;
                 Actor a;
                 a.mType = hasKey ? EActorType::kOpenDoor : EActorType::kClosedDoor;
-                a.mPosition = Vec2i{x * 32, y * 32};
+				initVec2i( a.mPosition, x * 32, y * 32 );
                 a.mSpeed.mX = 8;
                 doors.push_back(a);
             } else if (ch == 'D') {
                 foregroundTiles[y][x] = 0;
                 Actor a;
                 a.mType = EActorType::kClosedDoor;
-                a.mPosition = Vec2i{x * 32, y * 32};
+				initVec2i( a.mPosition, x * 32, y * 32 );
                 a.mSpeed.mX = 8;
                 doors.push_back(a);
             } else {

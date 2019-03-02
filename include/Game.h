@@ -29,8 +29,7 @@ public:
     int mY = 0;
 };
 
-class Actor {
-public:
+struct Actor {
     Vec2i mPosition;
     Vec2i mSpeed;
     EActorType mType;
@@ -39,8 +38,7 @@ public:
     int mHealth = 0;
 };
 
-class Item {
-public:
+struct Item {
     Vec2i mPosition;
     EItemType mType;
 };

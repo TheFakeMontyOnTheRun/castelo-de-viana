@@ -1,5 +1,5 @@
 CXX = em++
-CXXFLAGS = -std=c++14 -ferror-limit=1 -c -g -Iinclude -Istb -O3  --preload-file sdl.pfs --preload-file gamedata.pfs --use-preload-plugins
+CXXFLAGS = -std=c++11 -ferror-limit=1 -c -g -Iinclude -Istb -O3  --preload-file sdl.pfs --preload-file gamedata.pfs --use-preload-plugins
 
 LDFLAGS = -O3 -s USE_ZLIB=1 -s USE_LIBPNG=1 -s --preload-file sdl.pfs --preload-file gamedata.pfs --use-preload-plugins
 
