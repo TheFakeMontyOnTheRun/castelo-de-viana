@@ -9,7 +9,6 @@ namespace odb {
     class CPackedFileReader : public odb::IFileLoaderDelegate {
         FILE *mDataPack = nullptr;
         char* mPackPath;
-        std::unordered_map<std::string, size_t > mOffsets;
     public:
         CPackedFileReader() = delete;
         const char* getFilePathPrefix() override;

@@ -26,7 +26,7 @@ enum EVideoType : uint8_t {
 };
 
 ControlState getControlState();
-void copyImageBufferToVideoMemory(const std::array<uint8_t , 320 * 200>& imageBuffer );
+void copyImageBufferToVideoMemory(uint8_t *imageBuffer );
 void onQuit();
 void beginFrame();
 void doneWithFrame();

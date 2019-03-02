@@ -1,8 +1,9 @@
 //
 // Created by monty on 01-07-2017.
 //
+#include <stdint.h>
+#include <stdio.h>
 #include <vector>
-#include <unordered_map>
 
 using std::vector;
 
@@ -30,7 +31,7 @@ double ms;
 SDL_Surface *video;
 ControlState toReturn;
 EVideoType videoType = kVGA;
-std::array< uint32_t , 256 > mPalette;
+uint32_t mPalette[256];
 
 ControlState getControlState() {
 
@@ -201,7 +202,7 @@ void putpixel(SDL_Surface *surface, int x, int y, Uint32 pixel)
     }
 }
 
-void copyImageBufferToVideoMemory(const std::array<uint8_t , 320 * 200>& imageBuffer ) {
+void copyImageBufferToVideoMemory(uint8_t* imageBuffer ) {
 
   SDL_Rect rect;
   int pos = 0;

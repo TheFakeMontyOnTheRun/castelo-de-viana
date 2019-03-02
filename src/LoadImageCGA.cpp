@@ -2,11 +2,12 @@
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
+#include <stdint.h>
 
 #include <vector>
-#include <unordered_map>
 
 using std::vector;
+
 #include "NativeBitmap.h"
 #include "IFileLoaderDelegate.h"
 #include "CPackedFileReader.h"

@@ -1,7 +1,8 @@
 //
 // Created by monty on 06-12-2017.
 //
-#include <unordered_map>
+#include <string.h>
+
 #include <vector>
 
 using std::vector;
@@ -12,35 +13,33 @@ using std::vector;
 
 odb::CPackedFileReader::CPackedFileReader(const char* dataFilePath) : mPackPath(
         const_cast<char *>(dataFilePath)) {
-    mDataPack = fopen(dataFilePath, "rb");
-    uint16_t entries = 0;
-    fread(&entries, 2, 1, mDataPack);
-
-    char buffer[85];
-
-    for ( int c = 0; c < entries; ++c ) {
-
-        uint32_t offset = 0;
-        fread(&offset, 4, 1, mDataPack );
-
-        uint8_t stringSize = 0;
-        fread(&stringSize, 1, 1, mDataPack );
-
-        fread(&buffer, stringSize + 1, 1, mDataPack );
-        std::string name = buffer;
-
-
-
-        mOffsets[name] = offset;
-    }
-
-    fclose(mDataPack);
 }
 
 vector<char> odb::CPackedFileReader::loadBinaryFileFromPath(const char* path) {
     vector<char> toReturn;
     mDataPack = fopen(mPackPath, "rb");
-    uint32_t offset = mOffsets[ path ];
+    uint32_t offset = 0;
+
+	uint16_t entries = 0;
+	fread(&entries, 2, 1, mDataPack);
+
+	char buffer[85];
+
+	for ( int c = 0; c < entries; ++c ) {
+
+		fread(&offset, 4, 1, mDataPack );
+
+		uint8_t stringSize = 0;
+		fread(&stringSize, 1, 1, mDataPack );
+		fread(&buffer, stringSize + 1, 1, mDataPack );
+
+		if (!strcmp( buffer, path ) ) {
+			goto found;
+		}
+	}
+
+	found:
+
     if ( offset == 0 ) {
         printf("failed to load %s from offset %d", path, offset );
         exit(-1);
@@ -64,7 +63,27 @@ vector<char> odb::CPackedFileReader::loadBinaryFileFromPath(const char* path) {
 odb::StaticBuffer odb::CPackedFileReader::loadFileFromPath(const char* path) {
     odb::StaticBuffer toReturn;
     mDataPack = fopen(mPackPath, "r");
-    uint32_t offset = mOffsets[ path ];
+	uint32_t offset = 0;
+
+	uint16_t entries = 0;
+	fread(&entries, 2, 1, mDataPack);
+
+	char buffer[85];
+
+	for ( int c = 0; c < entries; ++c ) {
+
+		fread(&offset, 4, 1, mDataPack );
+
+		uint8_t stringSize = 0;
+		fread(&stringSize, 1, 1, mDataPack );
+		fread(&buffer, stringSize + 1, 1, mDataPack );
+
+		if (!strcmp( buffer, path ) ) {
+			goto found;
+		}
+	}
+
+	found:
 
     if ( offset == 0 ) {
         printf("failed to load %s", path);

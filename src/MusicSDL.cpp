@@ -1,19 +1,17 @@
 #include <time.h>
+#include <stdint.h>
 #include <unistd.h>
+#include <stdio.h>
 
-#include <unordered_map>
 #include <vector>
-
-#include "NativeBitmap.h"
 
 using std::vector;
 
+#include "NativeBitmap.h"
 #include "IFileLoaderDelegate.h"
 #include "CPackedFileReader.h"
 #include "Renderer.h"
 #include "LoadImage.h"
-
-
 #include "Game.h"
 
 void playMusic(int instrument, const char* music) {

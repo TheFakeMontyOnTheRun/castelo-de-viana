@@ -2,9 +2,9 @@
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 
 #include <vector>
-#include <unordered_map>
 
 #include "NativeBitmap.h"
 #include "Game.h"
@@ -47,7 +47,7 @@ odb::NativeBitmap* tinhosoSprites[2];
 
 odb::NativeBitmap* hero[6][2];
 
-std::array<uint8_t, 320 * 200> imageBuffer;
+uint8_t imageBuffer[ 320 * 200 ];
 odb::NativeBitmap* currentScreen = nullptr;
 
 void initOPL2() {

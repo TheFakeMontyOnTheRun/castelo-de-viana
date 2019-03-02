@@ -2,10 +2,11 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <math.h>
+#include <stdio.h>
+#include <stdint.h>
 #include <string.h>
 
 #include <vector>
-#include <unordered_map>
 
 #include "NativeBitmap.h"
 #include "Game.h"
@@ -28,8 +29,8 @@ int arrowCooldown = 0;
 bool paused = false;
 bool hasBossOnScreen = false;
 
-std::array<std::array<int, 10>, 6> backgroundTiles;
-std::array<std::array<int, 10>, 6> foregroundTiles;
+int backgroundTiles[6][10];
+int foregroundTiles[6][10];
 std::vector<Actor> foes;
 std::vector<Actor> doors;
 std::vector<Item> items;
@@ -569,6 +570,9 @@ void prepareRoom(int room) {
 
     snprintf(buffer, 64, "%d.fg", room );
     auto fgmap = reader.loadFileFromPath(buffer);
+
+    memset(backgroundTiles, 0, sizeof(int) * 10 * 6 );
+    memset(foregroundTiles, 0, sizeof(int) * 10 * 6 );
 
     foes.clear();
     items.clear();
