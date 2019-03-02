@@ -2,9 +2,9 @@
 // Created by monty on 26/09/16.
 //
 #include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
 
-#include <functional>
-#include <iterator>
 #include <vector>
 
 using std::vector;

@@ -1,12 +1,8 @@
 #include <time.h>
 #include <unistd.h>
 
-#include <algorithm>
-#include <random>
-#include <iostream>
-#include <fstream>
-#include <sstream>
 #include <unordered_map>
+#include <vector>
 
 #include "NativeBitmap.h"
 
@@ -18,8 +14,6 @@ using std::vector;
 #include "LoadImage.h"
 
 
-#include <string>
-#include <vector>
 #include "Game.h"
 
 void playMusic(int instrument, const char* music) {

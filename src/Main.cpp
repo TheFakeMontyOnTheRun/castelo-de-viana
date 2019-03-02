@@ -264,6 +264,10 @@ void render() {
 
     for (const auto &arrow : arrows) {
 
+        if ( !arrow.mActive ) {
+            continue;
+        }
+
         if (std::abs(arrow.mSpeed.mX) > std::abs(arrow.mSpeed.mY) ) {
             pixelData = arrowSprite[0]->getPixelData();
         } else {
@@ -308,7 +312,11 @@ void render() {
 
     for (const auto &foe : foes) {
 
-        if (foe.mType != EActorType::kSkeleton && foe.mType != EActorType::kGargoyle && foe.mType != EActorType::kHand &&
+		if (!foe.mActive) {
+			continue;
+		}
+
+		if (foe.mType != EActorType::kSkeleton && foe.mType != EActorType::kGargoyle && foe.mType != EActorType::kHand &&
             foe.mType != EActorType::kTinhoso && foe.mType != EActorType::kCapiroto ) {
             continue;
         }
@@ -364,6 +372,11 @@ void render() {
     }
 
     for (const auto &item : items) {
+
+        if (!item.mActive ) {
+            continue;
+        }
+
         y0 = (item.mPosition.mY);
         y1 = 32 + y0;
         x0 = (item.mPosition.mX);
@@ -466,7 +479,12 @@ void render() {
         int bossHealth = 0;
 
         for (auto const &foe : foes) {
-            if (foe.mType == kTinhoso || foe.mType == kCapiroto) {
+
+			if (!foe.mActive) {
+				continue;
+			}
+
+			if (foe.mType == kTinhoso || foe.mType == kCapiroto) {
                 bossHealth = foe.mHealth;
             }
         }

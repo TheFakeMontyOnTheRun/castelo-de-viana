@@ -5,7 +5,6 @@
 #include <string.h>
 
 #include <vector>
-#include <algorithm>
 #include <unordered_map>
 
 #include "NativeBitmap.h"
@@ -90,6 +89,7 @@ updateHero(bool isOnGround, bool isJumping, bool isUpPressed, bool isDownPressed
                 a.mType = kArrow;
                 a.mPosition = player.mPosition;
                 initVec2i( a.mSpeed, 0, -16 );
+                a.mActive = true;
                 a.mDirection = player.mDirection;
                 arrows.push_back(a);
                 player.mStance = kUp;
@@ -220,26 +220,6 @@ bool collide(const Actor &a, const Actor &b, int tolerance = 32) {
 
     return false;
 }
-
-void removeFrom(std::vector<Actor> &mainCollection, std::vector<Actor> &removeList) {
-    mainCollection.erase(std::remove_if(std::begin(mainCollection), std::end(mainCollection),
-                                        [&](Actor x) {
-                                            return std::find(std::begin(removeList), std::end(removeList), x) !=
-                                                   std::end(removeList);
-                                        }
-    ), std::end(mainCollection));
-}
-
-
-void removeFrom(std::vector<Item> &mainCollection, std::vector<Item> &removeList) {
-    mainCollection.erase(std::remove_if(std::begin(mainCollection), std::end(mainCollection),
-                                        [&](Item x) {
-                                            return std::find(std::begin(removeList), std::end(removeList), x) !=
-                                                   std::end(removeList);
-                                        }
-    ), std::end(mainCollection));
-}
-
 
 bool isOnHarmfulBlock(const Actor &actor) {
     int block = foregroundTiles[((actor.mPosition.mY + 16) / 32)][(actor.mPosition.mX + 16) / 32];
@@ -394,42 +374,49 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
         player.mSpeed.mY = 0;
     }
 
-    std::vector<Actor> actorsToRemove;
-
     for (auto &arrow : arrows) {
+
+    	if ( !arrow.mActive ) {
+    		continue;
+    	}
+
         arrow.mPosition.mX += arrow.mSpeed.mX;
         arrow.mPosition.mY += arrow.mSpeed.mY;
 
         if (isBlockedByWall(arrow)) {
-            actorsToRemove.push_back(arrow);
+            arrow.mActive = false;
             continue;
         }
 
         for (auto &foe : foes) {
+
+        	if (!foe.mActive) {
+        		continue;
+        	}
+
             if ( foe.mType != kHand && collide(foe, arrow, 32)) {
                 foe.mHealth--;
-                actorsToRemove.push_back(arrow);
+                arrow.mActive = false;
 
                 if (foe.mType == kGargoyle) {
                     for (auto &door : doors) {
                         door.mType = EActorType::kOpenDoor;
                     }
                 }
-
             }
         }
     }
 
-    removeFrom(arrows, actorsToRemove);
+    for (auto &item : items) {
 
-    std::vector<Item> itemsToRemove;
-
-    for (const auto &item : items) {
+    	if (!item.mActive ) {
+    		continue;
+    	}
 
         if (collide(player, item)) {
             if (item.mType == kKey && !hasKey) {
                 hasKey = true;
-                itemsToRemove.push_back(item);
+                item.mActive = false;
                 playTune(pickSound);
                 for (auto &door : doors) {
                     door.mType = EActorType::kOpenDoor;
@@ -437,8 +424,8 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
             } else if (item.mType == kMeat) {
                 if (player.mHealth < 10) {
                     playTune(pickSound);
-                    itemsToRemove.push_back(item);
-                    player.mHealth = 10;
+					item.mActive = false;
+					player.mHealth = 10;
                     playTune(pickSound);
                 }
                 ticksToShowHealth = 14;
@@ -446,13 +433,13 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
         }
     }
 
-    removeFrom(items, itemsToRemove);
-
-    actorsToRemove.clear();
-
     for (auto &foe : foes) {
 
-        if (foe.mType == kSpawner) {
+		if (!foe.mActive) {
+			continue;
+		}
+
+		if (foe.mType == kSpawner) {
             if ( ( counter % 40 ) == 0 && ( foes.size() <= 5 ) ) {
                 Actor a;
                 a.mType = EActorType::kSkeleton;
@@ -500,7 +487,7 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
         }
 
         if (foe.mHealth <= 0) {
-            actorsToRemove.push_back(foe);
+        	foe.mActive = false;
 
             if (foe.mType == kCapiroto) {
                 screen = kVictory;
@@ -556,12 +543,16 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
             foe.mPosition.mY = (foe.mPosition.mY / 32) * 32;
         }
     }
-    removeFrom(foes, actorsToRemove);
 }
 
 void evalutePlayerAttack() {
     for (auto &foe : foes) {
-            if ( foe.mType != kTinhoso && foe.mType != kHand &&  foe.mType != kCapiroto && foe.mType != kGargoyle && collide(foe, player)) {
+
+		if (!foe.mActive) {
+			continue;
+		}
+
+		if ( foe.mType != kTinhoso && foe.mType != kHand &&  foe.mType != kCapiroto && foe.mType != kGargoyle && collide(foe, player)) {
                 foe.mHealth -= 2;
                 return; //only one enemy per attack!
             }
@@ -598,6 +589,7 @@ void prepareRoom(int room) {
                 foregroundTiles[y][x] = 0;
                 Item item;
                 item.mType = kMeat;
+				item.mActive = true;
                 initVec2i(item.mPosition, x * 32, y * 32 );
                 items.push_back(item);
             } else if (ch == 'k') {
@@ -605,6 +597,7 @@ void prepareRoom(int room) {
                     foregroundTiles[y][x] = 0;
                     Item item;
                     item.mType = kKey;
+					item.mActive = true;
 					initVec2i(item.mPosition, x * 32, y * 32);
                     items.push_back(item);
                 }
@@ -613,6 +606,7 @@ void prepareRoom(int room) {
                 Actor a;
                 a.mType = EActorType::kSkeleton;
 				initVec2i( a.mPosition, x * 32, y * 32);
+				a.mActive = true;
                 a.mSpeed.mX = 8;
                 a.mHealth = 2;
                 foes.push_back(a);
@@ -632,6 +626,7 @@ void prepareRoom(int room) {
                     Actor a;
                     a.mType = EActorType::kHand;
 					initVec2i( a.mPosition, (x + 2 ) * 32, (y + 2) * 32 );
+					a.mActive = true;
                     a.mDirection = kLeft;
                     a.mHealth = 100000;
                     foes.push_back(a);
@@ -640,6 +635,7 @@ void prepareRoom(int room) {
                     foregroundTiles[y + 2][x - 2] = 0;
                     Actor a;
                     a.mType = EActorType::kHand;
+					a.mActive = true;
                     a.mDirection = kRight;
 					initVec2i( a.mPosition, (x - 2) * 32, (y + 2) * 32 );
                     a.mHealth = 100000;
@@ -653,6 +649,7 @@ void prepareRoom(int room) {
                 totalBossHealth = 5;
                 Actor a;
                 a.mType = EActorType::kTinhoso;
+				a.mActive = true;
                 initVec2i(a.mPosition, x * 32, y * 32 );
                 a.mHealth = 5;
                 hasBossOnScreen = true;
@@ -660,6 +657,7 @@ void prepareRoom(int room) {
             } else if (ch == 's') {
                 foregroundTiles[y][x] = 0;
                 Actor a;
+				a.mActive = true;
                 a.mType = EActorType::kSpawner;
 				initVec2i( a.mPosition, x * 32, y * 32);
                 a.mHealth = 20;
@@ -670,6 +668,7 @@ void prepareRoom(int room) {
                 a.mType = EActorType::kGargoyle;
 				initVec2i( a.mPosition, x * 32, y * 32 );
                 a.mSpeed.mX = 8;
+				a.mActive = true;
                 a.mHealth = 1;
                 foes.push_back(a);
             } else if (ch == 'd') {
@@ -677,6 +676,7 @@ void prepareRoom(int room) {
                 Actor a;
                 a.mType = hasKey ? EActorType::kOpenDoor : EActorType::kClosedDoor;
 				initVec2i( a.mPosition, x * 32, y * 32 );
+				a.mActive = true;
                 a.mSpeed.mX = 8;
                 doors.push_back(a);
             } else if (ch == 'D') {
@@ -684,6 +684,7 @@ void prepareRoom(int room) {
                 Actor a;
                 a.mType = EActorType::kClosedDoor;
 				initVec2i( a.mPosition, x * 32, y * 32 );
+				a.mActive = true;
                 a.mSpeed.mX = 8;
                 doors.push_back(a);
             } else {

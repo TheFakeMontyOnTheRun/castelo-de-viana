@@ -33,11 +33,13 @@ struct Actor {
     EDirection mDirection = EDirection::kRight;
     EStance mStance = EStance::kStanding;
     int mHealth = 0;
+    bool mActive = true;
 };
 
 struct Item {
     Vec2i mPosition;
     EItemType mType;
+    bool mActive;
 };
 
 bool operator==(const Vec2i &a, const Vec2i &b);
