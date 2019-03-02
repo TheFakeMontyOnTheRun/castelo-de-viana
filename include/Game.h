@@ -1,9 +1,6 @@
 #ifndef GAME_H
 #define GAME_H
 
-
-#include "NativeBitmap.h"
-
 enum EDirection {
     kLeft, kRight
 };

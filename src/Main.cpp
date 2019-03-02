@@ -1,3 +1,5 @@
+#include <stdint.h>
+
 #include <string>
 #include <cstdlib>
 #include <cmath>

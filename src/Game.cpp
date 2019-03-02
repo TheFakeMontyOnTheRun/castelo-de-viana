@@ -8,7 +8,7 @@
 #include <vector>
 #include <algorithm>
 #include <unordered_map>
-
+#include "NativeBitmap.h"
 #include "Game.h"
 #include "Renderer.h"
 

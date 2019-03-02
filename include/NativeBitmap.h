@@ -5,8 +5,6 @@
 #ifndef LESSON10_NATIVEBITMAP_H
 #define LESSON10_NATIVEBITMAP_H
 
-#include <cstdint>
-
 namespace odb {
     class NativeBitmap {
         int mWidth;
