@@ -4,7 +4,6 @@
 #include <cstdio>
 #include <cstring>
 #include <cmath>
-#include <memory>
 #include <string>
 #include <vector>
 #include <array>
@@ -26,13 +25,13 @@ using std::vector;
 
 namespace odb {
 
-    std::vector<std::shared_ptr<odb::NativeBitmap>> loadSpriteList(std::string listName, std::shared_ptr<odb::IFileLoaderDelegate> fileLoader, EVideoType videoType) {
+    std::vector<odb::NativeBitmap*> loadSpriteList(std::string listName, odb::IFileLoaderDelegate* fileLoader, EVideoType videoType) {
 
 
         auto buffer = fileLoader->loadFileFromPath(listName);
         buffer.push_back('\n');
 
-        std::vector<std::shared_ptr<odb::NativeBitmap>> tilesToLoad;
+        std::vector<odb::NativeBitmap*> tilesToLoad;
         int lastPoint = 0;
         int since = 0;
         auto bufferBegin = std::begin( buffer );
@@ -53,7 +52,7 @@ namespace odb {
         return tilesToLoad;
     }
 
-    std::shared_ptr<NativeBitmap> loadBitmap(std::string path, std::shared_ptr<odb::IFileLoaderDelegate> fileLoader, EVideoType videoType) {
+    NativeBitmap* loadBitmap(std::string path, odb::IFileLoaderDelegate* fileLoader, EVideoType videoType) {
         auto buffer = fileLoader->loadBinaryFileFromPath(path);
         int xSize;
         int ySize;
@@ -144,6 +143,6 @@ namespace odb {
 
 
 
-        return (std::make_shared<odb::NativeBitmap>(xSize, ySize, data8));
+        return new odb::NativeBitmap(xSize, ySize, data8);
     }
 }

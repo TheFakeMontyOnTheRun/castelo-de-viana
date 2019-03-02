@@ -61,7 +61,7 @@ extern std::vector<Actor> foes;
 extern std::vector<Item> items;
 extern std::vector<Actor> doors;
 extern std::vector<Actor> arrows;
-extern std::shared_ptr<odb::NativeBitmap> currentScreen;
+extern odb::NativeBitmap* currentScreen;
 extern EScreen screen;
 extern std::string currentBossName;
 extern int totalBossHealth;

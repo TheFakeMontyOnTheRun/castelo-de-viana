@@ -12,7 +12,6 @@
 #include <string>
 #include <vector>
 #include <array>
-#include <memory>
 
 #include "OPL2.h"
 #include "controller.h"

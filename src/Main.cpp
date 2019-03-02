@@ -4,7 +4,6 @@
 #include <cstdlib>
 #include <cmath>
 #include <array>
-#include <memory>
 #include <vector>
 #include <cstring>
 #include <unordered_map>
@@ -24,33 +23,33 @@ using std::vector;
 
 bool enableSecret = false;
 
-std::shared_ptr<odb::CPackedFileReader> reader;
+odb::CPackedFileReader* reader;
 
-std::vector<std::vector<std::shared_ptr<odb::NativeBitmap>>> tiles;
+std::vector<std::vector<odb::NativeBitmap*>> tiles;
 
-std::shared_ptr<odb::NativeBitmap> pausedSign;
+odb::NativeBitmap* pausedSign;
 
-std::shared_ptr<odb::NativeBitmap> arrowSprite[2];
+odb::NativeBitmap* arrowSprite[2];
 
-std::shared_ptr<odb::NativeBitmap> doorStates[2];
+odb::NativeBitmap* doorStates[2];
 
-std::shared_ptr<odb::NativeBitmap> foeSprites[2];
+odb::NativeBitmap* foeSprites[2];
 
-std::shared_ptr<odb::NativeBitmap> itemSprites[2];
+odb::NativeBitmap* itemSprites[2];
 
-std::shared_ptr<odb::NativeBitmap> gargoyleSprites[2];
+odb::NativeBitmap* gargoyleSprites[2];
 
-std::shared_ptr<odb::NativeBitmap> capirotoSprites[2];
+odb::NativeBitmap* capirotoSprites[2];
 
-std::shared_ptr<odb::NativeBitmap> handSprites[2];
+odb::NativeBitmap* handSprites[2];
 
-std::shared_ptr<odb::NativeBitmap> tinhosoSprites[2];
+odb::NativeBitmap* tinhosoSprites[2];
 
 
-std::shared_ptr<odb::NativeBitmap> hero[6][2];
+odb::NativeBitmap* hero[6][2];
 
 std::array<uint8_t, 320 * 200> imageBuffer;
-std::shared_ptr<odb::NativeBitmap> currentScreen = nullptr;
+odb::NativeBitmap* currentScreen = nullptr;
 
 void initOPL2() {
     setupOPL2();
@@ -128,7 +127,7 @@ void render() {
 
     for (int ty = 0; ty < 6; ++ty) {
         for (int tx = 0; tx < 10; ++tx) {
-            std::shared_ptr<odb::NativeBitmap> tile;
+            odb::NativeBitmap* tile;
             uint8_t *pixelData;
             y0 = (ty * 32);
             y1 = 32 + (ty * 32);
@@ -589,7 +588,7 @@ void sysTick() {
 
 
 void loadGraphics() {
-    reader = std::make_shared<odb::CPackedFileReader>(getAssetsPath());
+    reader = new odb::CPackedFileReader(getAssetsPath());
 
     pausedSign = odb::loadBitmap("paused.png", reader, videoType);
 
