@@ -25,4 +25,4 @@ set(SOURCE_FILES
 find_package(OpenGL REQUIRED)
 include (FindPkgConfig)
 add_executable(castleofviana ${SOURCE_FILES})
-target_link_libraries(castleofviana ${OPENGL_LIBRARIES} ${SDL_LIBRARY}  ${SDL_MIXER_LIBRARY} ${SDL_IMAGE_LIBRARY} ${OPENGL_LIBRARIES}  )
+target_link_libraries(castleofviana m ${OPENGL_LIBRARIES} ${SDL_LIBRARY}  ${SDL_MIXER_LIBRARY} ${SDL_IMAGE_LIBRARY} ${OPENGL_LIBRARIES}  )
