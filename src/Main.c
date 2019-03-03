@@ -578,7 +578,7 @@ void sysTick() {
 
 
     if (!paused) {
-        gameTick(isOnGround, isOnStairs);
+        gameTick(&isOnGround, &isOnStairs);
     }
 
 

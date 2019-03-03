@@ -272,7 +272,7 @@ void gameTick(int *isOnGround, int *isOnStairs) {
         player.mStance = kStanding;
     }
 
-    isOnStairs = (foregroundTiles[(player.mPosition.mY + 16) / 32][(player.mPosition.mX + 16) / 32] == 3);
+    *isOnStairs = (foregroundTiles[(player.mPosition.mY + 16) / 32][(player.mPosition.mX + 16) / 32] == 3);
 
     if (isBlockedByWall(&player)) {
         player.mSpeed.mX = 0;
@@ -305,16 +305,16 @@ void gameTick(int *isOnGround, int *isOnStairs) {
 
     int ceiling = (player.mPosition.mY) / 32;
 
-    isOnGround = isOnFloor(&player);
+    *isOnGround = isOnFloor(&player);
 
-    if (isOnStairs) {
+    if (*isOnStairs) {
         player.mStance = kClimbing;
         player.mSpeed.mX = 0;
     } else {
         player.mStance = kJumping;
     }
 
-    if (isOnGround || !isOnStairs) {
+    if (*isOnGround || !*isOnStairs) {
         player.mStance = kStanding;
 
         if (player.mSpeed.mX == 0 ) {
@@ -331,16 +331,16 @@ void gameTick(int *isOnGround, int *isOnStairs) {
         heroFrame = (heroFrame + 1) % 2;
     }
 
-    if ((player.mSpeed.mX != 0 && isOnGround) || player.mStance == kAltAttacking ) {
+    if ((player.mSpeed.mX != 0 && *isOnGround) || player.mStance == kAltAttacking ) {
         heroFrame = (heroFrame + 1) % 2;
     }
 
-    if (isOnGround) {
+    if (*isOnGround) {
         player.mSpeed.mX = player.mSpeed.mX / 2;
         player.mPosition.mY = (player.mPosition.mY / 32) * 32;
     }
 
-    if (isOnGround && !isOnStairs) {
+    if (*isOnGround && !*isOnStairs) {
         player.mSpeed.mY = min(0, player.mSpeed.mY);
         player.mPosition.mY = min(player.mPosition.mY, (player.mPosition.mY / 32) * 32);
     }
@@ -353,7 +353,7 @@ void gameTick(int *isOnGround, int *isOnStairs) {
         player.mSpeed.mY = -player.mSpeed.mY;
     }
 
-    if (!isOnStairs) {
+    if (!*isOnStairs) {
         player.mSpeed.mY = player.mSpeed.mY + 2;
 /*this prevents from jumping while keeping the climbing animation state.
 Unfortunately, prevents looking up.*/
@@ -546,9 +546,8 @@ Unfortunately, prevents looking up.*/
         }
 
         foe->mSpeed.mY += 2;
-        int isOnGround = isOnFloor(foe);
 
-        if (isOnGround) {
+        if (isOnFloor(foe)) {
             foe->mSpeed.mY = 0;
             foe->mPosition.mY = (foe->mPosition.mY / 32) * 32;
         }
