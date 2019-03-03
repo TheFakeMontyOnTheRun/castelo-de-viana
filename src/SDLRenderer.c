@@ -32,7 +32,7 @@ uint32_t mPalette[256];
 struct ControlState getControlState() {
 
   SDL_Event event;
-  
+
   while ( SDL_PollEvent( &event ) ) {
     
     if( event.type == SDL_QUIT ) {
@@ -266,7 +266,7 @@ uint8_t getPaletteEntry( uint32_t origin ) {
 void initVideoFor(enum EVideoType unused) {
   SDL_Init( SDL_INIT_VIDEO );
 
-
+    memset(&toReturn, 0, sizeof(struct ControlState));
 
   video = SDL_SetVideoMode( 320, 200, 0, SDL_ASYNCBLIT | SDL_HWACCEL | SDL_HWSURFACE);
 

@@ -30,6 +30,7 @@ EVideoType videoType = kCGA;
 
 extern "C" struct ControlState getControlState() {
     ControlState toReturn;
+	memset(&toReturn, 0, sizeof(struct ControlState));
 
     while (kbhit()) {
         auto getched = getch();
