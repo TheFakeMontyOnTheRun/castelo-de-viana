@@ -6,14 +6,13 @@
 #define DUNGEONSOFNOUDAR486_CPACKEDFILEREADER_H
 
 namespace odb {
-    class CPackedFileReader : public odb::IFileLoaderDelegate {
-        FILE *mDataPack = nullptr;
+    class CPackedFileReader {
+        FILE *mDataPack;
         char* mPackPath;
     public:
-        CPackedFileReader() = delete;
-        const char* getFilePathPrefix() override;
+        const char* getFilePathPrefix() ;
         explicit CPackedFileReader( const char* dataFilePath );
-        StaticBuffer loadFileFromPath( const char* path ) override ;
+        StaticBuffer loadFileFromPath( const char* path );
     };
 }
 

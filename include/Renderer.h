@@ -7,19 +7,19 @@
 
 
 struct ControlState {
-    bool moveLeft = false;
-    bool moveRight = false;
-    bool moveUp = false;
-    bool moveDown = false;
-    bool fireArrow = false;
-    bool sword = false;
-    bool jump = false;
-    bool secret = false;
-    bool escape = false;
-    bool enter = false;
+    bool moveLeft;
+    bool moveRight;
+    bool moveUp;
+    bool moveDown;
+    bool fireArrow;
+    bool sword;
+    bool jump;
+    bool secret;
+    bool escape;
+    bool enter;
 };
 
-enum EVideoType : uint8_t {
+enum EVideoType {
     kCGA,
     kVGA,
 };

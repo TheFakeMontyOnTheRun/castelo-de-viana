@@ -211,7 +211,7 @@ void copyImageBufferToVideoMemory(uint8_t* imageBuffer ) {
   rect.w = 320;
   rect.h = 200;
   SDL_FillRect( video, &rect, SDL_MapRGB( video->format, 0, 0, 0 ) );
-    auto screen = video;
+    SDL_Surface* screen = video;
     if ( SDL_MUSTLOCK(screen) ) {
         if ( SDL_LockSurface(screen) < 0 ) {
             fprintf(stderr, "Can't lock screen: %s\n", SDL_GetError());
@@ -278,8 +278,8 @@ void initVideoFor(EVideoType unused) {
     for (int r = 0; r < 256; r += 16) {
         for (int g = 0; g < 256; g += 8) {
             for (int b = 0; b < 256; b += 8) {
-                auto pixel = 0xFF000000 + (r << 16) + (g << 8) + (b);
-                auto paletteEntry = getPaletteEntry(pixel);
+                uint32_t pixel = 0xFF000000 + (r << 16) + (g << 8) + (b);
+                uint8_t paletteEntry = getPaletteEntry(pixel);
                 mPalette[paletteEntry] = pixel;
             }
         }

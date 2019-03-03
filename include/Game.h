@@ -2,7 +2,7 @@
 #define GAME_H
 
 enum EDirection {
-    kLeft, kRight
+    kDirectionLeft, kDirectionRight
 };
 enum EStance {
     kUp, kStanding, kClimbing, kAttacking, kJumping, kAltAttacking
@@ -21,18 +21,18 @@ enum EScreen {
 };
 
 struct Vec2i {
-    int mX = 0;
-    int mY = 0;
+    int mX;
+    int mY;
 };
 
 struct Actor {
     Vec2i mPosition;
     Vec2i mSpeed;
     EActorType mType;
-    EDirection mDirection = EDirection::kRight;
-    EStance mStance = EStance::kStanding;
-    int mHealth = 0;
-    bool mActive = true;
+    EDirection mDirection;
+    EStance mStance;
+    int mHealth;
+    bool mActive;
 };
 
 struct Item {

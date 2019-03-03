@@ -2,7 +2,7 @@
 SDL_LIB = -L/usr/lib -lSDL
 SDL_INCLUDE = -I/usr/local/include `sdl-config --cflags `
 
-CXXFLAGS = -std=c++11 -O2 -DSDL -Iinclude -c -g  $(SDL_INCLUDE) -Iinclude -Inoudar-core/noudar-core/include -Istb
+CXXFLAGS = -std=c++98 -O2 -DSDL -Iinclude -c -g  $(SDL_INCLUDE) -Iinclude -Inoudar-core/noudar-core/include -Istb
 OBJS = src/Game.o src/Main.o src/SDLRenderer.o src/NativeBitmap.o src/LoadImageCGA.o src/MusicSDL.o \
             src/CPackedFileReader.o\
             src/IFileLoaderDelegate.o\

@@ -45,7 +45,7 @@ odb::StaticBuffer odb::CPackedFileReader::loadFileFromPath(const char* path) {
         printf("failed to load %s", path);
         exit(-1);
     }
-    auto result = fseek( mDataPack, offset, SEEK_SET );
+    int result = fseek( mDataPack, offset, SEEK_SET );
 
     uint32_t size = 0;
     fread(&size, 4, 1, mDataPack );

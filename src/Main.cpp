@@ -46,7 +46,7 @@ odb::NativeBitmap* tinhosoSprites[2];
 odb::NativeBitmap* hero[6][2];
 
 uint8_t imageBuffer[ 320 * 200 ];
-odb::NativeBitmap* currentScreen = nullptr;
+odb::NativeBitmap* currentScreen = NULL;
 
 void initOPL2() {
     setupOPL2();
@@ -60,7 +60,7 @@ void prepareScreenFor(EScreen screenState) {
             playTune("eefggfedccdeedd");
             break;
         case kGame:
-            currentScreen = nullptr;
+            currentScreen = NULL;
             break;
         case kGameOver:
             currentScreen = odb::loadBitmap( "gameover.png", reader, videoType );
@@ -114,9 +114,9 @@ void render() {
     }
 
 
-    if (currentScreen != nullptr) {
+    if (currentScreen != NULL) {
 
-        auto pixelData = currentScreen->getPixelData();
+        uint8_t* pixelData = currentScreen->getPixelData();
 
         for (int c = 0; c < 320 * 200; ++c) {
             imageBuffer[c] = pixelData[c];
@@ -152,8 +152,8 @@ void render() {
                 pixel = 4;
                 for (int y = y0; y < y1; ++y) {
 
-                    auto sourceLine = pixelData + (32 * (y - y0));
-                    auto destLine = &imageBuffer[0] + (320 * y) + x0;
+                    uint8_t* sourceLine = pixelData + (32 * (y - y0));
+                    uint8_t* destLine = &imageBuffer[0] + (320 * y) + x0;
 
                     for (int x = x0; x < x1; ++x) {
 
@@ -177,8 +177,8 @@ void render() {
                 pixel = 4;
                 for (int y = y0; y < y1; ++y) {
 
-                    auto sourceLine = pixelData + (32 * (y - y0));
-                    auto destLine = &imageBuffer[0] + (320 * y) + x0;
+                    uint8_t* sourceLine = pixelData + (32 * (y - y0));
+                    uint8_t* destLine = &imageBuffer[0] + (320 * y) + x0;
 
                     for (int x = x0; x < x1; ++x) {
 
@@ -203,7 +203,7 @@ void render() {
     for (size_t pos = 0; pos < doors.used; ++ pos ) {
         Actor* door = *doorPtr;
 
-        pixelData = doorStates[door->mType - EActorType::kClosedDoor]->getPixelData();
+        pixelData = doorStates[door->mType - kClosedDoor]->getPixelData();
         y0 = (door->mPosition.mY);
         y1 = 32 + y0;
         x0 = (door->mPosition.mX);
@@ -233,7 +233,7 @@ void render() {
         ++doorPtr;
     }
 
-    auto sprite = hero[player.mStance][heroFrame];
+    odb::NativeBitmap* sprite = hero[player.mStance][heroFrame];
 
     if (((ticksUntilVulnerable <= 0) || ((counter % 2) == 0)) || paused) {
         y0 = (player.mPosition.mY);
@@ -241,7 +241,7 @@ void render() {
         y1 = sprite->getHeight() + y0;
         x0 = (player.mPosition.mX);
 
-        if (player.mDirection == EDirection::kLeft) {
+        if (player.mDirection == kDirectionLeft) {
             x0 -= (spriteWidth - 32);
         }
 
@@ -256,7 +256,7 @@ void render() {
             }
 
             for (int x = x0; x < x1; ++x) {
-                if (player.mDirection == EDirection::kRight) {
+                if (player.mDirection == kDirectionRight) {
                     pixel = (pixelData[(spriteWidth * (y - y0)) + ((x - x0))]);
                 } else {
                     pixel = (pixelData[(spriteWidth * (y - y0)) + ((spriteWidth - 1) - (x - x0))]);
@@ -305,7 +305,7 @@ void render() {
             }
 
             for (int x = x0; x < x1; ++x) {
-                if (arrow->mDirection == EDirection::kRight) {
+                if (arrow->mDirection == kDirectionRight) {
                     pixel = (pixelData[(32 * (y - y0)) + ((x - x0))]);
                 } else {
                     pixel = (pixelData[(32 * (y - y0)) + (31 - (x - x0))]);
@@ -335,11 +335,11 @@ void render() {
 			continue;
 		}
 
-		if (foe->mType != EActorType::kSkeleton &&
-		    foe->mType != EActorType::kGargoyle &&
-		    foe->mType != EActorType::kHand &&
-            foe->mType != EActorType::kTinhoso &&
-            foe->mType != EActorType::kCapiroto ) {
+		if (foe->mType != kSkeleton &&
+		    foe->mType != kGargoyle &&
+		    foe->mType != kHand &&
+            foe->mType != kTinhoso &&
+            foe->mType != kCapiroto ) {
             continue;
         }
 
@@ -372,7 +372,7 @@ void render() {
             }
 
             for (int x = x0; x < x1; ++x) {
-                if (foe->mDirection == EDirection::kRight) {
+                if (foe->mDirection == kDirectionRight) {
                     pixel = (pixelData[(32 * (y - y0)) + ((x - x0))]);
                 } else {
                     pixel = (pixelData[(32 * (y - y0)) + (31 - (x - x0))]);
@@ -460,18 +460,18 @@ void render() {
     }
 
     if (paused) {
-        auto pixelsPause = pausedSign->getPixelData();
-        auto width = pausedSign->getWidth();
-        auto height = pausedSign->getHeight();
-        auto centerX = 320 / 2;
-        auto centerY = 200 / 2;
+        uint8_t* pixelsPause = pausedSign->getPixelData();
+        int width = pausedSign->getWidth();
+        int height = pausedSign->getHeight();
+        int centerX = 320 / 2;
+        int centerY = 200 / 2;
 
         for ( int y = 0; y < height; ++y ) {
-            auto py = centerY - (height / 2) + y;
+            int py = centerY - (height / 2) + y;
             for ( int x = 0; x < width; ++x ) {
-                auto px = centerX - (width / 2) + x;
+                int px = centerX - (width / 2) + x;
 
-                auto pixel = (pixelsPause[(width * y) + x]);
+                uint8_t pixel = (pixelsPause[(width * y) + x]);
                 imageBuffer[(320 * py) + (px)] = pixel;
             }
         }
@@ -555,7 +555,7 @@ void sysTick() {
     }
 
 
-    auto controlState = getControlState();
+    ControlState controlState = getControlState();
 
     if ( controlState.sword ) {
         isAttacking = true;
@@ -680,7 +680,7 @@ void loadGraphics() {
 int main(int argc, char **argv) {
 
     for ( int c = 1; c < argc; ++c ) {
-        auto parm = argv[ c ];
+        char* parm = argv[ c ];
 
         if ( !strcmp(parm, "opl2lpt")) {
             initOPL2();

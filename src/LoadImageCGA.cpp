@@ -18,9 +18,9 @@
 
 namespace odb {
 
-    odb::ItemVector* loadSpriteList(const char* listName, odb::IFileLoaderDelegate* fileLoader, EVideoType videoType) {
+    odb::ItemVector* loadSpriteList(const char* listName, odb::CPackedFileReader* fileLoader, EVideoType videoType) {
 
-        auto buffer = fileLoader->loadFileFromPath(listName);
+        odb::StaticBuffer buffer = fileLoader->loadFileFromPath(listName);
         odb::ItemVector *tilesToLoad = (odb::ItemVector*)calloc(sizeof(odb::ItemVector), 1);
 
         size_t items = odb::countTokens((char*)buffer.data, buffer.size) + 1;
@@ -30,7 +30,7 @@ namespace odb {
         int lastPoint = 0;
         int since = 0;
 
-        auto bufferBegin = buffer.data;
+        uint8_t* bufferBegin = buffer.data;
         for ( size_t pos = 0; pos < buffer.size; ++pos ) {
             const char c = buffer.data[ pos ];
 
@@ -42,7 +42,7 @@ namespace odb {
                 }
 
                 char *filename = (char*)calloc(since - 1 + 1, 1 );
-                auto diff = (bufferBegin + lastPoint + since - 1) - (bufferBegin + lastPoint);
+                size_t diff = (bufferBegin + lastPoint + since - 1) - (bufferBegin + lastPoint);
                 memcpy( &filename[0], bufferBegin + lastPoint, diff );
 
                 lastPoint += since;
@@ -51,16 +51,17 @@ namespace odb {
                     odb::pushVector( tilesToLoad, odb::loadBitmap( filename, fileLoader, videoType ));
                 }
                 since = 0;
+                free(filename);
             }
         }
 
-
+		free(buffer.data);
 
         return tilesToLoad;
     }
 
-    NativeBitmap* loadBitmap(const char* path, odb::IFileLoaderDelegate* fileLoader, EVideoType videoType) {
-        auto buffer = fileLoader->loadFileFromPath(path);
+    NativeBitmap* loadBitmap(const char* path, odb::CPackedFileReader* fileLoader, EVideoType videoType) {
+        odb::StaticBuffer buffer = fileLoader->loadFileFromPath(path);
         int xSize;
         int ySize;
         int components;
@@ -68,7 +69,7 @@ namespace odb {
         uint8_t *data8;
 
         if (videoType == kVGA ) {
-            auto image = stbi_load_from_memory((const stbi_uc *) buffer.data, buffer.size, &xSize, &ySize, &components, 4);
+            stbi_uc* image = stbi_load_from_memory((const stbi_uc *) buffer.data, buffer.size, &xSize, &ySize, &components, 4);
             rawData = new int[xSize * ySize];
             data8 = new uint8_t[ xSize * ySize ];
             memcpy( rawData, image, xSize * ySize * sizeof( int ) );
@@ -88,11 +89,11 @@ namespace odb {
                 rawData[ c ] = origin;
             }
             stbi_image_free(image);
-            for ( auto c = 0; c < ( xSize * ySize ); ++c ) {
+            for ( int c = 0; c < ( xSize * ySize ); ++c ) {
                 data8[ c ] = getPaletteEntry( rawData[ c ] );
             }
         } else {
-            auto image = stbi_load_from_memory((const stbi_uc *) buffer.data, buffer.size, &xSize, &ySize, &components, 1);
+            stbi_uc* image = stbi_load_from_memory((const stbi_uc *) buffer.data, buffer.size, &xSize, &ySize, &components, 1);
             rawData = new int[xSize * ySize];
             data8 = new uint8_t[ xSize * ySize ];
             for (int y = 0; y < ySize; ++y) {
@@ -140,7 +141,7 @@ namespace odb {
             }
             stbi_image_free(image);
 
-            for ( auto c = 0; c < ( xSize * ySize ); ++c ) {
+            for ( int c = 0; c < ( xSize * ySize ); ++c ) {
                 data8[ c ] = ( rawData[ c ] );
             }
         }

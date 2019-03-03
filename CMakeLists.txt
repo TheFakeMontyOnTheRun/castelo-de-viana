@@ -6,7 +6,7 @@ include_directories(stb include
 
 
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 98)
 find_package(SDL REQUIRED)
 find_package(SDL_mixer REQUIRED)
 find_package(SDL_image REQUIRED)

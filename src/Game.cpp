@@ -33,11 +33,11 @@ odb::ItemVector doors;
 odb::ItemVector items;
 odb::ItemVector arrows;
 
-auto hurtSound = "t240m60i53l8dca";
-auto swordSound = "t240m60i44l8dgd";
-auto arrowSound = "t240m60i44l8abc";
-auto jumpSound = "t240m60i46l8cdefedc";
-auto pickSound = "t240m60i54l8abfc";
+const char* hurtSound = "t240m60i53l8dca";
+const char* swordSound = "t240m60i44l8dgd";
+const char* arrowSound = "t240m60i44l8abc";
+const char* jumpSound = "t240m60i46l8cdefedc";
+const char* pickSound = "t240m60i54l8abfc";
 
 int totalBossHealth = 0;
 const char* currentBossName;
@@ -58,7 +58,7 @@ void init() {
     player.mSpeed.mX = 0;
     player.mSpeed.mY = 0;
     player.mHealth = 10;
-    player.mType = EActorType::kPlayer;
+    player.mType = kPlayer;
     player.mStance = kJumping;
     counter = 0;
     room = 0;
@@ -119,7 +119,7 @@ updateHero(bool isOnGround, bool isJumping, bool isUpPressed, bool isDownPressed
 
     if (isLeftPressed) {
         player.mSpeed.mX = -8;
-        player.mDirection = kLeft;
+        player.mDirection = kDirectionLeft;
         if (isOnGround) {
             player.mStance = kStanding;
         }
@@ -127,7 +127,7 @@ updateHero(bool isOnGround, bool isJumping, bool isUpPressed, bool isDownPressed
 
     if (isRightPressed) {
         player.mSpeed.mX = +8;
-        player.mDirection = kRight;
+        player.mDirection = kDirectionRight;
         if (isOnGround) {
             player.mStance = kStanding;
         }
@@ -144,7 +144,7 @@ updateHero(bool isOnGround, bool isJumping, bool isUpPressed, bool isDownPressed
         a->mType = kArrow;
         a->mActive = true;
         a->mPosition = player.mPosition;
-        initVec2i( a->mSpeed, player.mDirection == kRight ? 16 : -16, 0);
+        initVec2i( a->mSpeed, player.mDirection == kDirectionRight ? 16 : -16, 0);
         a->mDirection = player.mDirection;
         player.mStance = kAltAttacking;
         arrowCooldown = 4;
@@ -177,7 +177,7 @@ bool isOnFloor(const Actor &actor) {
 bool isBlockedByWall(const Actor &actor) {
     int front = ((actor.mPosition.mX) / 32);
 
-    if (actor.mDirection == EDirection::kRight) {
+    if (actor.mDirection == kDirectionRight) {
         front++;
     }
 
@@ -187,7 +187,7 @@ bool isBlockedByWall(const Actor &actor) {
 bool collide(const Actor &a, const Item &b, int tolerance = 32) {
     if (std::abs(a.mPosition.mY - b.mPosition.mY) < tolerance) {
 
-        if (a.mDirection == EDirection::kRight) {
+        if (a.mDirection == kDirectionRight) {
             int diff = a.mPosition.mX - b.mPosition.mX;
             if (diff < (tolerance) && diff > 0) {
                 return true;
@@ -206,7 +206,7 @@ bool collide(const Actor &a, const Item &b, int tolerance = 32) {
 bool collide(const Actor &a, const Actor &b, int tolerance = 32) {
     if (std::abs(a.mPosition.mY - b.mPosition.mY) < tolerance) {
 
-        if (b.mDirection == EDirection::kRight) {
+        if (b.mDirection == kDirectionRight) {
             int diff = a.mPosition.mX - b.mPosition.mX;
             if (diff < (tolerance) && diff > 0) {
                 return true;
@@ -282,10 +282,10 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
         return;
     }
 
-    if (player.mStance == EStance::kAttacking) {
+    if (player.mStance == kAttacking) {
         evalutePlayerAttack();
 
-        player.mStance = EStance::kStanding;
+        player.mStance = kStanding;
     }
 
     isOnStairs = (foregroundTiles[(player.mPosition.mY + 16) / 32][(player.mPosition.mX + 16) / 32] == 3);
@@ -458,10 +458,10 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
             if ( ( counter % 40 ) == 0 && ( foes.used <= 5 ) ) {
                 Actor *a = (Actor*)calloc( 1, sizeof(Actor));
                 odb::pushVector( &foes, a );
-                a->mType = EActorType::kSkeleton;
+                a->mType = kSkeleton;
                 a->mPosition = Vec2i( foe->mPosition );
                 a->mSpeed.mX = 8;
-                a->mDirection = EDirection::kRight;
+                a->mDirection = kDirectionRight;
                 a->mActive = true;
                 a->mHealth = 2;
             }
@@ -486,12 +486,12 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
             }
 
             switch ( foe->mDirection ) {
-                case kLeft:
+                case kDirectionLeft:
                     if ( foe->mPosition.mX < 160 ) {
                         foe->mSpeed.mX = -foe->mSpeed.mX;
                     }
                     break;
-                case kRight:
+                case kDirectionRight:
                     if (  160 <= foe->mPosition.mX) {
                         foe->mSpeed.mX = -foe->mSpeed.mX;
                     }
@@ -536,21 +536,21 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
 
         if (foe->mPosition.mX >= (320 - 32)) {
             foe->mSpeed.mX = -8;
-            foe->mDirection = EDirection::kLeft;
+            foe->mDirection = kDirectionLeft;
         }
 
         if (foe->mPosition.mX < 0) {
             foe->mSpeed.mX = 8;
-            foe->mDirection = EDirection::kRight;
+            foe->mDirection = kDirectionRight;
         }
 
         if (isBlockedByWall(*foe)) {
             foe->mSpeed.mX *= -1;
 
-            if (foe->mDirection == EDirection::kLeft) {
-                foe->mDirection = EDirection::kRight;
+            if (foe->mDirection == kDirectionLeft) {
+                foe->mDirection = kDirectionRight;
             } else {
-                foe->mDirection = EDirection::kLeft;
+                foe->mDirection = kDirectionLeft;
             }
         }
 
@@ -609,10 +609,10 @@ void prepareRoom(int room) {
     odb::CPackedFileReader reader("gamedata.pfs");
 
     snprintf(buffer, 64, "%d.bg", room );
-    auto bgmap = reader.loadFileFromPath(buffer);
+    odb::StaticBuffer bgmap = reader.loadFileFromPath(buffer);
 
     snprintf(buffer, 64, "%d.fg", room );
-    auto fgmap = reader.loadFileFromPath(buffer);
+    odb::StaticBuffer fgmap = reader.loadFileFromPath(buffer);
 
     memset(backgroundTiles, 0, sizeof(int) * 10 * 6 );
     memset(foregroundTiles, 0, sizeof(int) * 10 * 6 );
@@ -654,8 +654,8 @@ void prepareRoom(int room) {
                 foregroundTiles[y][x] = 0;
                 Actor *a = (Actor*)calloc(sizeof(Actor), 1);
                 odb::pushVector( &foes, a );
-                a->mType = EActorType::kSkeleton;
-                a->mDirection = EDirection::kRight;
+                a->mType = kSkeleton;
+                a->mDirection = kDirectionRight;
                 initVec2i( a->mPosition, x * 32, y * 32);
                 a->mActive = true;
                 a->mSpeed.mX = 8;
@@ -665,7 +665,7 @@ void prepareRoom(int room) {
                 currentBossName = "CAPIROTO";
                 Actor *a = (Actor*)calloc( 1, sizeof(Actor));
                 odb::pushVector( &foes, a );
-                a->mType = EActorType::kCapiroto;
+                a->mType = kCapiroto;
                 initVec2i( a->mPosition, x * 32, y * 32);
                 a->mHealth = 25;
                 a->mActive = true;
@@ -676,19 +676,19 @@ void prepareRoom(int room) {
                     foregroundTiles[y + 2][ x + 2] = 0;
                     Actor *a = (Actor*)calloc( 1, sizeof(Actor));
                     odb::pushVector( &foes, a );
-                    a->mType = EActorType::kHand;
+                    a->mType = kHand;
                     initVec2i( a->mPosition, (x + 2 ) * 32, (y + 2) * 32 );
                     a->mActive = true;
-                    a->mDirection = kLeft;
+                    a->mDirection = kDirectionLeft;
                     a->mHealth = 100000;
                 }
                 {
                     foregroundTiles[y + 2][x - 2] = 0;
                     Actor *a = (Actor*)calloc( 1, sizeof(Actor));
                     odb::pushVector( &foes, a );
-                    a->mType = EActorType::kHand;
+                    a->mType = kHand;
                     a->mActive = true;
-                    a->mDirection = kRight;
+                    a->mDirection = kDirectionRight;
                     initVec2i( a->mPosition, (x - 2) * 32, (y + 2) * 32 );
                     a->mHealth = 100000;
                 }
@@ -700,7 +700,7 @@ void prepareRoom(int room) {
                 totalBossHealth = 5;
                 Actor *a = (Actor*)calloc( 1, sizeof(Actor));
                 odb::pushVector( &foes, a );
-                a->mType = EActorType::kTinhoso;
+                a->mType = kTinhoso;
                 a->mActive = true;
                 initVec2i(a->mPosition, x * 32, y * 32 );
                 a->mHealth = 5;
@@ -710,14 +710,14 @@ void prepareRoom(int room) {
                 Actor *a = (Actor*)calloc( 1, sizeof(Actor));
                 odb::pushVector( &foes, a );
                 a->mActive = true;
-                a->mType = EActorType::kSpawner;
+                a->mType = kSpawner;
                 initVec2i( a->mPosition, x * 32, y * 32);
                 a->mHealth = 20;
             } else if (ch == 'g') {
                 foregroundTiles[y][x] = 0;
                 Actor *a = (Actor*)calloc( 1, sizeof(Actor));
                 odb::pushVector( &foes, a );
-                a->mType = EActorType::kGargoyle;
+                a->mType = kGargoyle;
                 initVec2i( a->mPosition, x * 32, y * 32 );
                 a->mSpeed.mX = 8;
                 a->mActive = true;
@@ -726,14 +726,14 @@ void prepareRoom(int room) {
                 foregroundTiles[y][x] = 0;
                 Actor *a = (Actor*)calloc( 1, sizeof(Actor));
                 odb::pushVector( &doors, a );
-                a->mType = hasKey ? EActorType::kOpenDoor : EActorType::kClosedDoor;
+                a->mType = hasKey ? kOpenDoor : kClosedDoor;
                 initVec2i( a->mPosition, x * 32, y * 32 );
                 a->mActive = true;
             } else if (ch == 'D') {
                 foregroundTiles[y][x] = 0;
                 Actor *a = (Actor*)calloc( 1, sizeof(Actor));
                 odb::pushVector( &doors, a );
-                a->mType = EActorType::kClosedDoor;
+                a->mType = kClosedDoor;
                 initVec2i( a->mPosition, x * 32, y * 32 );
                 a->mActive = true;
             } else {
@@ -745,7 +745,7 @@ void prepareRoom(int room) {
 
     snprintf(buffer, 64, "%d.lst", room );
 
-    auto listBuffer = reader.loadFileFromPath(buffer);
+    odb::StaticBuffer listBuffer = reader.loadFileFromPath(buffer);
 
     size_t amount = odb::countTokens((char*)listBuffer.data, listBuffer.size) + 1;
     odb::ItemVector tilestoLoad;
@@ -753,7 +753,7 @@ void prepareRoom(int room) {
 
     int lastPoint = 0;
     int since = 0;
-    auto bufferBegin = listBuffer.data;
+    uint8_t* bufferBegin = listBuffer.data;
 
     for ( size_t pos = 0; pos < listBuffer.size; ++pos ) {
         char c = listBuffer.data[ pos ];
@@ -778,6 +778,9 @@ void prepareRoom(int room) {
     loadTiles(tilestoLoad);
 
     clearBuffers();
+	free( listBuffer.data );
+    free(fgmap.data);
+	free(bgmap.data);
 }
 
 void enforceScreenLimits() {
