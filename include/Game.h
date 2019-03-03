@@ -20,8 +20,7 @@ enum EScreen {
     kIntro, kGame, kGameOver, kVictory
 };
 
-class Vec2i {
-public:
+struct Vec2i {
     int mX = 0;
     int mY = 0;
 };
@@ -59,10 +58,10 @@ extern int ticksUntilVulnerable;
 extern int ticksToShowHealth;
 extern int backgroundTiles[6][10];
 extern int foregroundTiles[6][10];
-extern std::vector<Actor> foes;
-extern std::vector<Item> items;
-extern std::vector<Actor> doors;
-extern std::vector<Actor> arrows;
+extern odb::ItemVector foes;
+extern odb::ItemVector items;
+extern odb::ItemVector doors;
+extern odb::ItemVector arrows;
 extern odb::NativeBitmap* currentScreen;
 extern EScreen screen;
 extern const char* currentBossName;
@@ -73,7 +72,7 @@ void init();
 
 void gameTick(bool &isOnGround, bool &isOnStairs);
 
-void loadTiles(std::vector<char*> tilesToLoad);
+void loadTiles(odb::ItemVector tilesToLoad);
 
 void
 updateHero(bool isOnGround, bool isJumping, bool isUpPressed, bool isDownPressed, bool isLeftPressed, bool isAttacking,

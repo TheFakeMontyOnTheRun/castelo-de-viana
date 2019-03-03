@@ -1,17 +1,52 @@
 //
 // Created by monty on 26/09/16.
 //
+#include <stdint.h>
+#include <assert.h>
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <vector>
-
-using std::vector;
-
 #include "Common.h"
 
 namespace odb {
+
+	void clearVector(ItemVector* vector) {
+		memset(vector->items, 0, sizeof(void*) * vector->capacity );
+		vector->used = 0;
+	}
+
+	void initVector(ItemVector* vector, size_t capacity ) {
+		vector->capacity = capacity;
+		vector->used = 0;
+		vector->items = (void **)(malloc(sizeof(void*) * capacity ));
+	}
+
+	void pushVector( ItemVector* vector, void* item ) {
+
+		assert( vector->used + 1 <= vector->capacity );
+		vector->items[ vector->used ] = item;
+		vector->used++;
+	}
+
+	int min(int val1, int val2) {
+		return val1 < val2 ? val1 : val2;
+	}
+
+	size_t countTokens( const char* text, size_t length ) {
+
+		size_t count = 0;
+		char* ptr = (char*)text;
+
+		for (size_t pos = 0; pos < length; ++pos ) {
+			if (*ptr == '\n') {
+				count++;
+			}
+			++ptr;
+		}
+
+		return count;
+	}
 
 	char* fileFromString( const char* path ) {
 		char * buffer = 0;
@@ -32,31 +67,5 @@ namespace odb {
 		}
 
 		return buffer;
-	}
-
-	vector<char> readToBuffer(FILE *fileDescriptor) {
-		const unsigned N = 1024;
-
-		fseek(fileDescriptor, 0, SEEK_END);
-		auto endPos = ftell( fileDescriptor );
-		rewind(fileDescriptor);
-		vector<char> total(endPos);
-		auto writeHead = std::begin( total );
-
-		for ( int c = 0; c < endPos; ++c ) {
-			char buffer[N];
-			size_t read = fread((void *) &buffer[0], 1, N, fileDescriptor);
-			if (read) {
-				for (unsigned int c = 0; c < read; ++c) {
-					*writeHead = (buffer[c]);
-					writeHead = std::next(writeHead);
-				}
-			}
-			if (read < N) {
-				break;
-			}
-		}
-
-		return total;
 	}
 }

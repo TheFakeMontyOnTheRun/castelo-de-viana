@@ -1,12 +1,11 @@
 //
 // Created by monty on 01-07-2017.
 //
+#include <assert.h>
 #include <stdint.h>
 #include <stdio.h>
-#include <vector>
 
-using std::vector;
-
+#include "Common.h"
 #include "NativeBitmap.h"
 #include "IFileLoaderDelegate.h"
 #include "CPackedFileReader.h"

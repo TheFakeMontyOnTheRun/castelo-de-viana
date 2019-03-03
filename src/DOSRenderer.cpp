@@ -1,7 +1,9 @@
 //
 // Created by monty on 01-07-2017.
 //
-#include <array>
+#include <stdint.h>
+#include <stdio.h>
+#include <string.h>
 #include <go32.h>
 #include <sys/farptr.h>
 #include <conio.h>
@@ -21,8 +23,8 @@ clock_t t0;
 clock_t t1;
 clock_t ms;
 
-std::array<uint8_t, 320 * 100 / 4> evenBuffer;
-std::array<uint8_t, 320 * 100 / 4> oddBuffer;
+uint8_t evenBuffer[320 * 100 / 4];
+uint8_t oddBuffer[320 * 100 / 4];
 
 EVideoType videoType = kCGA;
 
@@ -163,13 +165,13 @@ void plot(int x, int y, int color) {
 
 int frame = 0;
 
-void copyImageBufferToVideoMemory(const std::array<uint8_t, 320 * 200>& imageBuffer ) {
+void copyImageBufferToVideoMemory(uint8_t* imageBuffer ) {
     if ( videoType == kVGA ) {
-        std::array<uint8_t , 320 * 200> mFinalBuffer;
-        auto currentImageBufferPos = std::begin(imageBuffer);
-        auto currentBufferPos = std::begin(mFinalBuffer);
+        uint8_t mFinalBuffer[320 * 200];
+        uint8_t* currentImageBufferPos = imageBuffer;
+        uint8_t* currentBufferPos = mFinalBuffer;
 
-        std::fill( std::begin(mFinalBuffer), std::end(mFinalBuffer), 0);
+        memset( mFinalBuffer, 0, 320 * 200 );
 
         for (int y = 0; y < 200; ++y) {
             for (int x = 0; x < 320; ++x) {
@@ -181,7 +183,7 @@ void copyImageBufferToVideoMemory(const std::array<uint8_t, 320 * 200>& imageBuf
         int origin = 0;
         int value = 0;
         int last = 0;
-        auto currentImageBufferPos = std::begin(imageBuffer);
+        uint8_t* currentImageBufferPos = imageBuffer;
 
         for (int y = 0; y < 200; ++y) {
             for (int x = 0; x < 320; ++x) {
@@ -189,7 +191,7 @@ void copyImageBufferToVideoMemory(const std::array<uint8_t, 320 * 200>& imageBuf
                 origin = *currentImageBufferPos;
 
                 if (last == origin) {
-                    currentImageBufferPos = std::next(currentImageBufferPos);
+                    ++currentImageBufferPos;
                     continue;
                 }
 
@@ -217,12 +219,12 @@ void copyImageBufferToVideoMemory(const std::array<uint8_t, 320 * 200>& imageBuf
 
                 plot(x, y, value);
 
-                currentImageBufferPos = std::next(currentImageBufferPos);
+                ++currentImageBufferPos;
             }
         }
 
-        dosmemput(evenBuffer.data(), 320 * 100 / 4, 0xB800 * 16);
-        dosmemput(oddBuffer.data(), 320 * 100 / 4, (0xB800 * 16) + 0x2000);
+        dosmemput(evenBuffer, 320 * 100 / 4, 0xB800 * 16);
+        dosmemput(oddBuffer, 320 * 100 / 4, (0xB800 * 16) + 0x2000);
     }
 }
 

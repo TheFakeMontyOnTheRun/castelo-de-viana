@@ -6,8 +6,7 @@
 #define CASTLEVANIA_RENDERER_H
 
 
-class ControlState {
-public:
+struct ControlState {
     bool moveLeft = false;
     bool moveRight = false;
     bool moveUp = false;

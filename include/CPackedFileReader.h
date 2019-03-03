@@ -13,8 +13,6 @@ namespace odb {
         CPackedFileReader() = delete;
         const char* getFilePathPrefix() override;
         explicit CPackedFileReader( const char* dataFilePath );
-        vector<char> loadBinaryFileFromPath( const char* path ) override;
-
         StaticBuffer loadFileFromPath( const char* path ) override ;
     };
 }

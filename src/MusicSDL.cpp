@@ -1,12 +1,10 @@
+#include <assert.h>
 #include <time.h>
 #include <stdint.h>
 #include <unistd.h>
 #include <stdio.h>
 
-#include <vector>
-
-using std::vector;
-
+#include "Common.h"
 #include "NativeBitmap.h"
 #include "IFileLoaderDelegate.h"
 #include "CPackedFileReader.h"

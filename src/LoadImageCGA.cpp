@@ -4,10 +4,7 @@
 #include <math.h>
 #include <stdint.h>
 
-#include <vector>
-
-using std::vector;
-
+#include "Common.h"
 #include "NativeBitmap.h"
 #include "IFileLoaderDelegate.h"
 #include "CPackedFileReader.h"
@@ -21,12 +18,15 @@ using std::vector;
 
 namespace odb {
 
-    std::vector<odb::NativeBitmap*> loadSpriteList(const char* listName, odb::IFileLoaderDelegate* fileLoader, EVideoType videoType) {
-
+    odb::ItemVector* loadSpriteList(const char* listName, odb::IFileLoaderDelegate* fileLoader, EVideoType videoType) {
 
         auto buffer = fileLoader->loadFileFromPath(listName);
+        odb::ItemVector *tilesToLoad = (odb::ItemVector*)calloc(sizeof(odb::ItemVector), 1);
 
-        std::vector<odb::NativeBitmap*> tilesToLoad;
+        size_t items = odb::countTokens((char*)buffer.data, buffer.size) + 1;
+        odb::initVector( tilesToLoad, items );
+
+
         int lastPoint = 0;
         int since = 0;
 
@@ -48,7 +48,7 @@ namespace odb {
                 lastPoint += since;
 
                 if ( strlen(filename) > 0 ) {
-                    tilesToLoad.push_back(odb::loadBitmap( filename, fileLoader, videoType ));
+                    odb::pushVector( tilesToLoad, odb::loadBitmap( filename, fileLoader, videoType ));
                 }
                 since = 0;
             }
@@ -60,7 +60,7 @@ namespace odb {
     }
 
     NativeBitmap* loadBitmap(const char* path, odb::IFileLoaderDelegate* fileLoader, EVideoType videoType) {
-        auto buffer = fileLoader->loadBinaryFileFromPath(path);
+        auto buffer = fileLoader->loadFileFromPath(path);
         int xSize;
         int ySize;
         int components;
@@ -68,7 +68,7 @@ namespace odb {
         uint8_t *data8;
 
         if (videoType == kVGA ) {
-            auto image = stbi_load_from_memory((const stbi_uc *) buffer.data(), buffer.size(), &xSize, &ySize, &components, 4);
+            auto image = stbi_load_from_memory((const stbi_uc *) buffer.data, buffer.size, &xSize, &ySize, &components, 4);
             rawData = new int[xSize * ySize];
             data8 = new uint8_t[ xSize * ySize ];
             memcpy( rawData, image, xSize * ySize * sizeof( int ) );
@@ -92,7 +92,7 @@ namespace odb {
                 data8[ c ] = getPaletteEntry( rawData[ c ] );
             }
         } else {
-            auto image = stbi_load_from_memory((const stbi_uc *) buffer.data(), buffer.size(), &xSize, &ySize, &components, 1);
+            auto image = stbi_load_from_memory((const stbi_uc *) buffer.data, buffer.size, &xSize, &ySize, &components, 1);
             rawData = new int[xSize * ySize];
             data8 = new uint8_t[ xSize * ySize ];
             for (int y = 0; y < ySize; ++y) {
@@ -144,11 +144,6 @@ namespace odb {
                 data8[ c ] = ( rawData[ c ] );
             }
         }
-
-
-
-
-
 
         return new odb::NativeBitmap(xSize, ySize, data8);
     }

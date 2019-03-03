@@ -1,3 +1,4 @@
+#include <assert.h>
 #include <time.h>
 #include <unistd.h>
 #include <stdlib.h>
@@ -6,14 +7,10 @@
 #include <stdint.h>
 #include <string.h>
 
-#include <vector>
-
+#include "Common.h"
 #include "NativeBitmap.h"
 #include "Game.h"
 #include "Renderer.h"
-
-using std::vector;
-
 #include "IFileLoaderDelegate.h"
 #include "CPackedFileReader.h"
 #include "LoadImage.h"
@@ -31,10 +28,10 @@ bool hasBossOnScreen = false;
 
 int backgroundTiles[6][10];
 int foregroundTiles[6][10];
-std::vector<Actor> foes;
-std::vector<Actor> doors;
-std::vector<Item> items;
-std::vector<Actor> arrows;
+odb::ItemVector foes;
+odb::ItemVector doors;
+odb::ItemVector items;
+odb::ItemVector arrows;
 
 auto hurtSound = "t240m60i53l8dca";
 auto swordSound = "t240m60i44l8dgd";
@@ -52,6 +49,8 @@ void initVec2i( Vec2i& vec, int x, int y ) {
 }
 
 void evalutePlayerAttack();
+
+void openAllDoors();
 
 void init() {
     player.mPosition.mX = 0;
@@ -86,13 +85,13 @@ updateHero(bool isOnGround, bool isJumping, bool isUpPressed, bool isDownPressed
             player.mStance = kClimbing;
         } else if (isOnGround) {
             if ( !isOnStairs && arrowCooldown <= 0) {
-                Actor a;
-                a.mType = kArrow;
-                a.mPosition = player.mPosition;
-                initVec2i( a.mSpeed, 0, -16 );
-                a.mActive = true;
-                a.mDirection = player.mDirection;
-                arrows.push_back(a);
+                Actor *a = (Actor*)calloc(sizeof(Actor), 1);
+                odb::pushVector( &arrows, a );
+                a->mType = kArrow;
+                a->mPosition = player.mPosition;
+                initVec2i( a->mSpeed, 0, -16 );
+                a->mActive = true;
+                a->mDirection = player.mDirection;
                 player.mStance = kUp;
                 arrowCooldown = 4;
                 playTune(arrowSound);
@@ -140,12 +139,13 @@ updateHero(bool isOnGround, bool isJumping, bool isUpPressed, bool isDownPressed
     }
 
     if (isUsingSpecial && arrowCooldown <= 0) {
-        Actor a;
-        a.mType = kArrow;
-        a.mPosition = player.mPosition;
-        initVec2i( a.mSpeed, player.mDirection == kRight ? 16 : -16, 0);
-        a.mDirection = player.mDirection;
-        arrows.push_back(a);
+        Actor *a = (Actor*)calloc( 1, sizeof(Actor));
+        odb::pushVector( &arrows, a );
+        a->mType = kArrow;
+        a->mActive = true;
+        a->mPosition = player.mPosition;
+        initVec2i( a->mSpeed, player.mDirection == kRight ? 16 : -16, 0);
+        a->mDirection = player.mDirection;
         player.mStance = kAltAttacking;
         arrowCooldown = 4;
         playTune(arrowSound);
@@ -235,8 +235,10 @@ void hurtPlayer(int ammount) {
 }
 
 bool isOnDoor(const Actor &actor) {
-    for (auto &door : doors) {
-        if (door.mType == kOpenDoor && collide(door, actor)) {
+    Actor** actorPtr = (Actor**)doors.items;
+    for (size_t pos = 0; pos < doors.used; ++pos ) {
+        Actor* door = *actorPtr;
+        if (door->mType == kOpenDoor && collide(*door, actor)) {
             return true;
         }
     }
@@ -355,8 +357,8 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
     }
 
     if (isOnGround && !isOnStairs) {
-        player.mSpeed.mY = std::min(0, player.mSpeed.mY);
-        player.mPosition.mY = std::min(player.mPosition.mY, (player.mPosition.mY / 32) * 32);
+        player.mSpeed.mY = odb::min(0, player.mSpeed.mY);
+        player.mPosition.mY = odb::min(player.mPosition.mY, (player.mPosition.mY / 32) * 32);
     }
 
     if (player.mSpeed.mY < 0 && foregroundTiles[ceiling][(player.mPosition.mX + 16) / 32] == 1) {
@@ -375,189 +377,230 @@ void gameTick(bool &isOnGround, bool &isOnStairs) {
         player.mSpeed.mY = 0;
     }
 
-    for (auto &arrow : arrows) {
+    Actor** arrowPtr = (Actor**)arrows.items;
 
-    	if ( !arrow.mActive ) {
+    for (size_t pos = 0; pos < arrows.used; ++pos ) {
+        Actor* arrow = *arrowPtr;
+
+    	if ( !arrow->mActive ) {
     		continue;
     	}
 
-        arrow.mPosition.mX += arrow.mSpeed.mX;
-        arrow.mPosition.mY += arrow.mSpeed.mY;
+        arrow->mPosition.mX += arrow->mSpeed.mX;
+        arrow->mPosition.mY += arrow->mSpeed.mY;
 
-        if (isBlockedByWall(arrow)) {
-            arrow.mActive = false;
+        if (isBlockedByWall(*arrow)) {
+            arrow->mActive = false;
             continue;
         }
 
-        for (auto &foe : foes) {
+        Actor** foePtr = (Actor**)foes.items;
+        for ( size_t pos2 = 0; pos2 < foes.used; ++pos2) {
+            Actor* foe = *foePtr;
 
-        	if (!foe.mActive) {
+        	if (!foe->mActive) {
         		continue;
         	}
 
-            if ( foe.mType != kHand && collide(foe, arrow, 32)) {
-                foe.mHealth--;
-                arrow.mActive = false;
+            if ( foe->mType != kHand && collide(*foe, *arrow, 32)) {
+                foe->mHealth--;
+                arrow->mActive = false;
 
-                if (foe.mType == kGargoyle) {
-                    for (auto &door : doors) {
-                        door.mType = EActorType::kOpenDoor;
-                    }
+                if (foe->mType == kGargoyle) {
+                    openAllDoors();
                 }
             }
+            ++foePtr;
         }
+
+        ++arrowPtr;
     }
 
-    for (auto &item : items) {
+    Item** itemPtr = (Item**)items.items;
+    for (size_t pos = 0; pos < items.used; ++pos ) {
 
-    	if (!item.mActive ) {
+        Item* item = *itemPtr;
+
+    	if (!item->mActive ) {
     		continue;
     	}
 
-        if (collide(player, item)) {
-            if (item.mType == kKey && !hasKey) {
+        if (collide(player, *item)) {
+            if (item->mType == kKey && !hasKey) {
                 hasKey = true;
-                item.mActive = false;
+                item->mActive = false;
                 playTune(pickSound);
-                for (auto &door : doors) {
-                    door.mType = EActorType::kOpenDoor;
-                }
-            } else if (item.mType == kMeat) {
+                openAllDoors();
+
+            } else if (item->mType == kMeat) {
                 if (player.mHealth < 10) {
                     playTune(pickSound);
-					item.mActive = false;
+					item->mActive = false;
 					player.mHealth = 10;
                     playTune(pickSound);
                 }
                 ticksToShowHealth = 14;
             }
         }
+
+        ++itemPtr;
     }
 
-    for (auto &foe : foes) {
+    Actor **foePtr = (Actor**)foes.items;
+    for (size_t pos = 0; pos < foes.used; ++pos ) {
+        Actor* foe = *foePtr;
 
-		if (!foe.mActive) {
+		if (!foe->mActive) {
 			continue;
 		}
 
-		if (foe.mType == kSpawner) {
-            if ( ( counter % 40 ) == 0 && ( foes.size() <= 5 ) ) {
-                Actor a;
-                a.mType = EActorType::kSkeleton;
-                a.mPosition = Vec2i( foe.mPosition );
-                a.mSpeed.mX = 8;
-                a.mHealth = 2;
-                foes.push_back(a);
+		if (foe->mType == kSpawner) {
+            if ( ( counter % 40 ) == 0 && ( foes.used <= 5 ) ) {
+                Actor *a = (Actor*)calloc( 1, sizeof(Actor));
+                odb::pushVector( &foes, a );
+                a->mType = EActorType::kSkeleton;
+                a->mPosition = Vec2i( foe->mPosition );
+                a->mSpeed.mX = 8;
+                a->mDirection = EDirection::kRight;
+                a->mActive = true;
+                a->mHealth = 2;
             }
             continue;
         }
 
 
-        if (( counter % 5 ) == 0 && foe.mType == kHand) {
-            int dx = player.mPosition.mX - foe.mPosition.mX;
-            int dy = player.mPosition.mY - foe.mPosition.mY;
+        if (( counter % 5 ) == 0 && foe->mType == kHand) {
+            int dx = player.mPosition.mX - foe->mPosition.mX;
+            int dy = player.mPosition.mY - foe->mPosition.mY;
 
             if ( dx > 0 ) {
-                foe.mSpeed.mX = 1;
+                foe->mSpeed.mX = 1;
             } else {
-                foe.mSpeed.mX = -1;
+                foe->mSpeed.mX = -1;
             }
 
             if ( dy > 0 ) {
-                foe.mSpeed.mY = 1;
+                foe->mSpeed.mY = 1;
             } else {
-                foe.mSpeed.mY = -1;
+                foe->mSpeed.mY = -1;
             }
 
-            switch ( foe.mDirection ) {
+            switch ( foe->mDirection ) {
                 case kLeft:
-                    if ( foe.mPosition.mX < 160 ) {
-                        foe.mSpeed.mX = -foe.mSpeed.mX;
+                    if ( foe->mPosition.mX < 160 ) {
+                        foe->mSpeed.mX = -foe->mSpeed.mX;
                     }
                     break;
                 case kRight:
-                    if (  160 <= foe.mPosition.mX) {
-                        foe.mSpeed.mX = -foe.mSpeed.mX;
+                    if (  160 <= foe->mPosition.mX) {
+                        foe->mSpeed.mX = -foe->mSpeed.mX;
                     }
                     break;
             }
         }
 
-        if (foe.mType != kSkeleton && foe.mType != kTinhoso && foe.mType != kCapiroto && foe.mType != kHand ) {
+        if (foe->mType != kSkeleton &&
+            foe->mType != kTinhoso &&
+            foe->mType != kCapiroto &&
+            foe->mType != kHand ) {
+
             continue;
         }
 
-        if (foe.mHealth <= 0) {
-        	foe.mActive = false;
+        if (foe->mHealth <= 0) {
+        	foe->mActive = false;
 
-            if (foe.mType == kCapiroto) {
+            if (foe->mType == kCapiroto) {
                 screen = kVictory;
                 prepareScreenFor(screen);
                 return;
             }
 
-            if (foe.mType == kTinhoso) {
+            if (foe->mType == kTinhoso) {
                 hasBossOnScreen = false;
 
-                doors.clear();
+                odb::clearVector(&doors);
             }
 
+            ++foePtr;
             continue;
         }
 
-        if (foe.mType != kSkeleton && foe.mType != kHand ) {
+        if (foe->mType != kSkeleton && foe->mType != kHand ) {
+            ++foePtr;
             continue;
         }
 
-        foe.mPosition.mX += foe.mSpeed.mX;
-        foe.mPosition.mY += foe.mSpeed.mY;
+        foe->mPosition.mX += foe->mSpeed.mX;
+        foe->mPosition.mY += foe->mSpeed.mY;
 
-        if (foe.mPosition.mX >= (320 - 32)) {
-            foe.mSpeed.mX = -8;
-            foe.mDirection = EDirection::kLeft;
+        if (foe->mPosition.mX >= (320 - 32)) {
+            foe->mSpeed.mX = -8;
+            foe->mDirection = EDirection::kLeft;
         }
 
-        if (foe.mPosition.mX < 0) {
-            foe.mSpeed.mX = 8;
-            foe.mDirection = EDirection::kRight;
+        if (foe->mPosition.mX < 0) {
+            foe->mSpeed.mX = 8;
+            foe->mDirection = EDirection::kRight;
         }
 
-        if (isBlockedByWall(foe)) {
-            foe.mSpeed.mX *= -1;
+        if (isBlockedByWall(*foe)) {
+            foe->mSpeed.mX *= -1;
 
-            if (foe.mDirection == EDirection::kLeft) {
-                foe.mDirection = EDirection::kRight;
+            if (foe->mDirection == EDirection::kLeft) {
+                foe->mDirection = EDirection::kRight;
             } else {
-                foe.mDirection = EDirection::kLeft;
+                foe->mDirection = EDirection::kLeft;
             }
         }
 
-        if ((ticksUntilVulnerable <= 0) && collide(foe, player, 16)) {
+        if ((ticksUntilVulnerable <= 0) && collide(*foe, player, 16)) {
             hurtPlayer(1);
         }
 
-        foe.mSpeed.mY += 2;
-        bool isOnGround = isOnFloor(foe);
+        foe->mSpeed.mY += 2;
+        bool isOnGround = isOnFloor(*foe);
 
         if (isOnGround) {
-            foe.mSpeed.mY = 0;
-            foe.mPosition.mY = (foe.mPosition.mY / 32) * 32;
+            foe->mSpeed.mY = 0;
+            foe->mPosition.mY = (foe->mPosition.mY / 32) * 32;
         }
+
+        ++foePtr;
     }
 }
 
-void evalutePlayerAttack() {
-    for (auto &foe : foes) {
+void openAllDoors() {
+    Actor** doorPtr = (Actor**)doors.items;
 
-		if (!foe.mActive) {
+    for (size_t pos3 = 0; pos3 < doors.used; ++pos3) {
+                        Actor* door = *doorPtr;
+                        door->mType = kOpenDoor;
+                        ++doorPtr;
+                    }
+}
+
+void evalutePlayerAttack() {
+
+    Actor** foePtr = (Actor**)foes.items;
+    for (size_t pos = 0; pos < foes.used; pos++ ) {
+        Actor* foe = *foePtr;
+
+		if (!foe->mActive) {
 			continue;
 		}
 
-		if ( foe.mType != kTinhoso && foe.mType != kHand &&  foe.mType != kCapiroto && foe.mType != kGargoyle && collide(foe, player)) {
-                foe.mHealth -= 2;
-                return; //only one enemy per attack!
-            }
+		if ( foe->mType != kTinhoso &&
+		    foe->mType != kHand &&
+		    foe->mType != kCapiroto &&
+		    foe->mType != kGargoyle &&
+		    collide(*foe, player)) {
+
+            foe->mHealth -= 2;
+            return; //only one enemy per attack!
         }
+		++foePtr;
+    }
 }
 
 void prepareRoom(int room) {
@@ -574,9 +617,11 @@ void prepareRoom(int room) {
     memset(backgroundTiles, 0, sizeof(int) * 10 * 6 );
     memset(foregroundTiles, 0, sizeof(int) * 10 * 6 );
 
-    foes.clear();
-    items.clear();
-    doors.clear();
+    odb::initVector(&foes, 8);
+    odb::initVector(&items, 4);
+    odb::initVector(&doors, 2);
+    odb::initVector(&arrows, 8);
+
     hasBossOnScreen = false;
     int position = 0;
     for (int y = 0; y < 6; ++y) {
@@ -591,59 +636,61 @@ void prepareRoom(int room) {
 
             if (ch == 'm') {
                 foregroundTiles[y][x] = 0;
-                Item item;
-                item.mType = kMeat;
-				item.mActive = true;
-                initVec2i(item.mPosition, x * 32, y * 32 );
-                items.push_back(item);
+                Item *item = (Item*)calloc(sizeof(Item), 1);
+                odb::pushVector( &items, item );
+                item->mType = kMeat;
+				item->mActive = true;
+                initVec2i(item->mPosition, x * 32, y * 32 );
             } else if (ch == 'k') {
                 if (!hasKey) {
                     foregroundTiles[y][x] = 0;
-                    Item item;
-                    item.mType = kKey;
-					item.mActive = true;
-					initVec2i(item.mPosition, x * 32, y * 32);
-                    items.push_back(item);
+                    Item *item = (Item*)calloc( 1, sizeof(Item));
+                    odb::pushVector( &items, item );
+                    item->mType = kKey;
+                    item->mActive = true;
+                    initVec2i(item->mPosition, x * 32, y * 32);
                 }
             } else if (ch == 'a') {
                 foregroundTiles[y][x] = 0;
-                Actor a;
-                a.mType = EActorType::kSkeleton;
-				initVec2i( a.mPosition, x * 32, y * 32);
-				a.mActive = true;
-                a.mSpeed.mX = 8;
-                a.mHealth = 2;
-                foes.push_back(a);
+                Actor *a = (Actor*)calloc(sizeof(Actor), 1);
+                odb::pushVector( &foes, a );
+                a->mType = EActorType::kSkeleton;
+                a->mDirection = EDirection::kRight;
+                initVec2i( a->mPosition, x * 32, y * 32);
+                a->mActive = true;
+                a->mSpeed.mX = 8;
+                a->mHealth = 2;
             } else if (ch == 'c') {
                 foregroundTiles[y][x] = 0;
                 currentBossName = "CAPIROTO";
-                Actor a;
-                a.mType = EActorType::kCapiroto;
-				initVec2i( a.mPosition, x * 32, y * 32);
-                a.mHealth = 25;
+                Actor *a = (Actor*)calloc( 1, sizeof(Actor));
+                odb::pushVector( &foes, a );
+                a->mType = EActorType::kCapiroto;
+                initVec2i( a->mPosition, x * 32, y * 32);
+                a->mHealth = 25;
+                a->mActive = true;
                 totalBossHealth = 25;
                 hasBossOnScreen = true;
-                foes.push_back(a);
 
                 {
                     foregroundTiles[y + 2][ x + 2] = 0;
-                    Actor a;
-                    a.mType = EActorType::kHand;
-					initVec2i( a.mPosition, (x + 2 ) * 32, (y + 2) * 32 );
-					a.mActive = true;
-                    a.mDirection = kLeft;
-                    a.mHealth = 100000;
-                    foes.push_back(a);
+                    Actor *a = (Actor*)calloc( 1, sizeof(Actor));
+                    odb::pushVector( &foes, a );
+                    a->mType = EActorType::kHand;
+                    initVec2i( a->mPosition, (x + 2 ) * 32, (y + 2) * 32 );
+                    a->mActive = true;
+                    a->mDirection = kLeft;
+                    a->mHealth = 100000;
                 }
                 {
                     foregroundTiles[y + 2][x - 2] = 0;
-                    Actor a;
-                    a.mType = EActorType::kHand;
-					a.mActive = true;
-                    a.mDirection = kRight;
-					initVec2i( a.mPosition, (x - 2) * 32, (y + 2) * 32 );
-                    a.mHealth = 100000;
-                    foes.push_back(a);
+                    Actor *a = (Actor*)calloc( 1, sizeof(Actor));
+                    odb::pushVector( &foes, a );
+                    a->mType = EActorType::kHand;
+                    a->mActive = true;
+                    a->mDirection = kRight;
+                    initVec2i( a->mPosition, (x - 2) * 32, (y + 2) * 32 );
+                    a->mHealth = 100000;
                 }
 
 
@@ -651,46 +698,44 @@ void prepareRoom(int room) {
                 foregroundTiles[y][x] = 0;
                 currentBossName = "TINHOSO";
                 totalBossHealth = 5;
-                Actor a;
-                a.mType = EActorType::kTinhoso;
-				a.mActive = true;
-                initVec2i(a.mPosition, x * 32, y * 32 );
-                a.mHealth = 5;
+                Actor *a = (Actor*)calloc( 1, sizeof(Actor));
+                odb::pushVector( &foes, a );
+                a->mType = EActorType::kTinhoso;
+                a->mActive = true;
+                initVec2i(a->mPosition, x * 32, y * 32 );
+                a->mHealth = 5;
                 hasBossOnScreen = true;
-                foes.push_back(a);
             } else if (ch == 's') {
                 foregroundTiles[y][x] = 0;
-                Actor a;
-				a.mActive = true;
-                a.mType = EActorType::kSpawner;
-				initVec2i( a.mPosition, x * 32, y * 32);
-                a.mHealth = 20;
-                foes.push_back(a);
+                Actor *a = (Actor*)calloc( 1, sizeof(Actor));
+                odb::pushVector( &foes, a );
+                a->mActive = true;
+                a->mType = EActorType::kSpawner;
+                initVec2i( a->mPosition, x * 32, y * 32);
+                a->mHealth = 20;
             } else if (ch == 'g') {
                 foregroundTiles[y][x] = 0;
-                Actor a;
-                a.mType = EActorType::kGargoyle;
-				initVec2i( a.mPosition, x * 32, y * 32 );
-                a.mSpeed.mX = 8;
-				a.mActive = true;
-                a.mHealth = 1;
-                foes.push_back(a);
+                Actor *a = (Actor*)calloc( 1, sizeof(Actor));
+                odb::pushVector( &foes, a );
+                a->mType = EActorType::kGargoyle;
+                initVec2i( a->mPosition, x * 32, y * 32 );
+                a->mSpeed.mX = 8;
+                a->mActive = true;
+                a->mHealth = 1;
             } else if (ch == 'd') {
                 foregroundTiles[y][x] = 0;
-                Actor a;
-                a.mType = hasKey ? EActorType::kOpenDoor : EActorType::kClosedDoor;
-				initVec2i( a.mPosition, x * 32, y * 32 );
-				a.mActive = true;
-                a.mSpeed.mX = 8;
-                doors.push_back(a);
+                Actor *a = (Actor*)calloc( 1, sizeof(Actor));
+                odb::pushVector( &doors, a );
+                a->mType = hasKey ? EActorType::kOpenDoor : EActorType::kClosedDoor;
+                initVec2i( a->mPosition, x * 32, y * 32 );
+                a->mActive = true;
             } else if (ch == 'D') {
                 foregroundTiles[y][x] = 0;
-                Actor a;
-                a.mType = EActorType::kClosedDoor;
-				initVec2i( a.mPosition, x * 32, y * 32 );
-				a.mActive = true;
-                a.mSpeed.mX = 8;
-                doors.push_back(a);
+                Actor *a = (Actor*)calloc( 1, sizeof(Actor));
+                odb::pushVector( &doors, a );
+                a->mType = EActorType::kClosedDoor;
+                initVec2i( a->mPosition, x * 32, y * 32 );
+                a->mActive = true;
             } else {
                 foregroundTiles[y][x] = ch - '0';
             }
@@ -700,9 +745,11 @@ void prepareRoom(int room) {
 
     snprintf(buffer, 64, "%d.lst", room );
 
-    std::vector<char*> tilesToLoad;
-
     auto listBuffer = reader.loadFileFromPath(buffer);
+
+    size_t amount = odb::countTokens((char*)listBuffer.data, listBuffer.size) + 1;
+    odb::ItemVector tilestoLoad;
+    odb::initVector( &tilestoLoad, amount );
 
     int lastPoint = 0;
     int since = 0;
@@ -722,13 +769,13 @@ void prepareRoom(int room) {
             memcpy( filename,  bufferBegin + lastPoint, since -1  );
             lastPoint += since;
             if ( strlen(filename) > 0 ) {
-                tilesToLoad.push_back(filename);
+                odb::pushVector( &tilestoLoad, filename );
             }
             since = 0;
         }
     }
 
-    loadTiles(tilesToLoad);
+    loadTiles(tilestoLoad);
 
     clearBuffers();
 }

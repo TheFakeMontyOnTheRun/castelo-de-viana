@@ -1,16 +1,14 @@
+#include <assert.h>
 #include <stdint.h>
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
 
-#include <vector>
-
+#include "Common.h"
 #include "NativeBitmap.h"
 #include "Game.h"
 #include "Renderer.h"
-
-using std::vector;
 
 #include "IFileLoaderDelegate.h"
 #include "CPackedFileReader.h"
@@ -24,7 +22,7 @@ bool enableSecret = false;
 
 odb::CPackedFileReader* reader;
 
-std::vector<std::vector<odb::NativeBitmap*>> tiles;
+odb::ItemVector tiles;
 
 odb::NativeBitmap* pausedSign;
 
@@ -76,19 +74,30 @@ void prepareScreenFor(EScreen screenState) {
 }
 
 void clearBuffers() {
-    std::fill(std::begin(imageBuffer), std::end(imageBuffer), 4);
+    memset( imageBuffer, 4, 320 * 200 );
 }
 
-void loadTiles(std::vector<char*> tilesToLoad) {
-    tiles.clear();
+void loadTiles(odb::ItemVector tilesToLoad) {
 
-    for (const auto &tile : tilesToLoad) {
+    char** ptr = (char**)tilesToLoad.items;
+    odb::initVector( &tiles, tilesToLoad.used );
+
+    for ( size_t pos = 0; pos < tilesToLoad.used; ++pos ) {
+
+        char* tile = *ptr;
+
+        odb::ItemVector* strip = (odb::ItemVector*)calloc(sizeof(odb::ItemVector), 1);
+
 
         if ( !strcmp( tile + (strlen(tile) - 4), ".png" ) ) {
-            tiles.push_back({odb::loadBitmap( tile, reader, videoType )});
+            odb::initVector( strip, 1 );
+            odb::pushVector( strip, odb::loadBitmap( tile, reader, videoType ) );
+            odb::pushVector( &tiles, strip);
         } else {
-            tiles.push_back(odb::loadSpriteList( tile, reader, videoType));
+            odb::pushVector( &tiles, odb::loadSpriteList( tile, reader, videoType));
         }
+
+        ++ptr;
     }
 }
 
@@ -97,10 +106,10 @@ void render() {
     uint8_t transparency;
 
     if ( videoType == kCGA ) {
-        std::fill(std::begin(imageBuffer), std::end(imageBuffer), 4);
+        memset( imageBuffer, 4, 320 * 200 );
         transparency = 0;
     } else {
-        std::fill(std::begin(imageBuffer), std::end(imageBuffer), 0);
+        memset( imageBuffer, 0, 320 * 200 );
         transparency = getPaletteEntry(0x00FF00);
     }
 
@@ -135,8 +144,8 @@ void render() {
             int pixel = 4;
 
             if (backgroundTiles[ty][tx] != 0) {
-                auto tileset = tiles[backgroundTiles[ty][tx]];
-                tile = tileset[counter % tileset.size()];
+                odb::ItemVector *tileset = (odb::ItemVector*)tiles.items[backgroundTiles[ty][tx]];
+                tile = (odb::NativeBitmap*)tileset->items[counter % tileset->used];
 
                 pixelData = tile->getPixelData();
 
@@ -161,9 +170,8 @@ void render() {
             }
 
             if (foregroundTiles[ty][tx] != 0) {
-                auto tileset = tiles[foregroundTiles[ty][tx]];
-                tile = tileset[counter % tileset.size()];
-
+                odb::ItemVector *tileset = (odb::ItemVector*)tiles.items[foregroundTiles[ty][tx]];
+                tile = (odb::NativeBitmap*)tileset->items[counter % tileset->used];
                 pixelData = tile->getPixelData();
 
                 pixel = 4;
@@ -190,11 +198,15 @@ void render() {
 
     uint8_t *pixelData;
 
-    for (const auto &door : doors) {
-        pixelData = doorStates[door.mType - EActorType::kClosedDoor]->getPixelData();
-        y0 = (door.mPosition.mY);
+    Actor** doorPtr = (Actor**)doors.items;
+
+    for (size_t pos = 0; pos < doors.used; ++ pos ) {
+        Actor* door = *doorPtr;
+
+        pixelData = doorStates[door->mType - EActorType::kClosedDoor]->getPixelData();
+        y0 = (door->mPosition.mY);
         y1 = 32 + y0;
-        x0 = (door.mPosition.mX);
+        x0 = (door->mPosition.mX);
         x1 = 32 + x0;
 
         int pixel = 0;
@@ -218,6 +230,7 @@ void render() {
                 imageBuffer[(320 * y) + (x)] = pixel;
             }
         }
+        ++doorPtr;
     }
 
     auto sprite = hero[player.mStance][heroFrame];
@@ -262,22 +275,26 @@ void render() {
         }
     }
 
-    for (const auto &arrow : arrows) {
+    Actor** arrowPtr = (Actor**)arrows.items;
 
-        if ( !arrow.mActive ) {
+    for (size_t pos = 0; pos < arrows.used; ++pos ) {
+
+        Actor* arrow = *arrowPtr;
+
+        if ( !arrow->mActive ) {
             continue;
         }
 
-        if (std::abs(arrow.mSpeed.mX) > std::abs(arrow.mSpeed.mY) ) {
+        if (std::abs(arrow->mSpeed.mX) > std::abs(arrow->mSpeed.mY) ) {
             pixelData = arrowSprite[0]->getPixelData();
         } else {
             pixelData = arrowSprite[1]->getPixelData();
         }
 
 
-        y0 = (arrow.mPosition.mY);
+        y0 = (arrow->mPosition.mY);
         y1 = 32 + y0;
-        x0 = (arrow.mPosition.mX);
+        x0 = (arrow->mPosition.mX);
         x1 = 32 + x0;
 
         int pixel = 0;
@@ -288,7 +305,7 @@ void render() {
             }
 
             for (int x = x0; x < x1; ++x) {
-                if (arrow.mDirection == EDirection::kRight) {
+                if (arrow->mDirection == EDirection::kRight) {
                     pixel = (pixelData[(32 * (y - y0)) + ((x - x0))]);
                 } else {
                     pixel = (pixelData[(32 * (y - y0)) + (31 - (x - x0))]);
@@ -306,41 +323,45 @@ void render() {
                 imageBuffer[(320 * y) + (x)] = pixel;
             }
         }
-
+        ++arrowPtr;
     }
 
+    Actor** foePtr = (Actor**)foes.items;
+    for (size_t pos = 0; pos < foes.used; ++pos ) {
 
-    for (const auto &foe : foes) {
+        Actor* foe = *foePtr;
 
-		if (!foe.mActive) {
+		if (!foe->mActive) {
 			continue;
 		}
 
-		if (foe.mType != EActorType::kSkeleton && foe.mType != EActorType::kGargoyle && foe.mType != EActorType::kHand &&
-            foe.mType != EActorType::kTinhoso && foe.mType != EActorType::kCapiroto ) {
+		if (foe->mType != EActorType::kSkeleton &&
+		    foe->mType != EActorType::kGargoyle &&
+		    foe->mType != EActorType::kHand &&
+            foe->mType != EActorType::kTinhoso &&
+            foe->mType != EActorType::kCapiroto ) {
             continue;
         }
 
-        if (foe.mType == kSkeleton) {
+        if (foe->mType == kSkeleton) {
             pixelData = foeSprites[counter % 2]->getPixelData();
-        } else if (foe.mType == kTinhoso) {
+        } else if (foe->mType == kTinhoso) {
             pixelData = tinhosoSprites[counter % 2]->getPixelData();
-        } else if (foe.mType == kHand) {
+        } else if (foe->mType == kHand) {
             pixelData = handSprites[counter % 2]->getPixelData();
-        } else if (foe.mType == kCapiroto) {
+        } else if (foe->mType == kCapiroto) {
             pixelData = capirotoSprites[counter % 2]->getPixelData();
-        } else if (foe.mType == kGargoyle) {
-            if (foe.mHealth > 0) {
+        } else if (foe->mType == kGargoyle) {
+            if (foe->mHealth > 0) {
                 pixelData = gargoyleSprites[0]->getPixelData();
             } else {
                 pixelData = gargoyleSprites[1]->getPixelData();
             }
-
         }
 
-        y0 = (foe.mPosition.mY);
+        y0 = (foe->mPosition.mY);
         y1 = 32 + y0;
-        x0 = (foe.mPosition.mX);
+        x0 = (foe->mPosition.mX);
         x1 = 32 + x0;
 
         int pixel = 0;
@@ -351,7 +372,7 @@ void render() {
             }
 
             for (int x = x0; x < x1; ++x) {
-                if (foe.mDirection == EDirection::kRight) {
+                if (foe->mDirection == EDirection::kRight) {
                     pixel = (pixelData[(32 * (y - y0)) + ((x - x0))]);
                 } else {
                     pixel = (pixelData[(32 * (y - y0)) + (31 - (x - x0))]);
@@ -369,19 +390,22 @@ void render() {
                 imageBuffer[(320 * y) + (x)] = pixel;
             }
         }
+        foePtr++;
     }
 
-    for (const auto &item : items) {
+    Item** itemPtr = (Item**)items.items;
+    for (size_t pos = 0; pos < items.used; ++pos ) {
+        Item* item = *itemPtr;
 
-        if (!item.mActive ) {
+        if (!item->mActive ) {
             continue;
         }
 
-        y0 = (item.mPosition.mY);
+        y0 = (item->mPosition.mY);
         y1 = 32 + y0;
-        x0 = (item.mPosition.mX);
+        x0 = (item->mPosition.mX);
         x1 = 32 + x0;
-        pixelData = itemSprites[item.mType]->getPixelData();
+        pixelData = itemSprites[item->mType]->getPixelData();
         int pixel = 0;
         for (int y = y0; y < y1; ++y) {
 
@@ -403,6 +427,7 @@ void render() {
                 imageBuffer[(320 * y) + (x)] = pixel;
             }
         }
+        ++itemPtr;
     }
 
     if ((hasKey && ((counter % 2) == 0 || paused))) {
@@ -478,15 +503,19 @@ void render() {
     if (hasBossOnScreen) {
         int bossHealth = 0;
 
-        for (auto const &foe : foes) {
+        Actor** foePtr = (Actor**)foes.items;
+        for (size_t pos = 0; pos < foes.used; ++pos ) {
+            Actor* foe = *foePtr;
 
-			if (!foe.mActive) {
+			if (!foe->mActive) {
 				continue;
 			}
 
-			if (foe.mType == kTinhoso || foe.mType == kCapiroto) {
-                bossHealth = foe.mHealth;
+			if (foe->mType == kTinhoso || foe->mType == kCapiroto) {
+                bossHealth = foe->mHealth;
             }
+
+			++foePtr;
         }
 
         for ( int y = 184; y < 192; ++y ) {
