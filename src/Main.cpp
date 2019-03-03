@@ -20,8 +20,6 @@
 
 bool enableSecret = false;
 
-odb::CPackedFileReader* reader;
-
 odb::ItemVector tiles;
 
 odb::NativeBitmap* pausedSign;
@@ -56,18 +54,18 @@ void prepareScreenFor(EScreen screenState) {
     muteSound();
     switch (screenState) {
         case kIntro:
-            currentScreen = odb::loadBitmap( (enableSecret ? "secret.dat" : "intro.png"), reader, videoType  );
+            currentScreen = odb::loadBitmap( (enableSecret ? "secret.dat" : "intro.png"), videoType  );
             playTune("eefggfedccdeedd");
             break;
         case kGame:
             currentScreen = NULL;
             break;
         case kGameOver:
-            currentScreen = odb::loadBitmap( "gameover.png", reader, videoType );
+            currentScreen = odb::loadBitmap( "gameover.png", videoType );
             playTune("gggefffd");
             break;
         case kVictory:
-            currentScreen = odb::loadBitmap( "victory.png", reader, videoType );
+            currentScreen = odb::loadBitmap( "victory.png", videoType );
             playTune("eefggfedccdeed12d4eefggfedccdedc12c4ddecde12f12ecde12f12edcdpeefggfedccdedc12c4");
             break;
     }
@@ -91,10 +89,10 @@ void loadTiles(odb::ItemVector tilesToLoad) {
 
         if ( !strcmp( tile + (strlen(tile) - 4), ".png" ) ) {
             odb::initVector( strip, 1 );
-            odb::pushVector( strip, odb::loadBitmap( tile, reader, videoType ) );
+            odb::pushVector( strip, odb::loadBitmap( tile, videoType ) );
             odb::pushVector( &tiles, strip);
         } else {
-            odb::pushVector( &tiles, odb::loadSpriteList( tile, reader, videoType));
+            odb::pushVector( &tiles, odb::loadSpriteList( tile, videoType));
         }
 
         ++ptr;
@@ -116,7 +114,7 @@ void render() {
 
     if (currentScreen != NULL) {
 
-        uint8_t* pixelData = currentScreen->getPixelData();
+        uint8_t* pixelData = currentScreen->mRawData;
 
         for (int c = 0; c < 320 * 200; ++c) {
             imageBuffer[c] = pixelData[c];
@@ -147,7 +145,7 @@ void render() {
                 odb::ItemVector *tileset = (odb::ItemVector*)tiles.items[backgroundTiles[ty][tx]];
                 tile = (odb::NativeBitmap*)tileset->items[counter % tileset->used];
 
-                pixelData = tile->getPixelData();
+                pixelData = tile->mRawData;
 
                 pixel = 4;
                 for (int y = y0; y < y1; ++y) {
@@ -172,7 +170,7 @@ void render() {
             if (foregroundTiles[ty][tx] != 0) {
                 odb::ItemVector *tileset = (odb::ItemVector*)tiles.items[foregroundTiles[ty][tx]];
                 tile = (odb::NativeBitmap*)tileset->items[counter % tileset->used];
-                pixelData = tile->getPixelData();
+                pixelData = tile->mRawData;
 
                 pixel = 4;
                 for (int y = y0; y < y1; ++y) {
@@ -203,7 +201,7 @@ void render() {
     for (size_t pos = 0; pos < doors.used; ++ pos ) {
         Actor* door = *doorPtr;
 
-        pixelData = doorStates[door->mType - kClosedDoor]->getPixelData();
+        pixelData = doorStates[door->mType - kClosedDoor]->mRawData;
         y0 = (door->mPosition.mY);
         y1 = 32 + y0;
         x0 = (door->mPosition.mX);
@@ -237,8 +235,8 @@ void render() {
 
     if (((ticksUntilVulnerable <= 0) || ((counter % 2) == 0)) || paused) {
         y0 = (player.mPosition.mY);
-        int spriteWidth = sprite->getWidth();
-        y1 = sprite->getHeight() + y0;
+        int spriteWidth = sprite->mWidth;
+        y1 = sprite->mHeight + y0;
         x0 = (player.mPosition.mX);
 
         if (player.mDirection == kDirectionLeft) {
@@ -246,7 +244,7 @@ void render() {
         }
 
         x1 = spriteWidth + x0;
-        pixelData = sprite->getPixelData();
+        pixelData = sprite->mRawData;
 
         int pixel = 0;
         for (int y = y0; y < y1; ++y) {
@@ -286,9 +284,9 @@ void render() {
         }
 
         if (std::abs(arrow->mSpeed.mX) > std::abs(arrow->mSpeed.mY) ) {
-            pixelData = arrowSprite[0]->getPixelData();
+            pixelData = arrowSprite[0]->mRawData;
         } else {
-            pixelData = arrowSprite[1]->getPixelData();
+            pixelData = arrowSprite[1]->mRawData;
         }
 
 
@@ -344,18 +342,18 @@ void render() {
         }
 
         if (foe->mType == kSkeleton) {
-            pixelData = foeSprites[counter % 2]->getPixelData();
+            pixelData = foeSprites[counter % 2]->mRawData;
         } else if (foe->mType == kTinhoso) {
-            pixelData = tinhosoSprites[counter % 2]->getPixelData();
+            pixelData = tinhosoSprites[counter % 2]->mRawData;
         } else if (foe->mType == kHand) {
-            pixelData = handSprites[counter % 2]->getPixelData();
+            pixelData = handSprites[counter % 2]->mRawData;
         } else if (foe->mType == kCapiroto) {
-            pixelData = capirotoSprites[counter % 2]->getPixelData();
+            pixelData = capirotoSprites[counter % 2]->mRawData;
         } else if (foe->mType == kGargoyle) {
             if (foe->mHealth > 0) {
-                pixelData = gargoyleSprites[0]->getPixelData();
+                pixelData = gargoyleSprites[0]->mRawData;
             } else {
-                pixelData = gargoyleSprites[1]->getPixelData();
+                pixelData = gargoyleSprites[1]->mRawData;
             }
         }
 
@@ -405,7 +403,7 @@ void render() {
         y1 = 32 + y0;
         x0 = (item->mPosition.mX);
         x1 = 32 + x0;
-        pixelData = itemSprites[item->mType]->getPixelData();
+        pixelData = itemSprites[item->mType]->mRawData;
         int pixel = 0;
         for (int y = y0; y < y1; ++y) {
 
@@ -435,7 +433,7 @@ void render() {
         y1 = 32 + y0;
         x0 = 2;
         x1 = 32 + x0;
-        pixelData = itemSprites[kKey]->getPixelData();
+        pixelData = itemSprites[kKey]->mRawData;
         int pixel = 0;
         for (int y = y0; y < y1; ++y) {
 
@@ -460,9 +458,9 @@ void render() {
     }
 
     if (paused) {
-        uint8_t* pixelsPause = pausedSign->getPixelData();
-        int width = pausedSign->getWidth();
-        int height = pausedSign->getHeight();
+        uint8_t* pixelsPause = pausedSign->mRawData;
+        int width = pausedSign->mWidth;
+        int height = pausedSign->mHeight;
         int centerX = 320 / 2;
         int centerY = 200 / 2;
 
@@ -634,47 +632,45 @@ void sysTick() {
 
 
 void loadGraphics() {
-    reader = new odb::CPackedFileReader(getAssetsPath());
+    pausedSign = odb::loadBitmap("paused.png", videoType);
 
-    pausedSign = odb::loadBitmap("paused.png", reader, videoType);
+    arrowSprite[0] = odb::loadBitmap("arrow.png", videoType);
+    arrowSprite[1] = odb::loadBitmap("arrowup.png", videoType);
 
-    arrowSprite[0] = odb::loadBitmap("arrow.png",  reader, videoType);
-    arrowSprite[1] = odb::loadBitmap("arrowup.png",  reader, videoType);
+    doorStates[0] = odb::loadBitmap("door0.png", videoType);
+    doorStates[1] = odb::loadBitmap("door1.png", videoType);
 
-    doorStates[0] = odb::loadBitmap("door0.png",  reader, videoType);
-    doorStates[1] = odb::loadBitmap("door1.png",  reader, videoType);
+    foeSprites[0] = odb::loadBitmap("foe0.png", videoType);
+    foeSprites[1] = odb::loadBitmap("foe1.png", videoType);
 
-    foeSprites[0] = odb::loadBitmap("foe0.png",  reader, videoType);
-    foeSprites[1] = odb::loadBitmap("foe1.png",  reader, videoType);
+    itemSprites[0] = odb::loadBitmap("meat.png", videoType);
+    itemSprites[1] = odb::loadBitmap("key.png", videoType);
 
-    itemSprites[0] = odb::loadBitmap("meat.png",  reader, videoType);
-    itemSprites[1] = odb::loadBitmap("key.png",  reader, videoType);
+    gargoyleSprites[0] = odb::loadBitmap("garg0.png", videoType);
+    gargoyleSprites[1] = odb::loadBitmap("garg1.png", videoType);
 
-    gargoyleSprites[0] = odb::loadBitmap("garg0.png",  reader, videoType);
-    gargoyleSprites[1] = odb::loadBitmap("garg1.png",  reader, videoType);
+    capirotoSprites[0] = odb::loadBitmap("capi0.png", videoType);
+    capirotoSprites[1] = odb::loadBitmap("capi1.png", videoType);
 
-    capirotoSprites[0] = odb::loadBitmap("capi0.png",  reader, videoType);
-    capirotoSprites[1] = odb::loadBitmap("capi1.png",  reader, videoType);
+    handSprites[0] = odb::loadBitmap("hand0.png", videoType);
+    handSprites[1] = odb::loadBitmap("hand0.png", videoType);
 
-    handSprites[0] = odb::loadBitmap("hand0.png",  reader, videoType);
-    handSprites[1] = odb::loadBitmap("hand0.png",  reader, videoType);
-
-    tinhosoSprites[0] = odb::loadBitmap("tinhoso0.png",  reader, videoType);
-    tinhosoSprites[1] = odb::loadBitmap("tinhoso1.png",  reader, videoType);
+    tinhosoSprites[0] = odb::loadBitmap("tinhoso0.png", videoType);
+    tinhosoSprites[1] = odb::loadBitmap("tinhoso1.png", videoType);
 
 
-    hero[0][0] = odb::loadBitmap( "up0.png",  reader, videoType);
-    hero[0][1] = odb::loadBitmap( "up1.png",  reader, videoType);
-    hero[1][0] = odb::loadBitmap( "hero0.png",  reader, videoType);
-    hero[1][1] = odb::loadBitmap( "hero1.png",  reader, videoType);
-    hero[2][0] = odb::loadBitmap( "down0.png",  reader, videoType);
-    hero[2][1] = odb::loadBitmap( "down1.png",  reader, videoType);
-    hero[3][0] = odb::loadBitmap( "attack0.png", reader, videoType);
-    hero[3][1] = odb::loadBitmap( "attack0.png", reader, videoType);
-    hero[4][0] = odb::loadBitmap( "jump0.png", reader, videoType);
-    hero[4][1] = odb::loadBitmap( "jump0.png",  reader, videoType);
-    hero[5][0] = odb::loadBitmap( "arrow0.png",  reader, videoType);
-    hero[5][1] = odb::loadBitmap( "arrow1.png",  reader, videoType);
+    hero[0][0] = odb::loadBitmap( "up0.png", videoType);
+    hero[0][1] = odb::loadBitmap( "up1.png", videoType);
+    hero[1][0] = odb::loadBitmap( "hero0.png", videoType);
+    hero[1][1] = odb::loadBitmap( "hero1.png", videoType);
+    hero[2][0] = odb::loadBitmap( "down0.png", videoType);
+    hero[2][1] = odb::loadBitmap( "down1.png", videoType);
+    hero[3][0] = odb::loadBitmap( "attack0.png", videoType);
+    hero[3][1] = odb::loadBitmap( "attack0.png", videoType);
+    hero[4][0] = odb::loadBitmap( "jump0.png", videoType);
+    hero[4][1] = odb::loadBitmap( "jump0.png", videoType);
+    hero[5][0] = odb::loadBitmap( "arrow0.png", videoType);
+    hero[5][1] = odb::loadBitmap( "arrow1.png", videoType);
 }
 
 int main(int argc, char **argv) {

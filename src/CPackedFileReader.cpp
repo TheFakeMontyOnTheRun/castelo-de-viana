@@ -12,13 +12,9 @@
 #include "IFileLoaderDelegate.h"
 #include "CPackedFileReader.h"
 
-odb::CPackedFileReader::CPackedFileReader(const char* dataFilePath) : mPackPath(
-        const_cast<char *>(dataFilePath)) {
-}
-
-odb::StaticBuffer odb::CPackedFileReader::loadFileFromPath(const char* path) {
+odb::StaticBuffer loadFileFromPath(const char* dataFilePath, const char* path) {
     odb::StaticBuffer toReturn;
-    mDataPack = fopen(mPackPath, "r");
+    FILE* mDataPack = fopen(dataFilePath, "r");
 	uint32_t offset = 0;
 
 	uint16_t entries = 0;
@@ -39,6 +35,9 @@ odb::StaticBuffer odb::CPackedFileReader::loadFileFromPath(const char* path) {
 		}
 	}
 
+	printf("File not found: %s\n", path);
+	assert(false);
+
 	found:
 
     if ( offset == 0 ) {
@@ -55,8 +54,4 @@ odb::StaticBuffer odb::CPackedFileReader::loadFileFromPath(const char* path) {
     fclose(mDataPack);
 
     return toReturn;
-}
-
-const char* odb::CPackedFileReader::getFilePathPrefix() {
-    return "";
 }

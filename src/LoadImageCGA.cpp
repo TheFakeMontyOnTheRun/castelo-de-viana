@@ -18,9 +18,9 @@
 
 namespace odb {
 
-    odb::ItemVector* loadSpriteList(const char* listName, odb::CPackedFileReader* fileLoader, EVideoType videoType) {
+    odb::ItemVector* loadSpriteList(const char* listName, EVideoType videoType) {
 
-        odb::StaticBuffer buffer = fileLoader->loadFileFromPath(listName);
+        odb::StaticBuffer buffer = loadFileFromPath(getAssetsPath(), listName);
         odb::ItemVector *tilesToLoad = (odb::ItemVector*)calloc(sizeof(odb::ItemVector), 1);
 
         size_t items = odb::countTokens((char*)buffer.data, buffer.size) + 1;
@@ -48,7 +48,7 @@ namespace odb {
                 lastPoint += since;
 
                 if ( strlen(filename) > 0 ) {
-                    odb::pushVector( tilesToLoad, odb::loadBitmap( filename, fileLoader, videoType ));
+                    odb::pushVector( tilesToLoad, odb::loadBitmap( filename, videoType ));
                 }
                 since = 0;
                 free(filename);
@@ -60,8 +60,8 @@ namespace odb {
         return tilesToLoad;
     }
 
-    NativeBitmap* loadBitmap(const char* path, odb::CPackedFileReader* fileLoader, EVideoType videoType) {
-        odb::StaticBuffer buffer = fileLoader->loadFileFromPath(path);
+    NativeBitmap* loadBitmap(const char* path, EVideoType videoType) {
+        odb::StaticBuffer buffer = loadFileFromPath( getAssetsPath(), path);
         int xSize;
         int ySize;
         int components;
@@ -70,8 +70,8 @@ namespace odb {
 
         if (videoType == kVGA ) {
             stbi_uc* image = stbi_load_from_memory((const stbi_uc *) buffer.data, buffer.size, &xSize, &ySize, &components, 4);
-            rawData = new int[xSize * ySize];
-            data8 = new uint8_t[ xSize * ySize ];
+            rawData = (int*)malloc(sizeof(int) * xSize * ySize );
+            data8 = (uint8_t*)malloc(sizeof(uint8_t) * xSize * ySize );
             memcpy( rawData, image, xSize * ySize * sizeof( int ) );
 
             for ( int c = 0; c < xSize * ySize; ++c  ) {
@@ -92,10 +92,13 @@ namespace odb {
             for ( int c = 0; c < ( xSize * ySize ); ++c ) {
                 data8[ c ] = getPaletteEntry( rawData[ c ] );
             }
+
+            free(rawData);
+
         } else {
             stbi_uc* image = stbi_load_from_memory((const stbi_uc *) buffer.data, buffer.size, &xSize, &ySize, &components, 1);
-            rawData = new int[xSize * ySize];
-            data8 = new uint8_t[ xSize * ySize ];
+            rawData = (int*)malloc(sizeof(int) * xSize * ySize );
+            data8 = (uint8_t*)malloc(sizeof(uint8_t) * xSize * ySize );
             for (int y = 0; y < ySize; ++y) {
                 for (int x = 0; x < xSize; ++x) {
                     int pixel = image[(y * xSize) + x];
@@ -144,8 +147,16 @@ namespace odb {
             for ( int c = 0; c < ( xSize * ySize ); ++c ) {
                 data8[ c ] = ( rawData[ c ] );
             }
+
+            free(rawData);
         }
 
-        return new odb::NativeBitmap(xSize, ySize, data8);
+
+        odb::NativeBitmap *toReturn = (odb::NativeBitmap*)calloc( sizeof(odb::NativeBitmap), 1);
+        toReturn->mWidth = xSize;
+        toReturn->mHeight = ySize;
+        toReturn->mRawData = data8;
+
+        return toReturn;
     }
 }

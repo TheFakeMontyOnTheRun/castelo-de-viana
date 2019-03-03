@@ -606,13 +606,12 @@ void evalutePlayerAttack() {
 void prepareRoom(int room) {
     muteSound();
     char buffer[64];
-    odb::CPackedFileReader reader("gamedata.pfs");
 
     snprintf(buffer, 64, "%d.bg", room );
-    odb::StaticBuffer bgmap = reader.loadFileFromPath(buffer);
+    odb::StaticBuffer bgmap = loadFileFromPath("gamedata.pfs", buffer);
 
     snprintf(buffer, 64, "%d.fg", room );
-    odb::StaticBuffer fgmap = reader.loadFileFromPath(buffer);
+    odb::StaticBuffer fgmap = loadFileFromPath("gamedata.pfs", buffer);
 
     memset(backgroundTiles, 0, sizeof(int) * 10 * 6 );
     memset(foregroundTiles, 0, sizeof(int) * 10 * 6 );
@@ -745,7 +744,7 @@ void prepareRoom(int room) {
 
     snprintf(buffer, 64, "%d.lst", room );
 
-    odb::StaticBuffer listBuffer = reader.loadFileFromPath(buffer);
+    odb::StaticBuffer listBuffer = loadFileFromPath( "gamedata.pfs", buffer);
 
     size_t amount = odb::countTokens((char*)listBuffer.data, listBuffer.size) + 1;
     odb::ItemVector tilestoLoad;
@@ -821,17 +820,4 @@ void enforceScreenLimits() {
             player.mPosition.mY = (32 * 6) - 32 - 1;
         }
     }
-}
-
-bool operator==(const Vec2i &a, const Vec2i &b) {
-    return a.mX == b.mX && a.mY == b.mY;
-}
-
-bool operator==(const Item &a, const Item &b) {
-    return a.mType == b.mType && a.mPosition == b.mPosition;
-}
-
-bool operator==(const Actor &a, const Actor &b) {
-    return a.mType == b.mType && a.mStance == b.mStance && a.mDirection == b.mDirection && a.mPosition == b.mPosition &&
-           a.mSpeed == b.mSpeed;
 }

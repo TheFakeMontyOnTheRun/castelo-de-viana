@@ -6,21 +6,10 @@
 #define LESSON10_NATIVEBITMAP_H
 
 namespace odb {
-    class NativeBitmap {
+    struct NativeBitmap {
         int mWidth;
         int mHeight;
         uint8_t *mRawData;
-
-    public:
-        NativeBitmap(int aWidth, int aHeight, uint8_t *aRawData);
-
-        int getWidth() const;
-
-        int getHeight() const;
-
-        uint8_t *getPixelData() const;
-
-        ~NativeBitmap();
     };
 }
 

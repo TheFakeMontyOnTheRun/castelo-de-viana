@@ -4,8 +4,8 @@
 
 namespace odb {
 
-    NativeBitmap* loadBitmap(const char* path, odb::CPackedFileReader* fileLoader, EVideoType videoType);
+    NativeBitmap* loadBitmap(const char* path, EVideoType videoType);
 
-	odb::ItemVector* loadSpriteList(const char* listName, odb::CPackedFileReader* fileLoader, EVideoType videoType);
+	odb::ItemVector* loadSpriteList(const char* listName, EVideoType videoType);
 }
 #endif
