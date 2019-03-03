@@ -10,7 +10,7 @@
 
 struct StaticBuffer loadFileFromPath(const char* dataFilePath, const char* path) {
 	struct StaticBuffer toReturn;
-    FILE* mDataPack = fopen(dataFilePath, "r");
+    FILE* mDataPack = fopen(dataFilePath, "rb");
 	uint32_t offset = 0;
 
 	uint16_t entries = 0;
