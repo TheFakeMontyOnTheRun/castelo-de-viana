@@ -9,11 +9,10 @@
 
 
 #include "Common.h"
-#include "IFileLoaderDelegate.h"
 #include "CPackedFileReader.h"
 
-odb::StaticBuffer loadFileFromPath(const char* dataFilePath, const char* path) {
-    odb::StaticBuffer toReturn;
+StaticBuffer loadFileFromPath(const char* dataFilePath, const char* path) {
+    StaticBuffer toReturn;
     FILE* mDataPack = fopen(dataFilePath, "r");
 	uint32_t offset = 0;
 

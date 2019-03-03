@@ -5,6 +5,6 @@
 #ifndef DUNGEONSOFNOUDAR486_CPACKEDFILEREADER_H
 #define DUNGEONSOFNOUDAR486_CPACKEDFILEREADER_H
 
-odb::StaticBuffer loadFileFromPath( const char* dataFilePath, const char* path );
+StaticBuffer loadFileFromPath(const char *dataFilePath, const char *path);
 
 #endif //DUNGEONSOFNOUDAR486_CPACKEDFILEREADER_H

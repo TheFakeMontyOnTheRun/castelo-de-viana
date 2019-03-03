@@ -1,13 +1,13 @@
 //
 // Created by monty on 01-07-2017.
 //
+#include <string.h>
 #include <assert.h>
 #include <stdint.h>
 #include <stdio.h>
 
 #include "Common.h"
 #include "NativeBitmap.h"
-#include "IFileLoaderDelegate.h"
 #include "CPackedFileReader.h"
 #include "Renderer.h"
 #include "LoadImage.h"

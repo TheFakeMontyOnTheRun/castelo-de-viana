@@ -6,7 +6,6 @@
 
 #include "Common.h"
 #include "NativeBitmap.h"
-#include "IFileLoaderDelegate.h"
 #include "CPackedFileReader.h"
 #include "Renderer.h"
 #include "LoadImage.h"

@@ -4,29 +4,28 @@
 
 #ifndef DUNGEONSOFNOUDAR_NDK_COMMON_H
 #define DUNGEONSOFNOUDAR_NDK_COMMON_H
-namespace odb {
 
-	struct ItemVector {
-		void** items;
-		size_t capacity;
-		size_t used;
-	};
+typedef struct ItemVector {
+	void **items;
+	size_t capacity;
+	size_t used;
+} ItemVector;
 
-	struct StaticBuffer {
-		uint8_t *data;
-		size_t size;
-	};
+typedef struct StaticBuffer {
+	uint8_t *data;
+	size_t size;
+} StaticBuffer;
 
-	void pushVector( ItemVector* vector, void* item );
+void pushVector(ItemVector *vector, void *item);
 
-	void initVector(ItemVector* vector, size_t capacity );
+void initVector(ItemVector *vector, size_t capacity);
 
-	void clearVector(ItemVector* vector);
+void clearVector(ItemVector *vector);
 
-	size_t countTokens( const char* text, size_t length);
+size_t countTokens(const char *text, size_t length);
 
-    char* fileFromString( const char* path );
+char *fileFromString(const char *path);
 
-    int min(int val1, int val2);
-}
+int min(int val1, int val2);
+
 #endif //DUNGEONSOFNOUDAR_NDK_COMMON_H

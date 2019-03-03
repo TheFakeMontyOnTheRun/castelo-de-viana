@@ -17,9 +17,7 @@ set(SOURCE_FILES
         src/MusicSDL.cpp
         src/LoadImageCGA.cpp
         include/LoadImage.h
-        src/NativeBitmap.cpp
         src/CPackedFileReader.cpp
-        src/IFileLoaderDelegate.cpp
         src/Common.cpp
         include/NativeBitmap.h src/SDLRenderer.cpp include/Renderer.h
         )

@@ -21,8 +21,8 @@
 bool enableOPL2 = false;
 extern OPL2 opl2;
 
-odb::StaticBuffer noSound;
-odb::StaticBuffer *melody;
+StaticBuffer noSound;
+StaticBuffer *melody;
 uint8_t* currentSoundPosition;
 
 int currentNote = 0;
@@ -74,7 +74,7 @@ short setup(void) {
 }
 
 
-void playSound(odb::StaticBuffer* sound) {
+void playSound(StaticBuffer* sound) {
 
 	if ( sound == NULL || sound->size == 0 ) {
 		melody = &noSound;
