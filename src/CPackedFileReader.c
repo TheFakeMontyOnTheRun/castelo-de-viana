@@ -1,6 +1,3 @@
-//
-// Created by monty on 06-12-2017.
-//
 #include <assert.h>
 #include <stdio.h>
 #include <stdint.h>
@@ -11,8 +8,8 @@
 #include "Common.h"
 #include "CPackedFileReader.h"
 
-StaticBuffer loadFileFromPath(const char* dataFilePath, const char* path) {
-    StaticBuffer toReturn;
+struct StaticBuffer loadFileFromPath(const char* dataFilePath, const char* path) {
+	struct StaticBuffer toReturn;
     FILE* mDataPack = fopen(dataFilePath, "r");
 	uint32_t offset = 0;
 
@@ -21,7 +18,8 @@ StaticBuffer loadFileFromPath(const char* dataFilePath, const char* path) {
 
 	char buffer[85];
 
-	for ( int c = 0; c < entries; ++c ) {
+	int c = 0;
+	for ( c = 0; c < entries; ++c ) {
 
 		fread(&offset, 4, 1, mDataPack );
 
@@ -35,7 +33,7 @@ StaticBuffer loadFileFromPath(const char* dataFilePath, const char* path) {
 	}
 
 	printf("File not found: %s\n", path);
-	assert(false);
+	assert(FALSE);
 
 	found:
 

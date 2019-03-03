@@ -1,6 +1,3 @@
-//
-// Created by monty on 01-07-2017.
-//
 #include <string.h>
 #include <assert.h>
 #include <stdint.h>
@@ -28,11 +25,11 @@ double t0;
 double t1;
 double ms;
 SDL_Surface *video;
-ControlState toReturn;
-EVideoType videoType = kVGA;
+struct ControlState toReturn;
+enum EVideoType videoType = kVGA;
 uint32_t mPalette[256];
 
-ControlState getControlState() {
+struct ControlState getControlState() {
 
   SDL_Event event;
   
@@ -51,46 +48,46 @@ ControlState getControlState() {
 
 
               case SDLK_ESCAPE:
-                  toReturn.escape = true;
+                  toReturn.escape = TRUE;
                   break;
 
               case SDLK_RETURN:
-                  toReturn.enter = true;
+                  toReturn.enter = TRUE;
                   break;
 
               case SDLK_LEFT:
-                  toReturn.moveLeft = true;
+                  toReturn.moveLeft = TRUE;
                   break;
 
               case SDLK_RIGHT:
-                  toReturn.moveRight = true;
+                  toReturn.moveRight = TRUE;
                   break;
 
               case SDLK_UP:
-                  toReturn.moveUp = true;
+                  toReturn.moveUp = TRUE;
                   break;
 
               case SDLK_l:
-                  toReturn.secret = true;
+                  toReturn.secret = TRUE;
                   break;
 
               case SDLK_DOWN:
-                  toReturn.moveDown = true;
+                  toReturn.moveDown = TRUE;
                   break;
 
 
               case SDLK_LSHIFT:
               case SDLK_RSHIFT:
-                  toReturn.jump = true;
+                  toReturn.jump = TRUE;
                   break;
 
               case SDLK_LCTRL:
               case SDLK_RCTRL:
-                  toReturn.sword = true;
+                  toReturn.sword = TRUE;
                   break;
 
               case SDLK_SPACE:
-                  toReturn.fireArrow = true;
+                  toReturn.fireArrow = TRUE;
                   break;
           }
       } else if ( event.type == SDL_KEYUP ) {
@@ -98,46 +95,46 @@ ControlState getControlState() {
 
 
               case SDLK_ESCAPE:
-                  toReturn.escape = false;
+                  toReturn.escape = FALSE;
                   break;
 
               case SDLK_RETURN:
-                  toReturn.enter = false;
+                  toReturn.enter = FALSE;
                   break;
 
               case SDLK_LEFT:
-                  toReturn.moveLeft = false;
+                  toReturn.moveLeft = FALSE;
                   break;
 
               case SDLK_RIGHT:
-                  toReturn.moveRight = false;
+                  toReturn.moveRight = FALSE;
                   break;
 
               case SDLK_UP:
-                  toReturn.moveUp = false;
+                  toReturn.moveUp = FALSE;
                   break;
 
               case SDLK_l:
-                  toReturn.secret = false;
+                  toReturn.secret = FALSE;
                   break;
 
               case SDLK_DOWN:
-                  toReturn.moveDown = false;
+                  toReturn.moveDown = FALSE;
                   break;
 
 
               case SDLK_LSHIFT:
               case SDLK_RSHIFT:
-                  toReturn.jump = false;
+                  toReturn.jump = FALSE;
                   break;
 
               case SDLK_LCTRL:
               case SDLK_RCTRL:
-                  toReturn.sword = false;
+                  toReturn.sword = FALSE;
                   break;
 
               case SDLK_SPACE:
-                  toReturn.fireArrow = false;
+                  toReturn.fireArrow = FALSE;
                   break;
           }
       }
@@ -219,14 +216,16 @@ void copyImageBufferToVideoMemory(uint8_t* imageBuffer ) {
         }
     }
 
-    for ( int y = 0; y < 200; ++y ) {
-    for ( int x = 0; x < 320; ++x ) {
-      rect.x = x;
-      rect.y = y;
-      rect.w = 1;
-      rect.h = 1;
+    int y = 0;
+    for ( y = 0; y < 200; ++y ) {
+        int x = 0;
+        for ( x = 0; x < 320; ++x ) {
+          rect.x = x;
+          rect.y = y;
+          rect.w = 1;
+          rect.h = 1;
 
-      pos = ( 320 * y ) + x;
+          pos = ( 320 * y ) + x;
 
         putpixel(video, x, y, mPalette[imageBuffer[ pos ]]);
 
@@ -264,7 +263,7 @@ uint8_t getPaletteEntry( uint32_t origin ) {
 }
 
 
-void initVideoFor(EVideoType unused) {
+void initVideoFor(enum EVideoType unused) {
   SDL_Init( SDL_INIT_VIDEO );
 
 
@@ -275,9 +274,10 @@ void initVideoFor(EVideoType unused) {
     enterFullScreenMode();
 #endif
 
-    for (int r = 0; r < 256; r += 16) {
-        for (int g = 0; g < 256; g += 8) {
-            for (int b = 0; b < 256; b += 8) {
+    int r, g, b;
+    for (r = 0; r < 256; r += 16) {
+        for (g = 0; g < 256; g += 8) {
+            for (b = 0; b < 256; b += 8) {
                 uint32_t pixel = 0xFF000000 + (r << 16) + (g << 8) + (b);
                 uint8_t paletteEntry = getPaletteEntry(pixel);
                 mPalette[paletteEntry] = pixel;

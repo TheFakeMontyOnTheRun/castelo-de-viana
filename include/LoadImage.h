@@ -1,9 +1,8 @@
+#ifndef LOADIMAGE_H
+#define LOADIMAGE_H
 
-#ifndef BF_CDOSRenderer_H
-#define BF_CDOSRenderer_H
+struct NativeBitmap *loadBitmap(const char *path, enum EVideoType videoType);
 
-NativeBitmap *loadBitmap(const char *path, EVideoType videoType);
-
-ItemVector *loadSpriteList(const char *listName, EVideoType videoType);
+struct ItemVector *loadSpriteList(const char *listName, enum EVideoType videoType);
 
 #endif

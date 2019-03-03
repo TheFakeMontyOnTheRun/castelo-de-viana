@@ -14,10 +14,10 @@
 #include "stb_image.h"
 
 
-ItemVector *loadSpriteList(const char *listName, EVideoType videoType) {
+struct ItemVector *loadSpriteList(const char *listName, enum EVideoType videoType) {
 
-	StaticBuffer buffer = loadFileFromPath(getAssetsPath(), listName);
-	ItemVector *tilesToLoad = (ItemVector *) calloc(sizeof(ItemVector), 1);
+	struct StaticBuffer buffer = loadFileFromPath(getAssetsPath(), listName);
+	struct ItemVector *tilesToLoad = (struct ItemVector *) calloc(sizeof(struct ItemVector), 1);
 
 	size_t items = countTokens((char *) buffer.data, buffer.size) + 1;
 	initVector(tilesToLoad, items);
@@ -27,7 +27,8 @@ ItemVector *loadSpriteList(const char *listName, EVideoType videoType) {
 	int since = 0;
 
 	uint8_t *bufferBegin = buffer.data;
-	for (size_t pos = 0; pos < buffer.size; ++pos) {
+	size_t pos = 0;
+	for (pos = 0; pos < buffer.size; ++pos) {
 		const char c = buffer.data[pos];
 
 		++since;
@@ -57,8 +58,8 @@ ItemVector *loadSpriteList(const char *listName, EVideoType videoType) {
 	return tilesToLoad;
 }
 
-NativeBitmap *loadBitmap(const char *path, EVideoType videoType) {
-	StaticBuffer buffer = loadFileFromPath(getAssetsPath(), path);
+struct NativeBitmap *loadBitmap(const char *path, enum EVideoType videoType) {
+	struct StaticBuffer buffer = loadFileFromPath(getAssetsPath(), path);
 	int xSize;
 	int ySize;
 	int components;
@@ -72,8 +73,8 @@ NativeBitmap *loadBitmap(const char *path, EVideoType videoType) {
 		rawData = (int *) malloc(sizeof(int) * xSize * ySize);
 		data8 = (uint8_t *) malloc(sizeof(uint8_t) * xSize * ySize);
 		memcpy(rawData, image, xSize * ySize * sizeof(int));
-
-		for (int c = 0; c < xSize * ySize; ++c) {
+		int c = 0;
+		for (c = 0; c < xSize * ySize; ++c) {
 			int origin = rawData[c];
 
 			int a = (origin & 0xFF000000) >> 24;
@@ -88,7 +89,7 @@ NativeBitmap *loadBitmap(const char *path, EVideoType videoType) {
 			rawData[c] = origin;
 		}
 		stbi_image_free(image);
-		for (int c = 0; c < (xSize * ySize); ++c) {
+		for (c = 0; c < (xSize * ySize); ++c) {
 			data8[c] = getPaletteEntry(rawData[c]);
 		}
 
@@ -100,8 +101,11 @@ NativeBitmap *loadBitmap(const char *path, EVideoType videoType) {
 											   &components, 1);
 		rawData = (int *) malloc(sizeof(int) * xSize * ySize);
 		data8 = (uint8_t *) malloc(sizeof(uint8_t) * xSize * ySize);
-		for (int y = 0; y < ySize; ++y) {
-			for (int x = 0; x < xSize; ++x) {
+
+		int y = 0;
+		for (y = 0; y < ySize; ++y) {
+			int x = 0;
+			for (x = 0; x < xSize; ++x) {
 				int pixel = image[(y * xSize) + x];
 				switch (pixel) {
 					case 154:
@@ -145,7 +149,8 @@ NativeBitmap *loadBitmap(const char *path, EVideoType videoType) {
 		}
 		stbi_image_free(image);
 
-		for (int c = 0; c < (xSize * ySize); ++c) {
+		int c = 0;
+		for (c = 0; c < (xSize * ySize); ++c) {
 			data8[c] = (rawData[c]);
 		}
 
@@ -153,7 +158,7 @@ NativeBitmap *loadBitmap(const char *path, EVideoType videoType) {
 	}
 
 
-	NativeBitmap *toReturn = (NativeBitmap *) calloc(sizeof(NativeBitmap), 1);
+	struct NativeBitmap *toReturn = (struct NativeBitmap *) calloc(sizeof(struct NativeBitmap), 1);
 	toReturn->mWidth = xSize;
 	toReturn->mHeight = ySize;
 	toReturn->mRawData = data8;

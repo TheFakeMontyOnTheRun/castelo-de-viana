@@ -1,10 +1,6 @@
-//
-// Created by monty on 06-12-2017.
-//
+#ifndef CPACKEDFILEREADER_H
+#define CPACKEDFILEREADER_H
 
-#ifndef DUNGEONSOFNOUDAR486_CPACKEDFILEREADER_H
-#define DUNGEONSOFNOUDAR486_CPACKEDFILEREADER_H
+struct StaticBuffer loadFileFromPath(const char *dataFilePath, const char *path);
 
-StaticBuffer loadFileFromPath(const char *dataFilePath, const char *path);
-
-#endif //DUNGEONSOFNOUDAR486_CPACKEDFILEREADER_H
+#endif

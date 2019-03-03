@@ -35,38 +35,38 @@ struct Vec2i {
 };
 
 struct Actor {
-	Vec2i mPosition;
-	Vec2i mSpeed;
-	EActorType mType;
-	EDirection mDirection;
-	EStance mStance;
+	struct Vec2i mPosition;
+	struct Vec2i mSpeed;
+	enum EActorType mType;
+	enum EDirection mDirection;
+	enum EStance mStance;
 	int mHealth;
-	bool mActive;
+	int mActive;
 };
 
 struct Item {
-	Vec2i mPosition;
-	EItemType mType;
-	bool mActive;
+	struct Vec2i mPosition;
+	enum EItemType mType;
+	int mActive;
 };
 
-extern Actor player;
-extern bool hasKey;
-extern bool hasBossOnScreen;
+extern struct Actor player;
+extern int hasKey;
+extern int hasBossOnScreen;
 extern int counter;
 extern int room;
-extern bool paused;
+extern int paused;
 extern int heroFrame;
 extern int ticksUntilVulnerable;
 extern int ticksToShowHealth;
 extern int backgroundTiles[6][10];
 extern int foregroundTiles[6][10];
-extern ItemVector foes;
-extern ItemVector items;
-extern ItemVector doors;
-extern ItemVector arrows;
-extern NativeBitmap *currentScreen;
-extern EScreen screen;
+extern struct ItemVector foes;
+extern struct ItemVector items;
+extern struct ItemVector doors;
+extern struct ItemVector arrows;
+extern struct NativeBitmap *currentScreen;
+extern enum EScreen screen;
 extern const char *currentBossName;
 extern int totalBossHealth;
 
@@ -74,21 +74,21 @@ extern void clearBuffers();
 
 void init();
 
-void gameTick(bool &isOnGround, bool &isOnStairs);
+void gameTick(int *isOnGround, int *isOnStairs);
 
-void loadTiles(ItemVector tilesToLoad);
+void loadTiles(struct ItemVector tilesToLoad);
 
 void
-updateHero(bool isOnGround, bool isJumping, bool isUpPressed,
-		   bool isDownPressed, bool isLeftPressed, bool isAttacking,
-		   bool isUsingSpecial,
-		   bool isRightPressed, bool isOnStairs, bool isPausePressed);
+updateHero(int isOnGround, int isJumping, int isUpPressed,
+		   int isDownPressed, int isLeftPressed, int isAttacking,
+		   int isUsingSpecial,
+		   int isRightPressed, int isOnStairs, int isPausePressed);
 
 void prepareRoom(int room);
 
 void enforceScreenLimits();
 
-void prepareScreenFor(EScreen screenState);
+void prepareScreenFor(enum EScreen screenState);
 
 void playMusic(int instrument, const char *music);
 

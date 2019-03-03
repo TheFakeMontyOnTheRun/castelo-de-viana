@@ -12,18 +12,17 @@ find_package(SDL_mixer REQUIRED)
 find_package(SDL_image REQUIRED)
 
 set(SOURCE_FILES
-        src/Main.cpp
-        src/Game.cpp
-        src/MusicSDL.cpp
-        src/LoadImageCGA.cpp
+        src/Main.c
+        src/Game.c
+        src/MusicSDL.c
+        src/LoadImageCGA.c
         include/LoadImage.h
-        src/CPackedFileReader.cpp
-        src/Common.cpp
-        include/NativeBitmap.h src/SDLRenderer.cpp include/Renderer.h
+        src/CPackedFileReader.c
+        src/Common.c
+        include/NativeBitmap.h src/SDLRenderer.c include/Renderer.h
         )
 
 find_package(OpenGL REQUIRED)
 include (FindPkgConfig)
-
 add_executable(castleofviana ${SOURCE_FILES})
 target_link_libraries(castleofviana ${OPENGL_LIBRARIES} ${SDL_LIBRARY}  ${SDL_MIXER_LIBRARY} ${SDL_IMAGE_LIBRARY} ${OPENGL_LIBRARIES}  )

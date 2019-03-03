@@ -1,31 +1,29 @@
-//
-// Created by monty on 26/09/16.
-//
+#ifndef COMMON_H
+#define COMMON_H
 
-#ifndef DUNGEONSOFNOUDAR_NDK_COMMON_H
-#define DUNGEONSOFNOUDAR_NDK_COMMON_H
-
-typedef struct ItemVector {
+struct ItemVector {
 	void **items;
 	size_t capacity;
 	size_t used;
-} ItemVector;
+};
 
-typedef struct StaticBuffer {
+struct StaticBuffer {
 	uint8_t *data;
 	size_t size;
-} StaticBuffer;
+};
 
-void pushVector(ItemVector *vector, void *item);
+void pushVector(struct ItemVector *vector, void *item);
 
-void initVector(ItemVector *vector, size_t capacity);
+void initVector(struct ItemVector *vector, size_t capacity);
 
-void clearVector(ItemVector *vector);
+void clearVector(struct ItemVector *vector);
 
 size_t countTokens(const char *text, size_t length);
 
-char *fileFromString(const char *path);
-
 int min(int val1, int val2);
 
-#endif //DUNGEONSOFNOUDAR_NDK_COMMON_H
+#define DEFAULT_TOLERANCE 32
+#define TRUE 1
+#define FALSE 0
+
+#endif

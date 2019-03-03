@@ -17,39 +17,39 @@
 #include <emscripten/html5.h>
 #endif
 
-bool enableSecret = false;
+int enableSecret = FALSE;
 
-ItemVector tiles;
+struct ItemVector tiles;
 
-NativeBitmap* pausedSign;
+struct NativeBitmap* pausedSign;
 
-NativeBitmap* arrowSprite[2];
+struct NativeBitmap* arrowSprite[2];
 
-NativeBitmap* doorStates[2];
+struct NativeBitmap* doorStates[2];
 
-NativeBitmap* foeSprites[2];
+struct NativeBitmap* foeSprites[2];
 
-NativeBitmap* itemSprites[2];
+struct NativeBitmap* itemSprites[2];
 
-NativeBitmap* gargoyleSprites[2];
+struct NativeBitmap* gargoyleSprites[2];
 
-NativeBitmap* capirotoSprites[2];
+struct NativeBitmap* capirotoSprites[2];
 
-NativeBitmap* handSprites[2];
+struct NativeBitmap* handSprites[2];
 
-NativeBitmap* tinhosoSprites[2];
+struct NativeBitmap* tinhosoSprites[2];
 
-
-NativeBitmap* hero[6][2];
+struct NativeBitmap* hero[6][2];
 
 uint8_t imageBuffer[ 320 * 200 ];
-NativeBitmap* currentScreen = NULL;
+
+struct NativeBitmap* currentScreen = NULL;
 
 void initOPL2() {
     setupOPL2();
 }
 
-void prepareScreenFor(EScreen screenState) {
+void prepareScreenFor(enum EScreen screenState) {
     muteSound();
     switch (screenState) {
         case kIntro:
@@ -74,16 +74,17 @@ void clearBuffers() {
     memset( imageBuffer, 4, 320 * 200 );
 }
 
-void loadTiles(ItemVector tilesToLoad) {
+void loadTiles(struct ItemVector tilesToLoad) {
 
     char** ptr = (char**)tilesToLoad.items;
     initVector( &tiles, tilesToLoad.used );
 
-    for ( size_t pos = 0; pos < tilesToLoad.used; ++pos ) {
+    size_t pos = 0;
+    for ( pos = 0; pos < tilesToLoad.used; ++pos ) {
 
         char* tile = *ptr;
 
-        ItemVector* strip = (ItemVector*)calloc(sizeof(ItemVector), 1);
+        struct ItemVector* strip = (struct ItemVector*)calloc(sizeof(struct ItemVector), 1);
 
 
         if ( !strcmp( tile + (strlen(tile) - 4), ".png" ) ) {
@@ -115,7 +116,8 @@ void render() {
 
         uint8_t* pixelData = currentScreen->mRawData;
 
-        for (int c = 0; c < 320 * 200; ++c) {
+        int c = 0;
+        for (c = 0; c < 320 * 200; ++c) {
             imageBuffer[c] = pixelData[c];
         }
 
@@ -129,10 +131,11 @@ void render() {
     int x0 = 0;
     int x1 = 0;
 
-
-    for (int ty = 0; ty < 6; ++ty) {
-        for (int tx = 0; tx < 10; ++tx) {
-            NativeBitmap* tile;
+	int ty = 0;
+    for (ty = 0; ty < 6; ++ty) {
+    	int tx = 0;
+        for (tx = 0; tx < 10; ++tx) {
+            struct NativeBitmap* tile;
             uint8_t *pixelData;
             y0 = (ty * 32);
             y1 = 32 + (ty * 32);
@@ -141,18 +144,20 @@ void render() {
             int pixel = 4;
 
             if (backgroundTiles[ty][tx] != 0) {
-                ItemVector *tileset = (ItemVector*)tiles.items[backgroundTiles[ty][tx]];
-                tile = (NativeBitmap*)tileset->items[counter % tileset->used];
+                struct ItemVector *tileset = (struct ItemVector*)tiles.items[backgroundTiles[ty][tx]];
+                tile = (struct NativeBitmap*)tileset->items[counter % tileset->used];
 
                 pixelData = tile->mRawData;
 
                 pixel = 4;
-                for (int y = y0; y < y1; ++y) {
+                int y = y0;
+                for (y = y0; y < y1; ++y) {
 
                     uint8_t* sourceLine = pixelData + (32 * (y - y0));
                     uint8_t* destLine = &imageBuffer[0] + (320 * y) + x0;
 
-                    for (int x = x0; x < x1; ++x) {
+                    int x = x0;
+                    for (x = x0; x < x1; ++x) {
 
                         pixel = *sourceLine;
 
@@ -167,17 +172,19 @@ void render() {
             }
 
             if (foregroundTiles[ty][tx] != 0) {
-                ItemVector *tileset = (ItemVector*)tiles.items[foregroundTiles[ty][tx]];
-                tile = (NativeBitmap*)tileset->items[counter % tileset->used];
+                struct ItemVector *tileset = (struct ItemVector*)tiles.items[foregroundTiles[ty][tx]];
+                tile = (struct NativeBitmap*)tileset->items[counter % tileset->used];
                 pixelData = tile->mRawData;
 
                 pixel = 4;
-                for (int y = y0; y < y1; ++y) {
+                int y = y0;
+                for (y = y0; y < y1; ++y) {
 
                     uint8_t* sourceLine = pixelData + (32 * (y - y0));
                     uint8_t* destLine = &imageBuffer[0] + (320 * y) + x0;
 
-                    for (int x = x0; x < x1; ++x) {
+                    int x = x0;
+                    for (x = x0; x < x1; ++x) {
 
                         pixel = *sourceLine;
 
@@ -195,10 +202,11 @@ void render() {
 
     uint8_t *pixelData;
 
-    Actor** doorPtr = (Actor**)doors.items;
+    struct Actor** doorPtr = (struct Actor**)doors.items;
 
-    for (size_t pos = 0; pos < doors.used; ++ pos ) {
-        Actor* door = *doorPtr;
+    size_t pos = 0;
+    for (pos = 0; pos < doors.used; ++ pos ) {
+        struct Actor* door = *doorPtr;
 
         pixelData = doorStates[door->mType - kClosedDoor]->mRawData;
         y0 = (door->mPosition.mY);
@@ -207,13 +215,16 @@ void render() {
         x1 = 32 + x0;
 
         int pixel = 0;
-        for (int y = y0; y < y1; ++y) {
+
+        int y = y0;
+        for (y = y0; y < y1; ++y) {
 
             if (y < 0 || y >= 200) {
                 continue;
             }
 
-            for (int x = x0; x < x1; ++x) {
+            int x = x0;
+            for (x = x0; x < x1; ++x) {
                 pixel = (pixelData[(32 * (y - y0)) + ((x - x0))]);
 
                 if (pixel == transparency) {
@@ -230,7 +241,7 @@ void render() {
         ++doorPtr;
     }
 
-    NativeBitmap* sprite = hero[player.mStance][heroFrame];
+    struct NativeBitmap* sprite = hero[player.mStance][heroFrame];
 
     if (((ticksUntilVulnerable <= 0) || ((counter % 2) == 0)) || paused) {
         y0 = (player.mPosition.mY);
@@ -246,13 +257,16 @@ void render() {
         pixelData = sprite->mRawData;
 
         int pixel = 0;
-        for (int y = y0; y < y1; ++y) {
+
+        int y = y0;
+        for (y = y0; y < y1; ++y) {
 
             if (y < 0 || y >= 200) {
                 continue;
             }
 
-            for (int x = x0; x < x1; ++x) {
+            int x = x0;
+            for (x = x0; x < x1; ++x) {
                 if (player.mDirection == kDirectionRight) {
                     pixel = (pixelData[(spriteWidth * (y - y0)) + ((x - x0))]);
                 } else {
@@ -272,11 +286,11 @@ void render() {
         }
     }
 
-    Actor** arrowPtr = (Actor**)arrows.items;
+    struct Actor** arrowPtr = (struct Actor**)arrows.items;
 
-    for (size_t pos = 0; pos < arrows.used; ++pos ) {
+    for (pos = 0; pos < arrows.used; ++pos ) {
 
-        Actor* arrow = *arrowPtr;
+        struct Actor* arrow = *arrowPtr;
 
         if ( !arrow->mActive ) {
             continue;
@@ -295,13 +309,15 @@ void render() {
         x1 = 32 + x0;
 
         int pixel = 0;
-        for (int y = y0; y < y1; ++y) {
+        int y = 0;
+        for (y = y0; y < y1; ++y) {
 
             if (y < 0 || y >= 200) {
                 continue;
             }
 
-            for (int x = x0; x < x1; ++x) {
+            int x = x0;
+            for (x = x0; x < x1; ++x) {
                 if (arrow->mDirection == kDirectionRight) {
                     pixel = (pixelData[(32 * (y - y0)) + ((x - x0))]);
                 } else {
@@ -323,10 +339,10 @@ void render() {
         ++arrowPtr;
     }
 
-    Actor** foePtr = (Actor**)foes.items;
-    for (size_t pos = 0; pos < foes.used; ++pos ) {
+    struct Actor** foePtr = (struct Actor**)foes.items;
+    for (pos = 0; pos < foes.used; ++pos ) {
 
-        Actor* foe = *foePtr;
+        struct Actor* foe = *foePtr;
 
 		if (!foe->mActive) {
 			continue;
@@ -362,13 +378,15 @@ void render() {
         x1 = 32 + x0;
 
         int pixel = 0;
-        for (int y = y0; y < y1; ++y) {
+        int y = 0;
+        for (y = y0; y < y1; ++y) {
 
             if (y < 0 || y >= 200) {
                 continue;
             }
 
-            for (int x = x0; x < x1; ++x) {
+            int x = x0;
+            for (x = x0; x < x1; ++x) {
                 if (foe->mDirection == kDirectionRight) {
                     pixel = (pixelData[(32 * (y - y0)) + ((x - x0))]);
                 } else {
@@ -390,9 +408,10 @@ void render() {
         foePtr++;
     }
 
-    Item** itemPtr = (Item**)items.items;
-    for (size_t pos = 0; pos < items.used; ++pos ) {
-        Item* item = *itemPtr;
+    struct Item** itemPtr = (struct Item**)items.items;
+
+    for (pos = 0; pos < items.used; ++pos ) {
+        struct Item* item = *itemPtr;
 
         if (!item->mActive ) {
             continue;
@@ -404,13 +423,15 @@ void render() {
         x1 = 32 + x0;
         pixelData = itemSprites[item->mType]->mRawData;
         int pixel = 0;
-        for (int y = y0; y < y1; ++y) {
+        int y = y0;
+        for (y = y0; y < y1; ++y) {
 
             if (y < 0 || y >= 200) {
                 continue;
             }
 
-            for (int x = x0; x < x1; ++x) {
+            int x = x0;
+            for (x = x0; x < x1; ++x) {
                 pixel = (pixelData[(32 * (y - y0)) + ((x - x0))]);
 
                 if (pixel == transparency) {
@@ -434,13 +455,15 @@ void render() {
         x1 = 32 + x0;
         pixelData = itemSprites[kKey]->mRawData;
         int pixel = 0;
-        for (int y = y0; y < y1; ++y) {
+        int y = y0;
+        for (y = y0; y < y1; ++y) {
 
             if (y < 0 || y >= 200) {
                 continue;
             }
 
-            for (int x = x0; x < x1; ++x) {
+            int x = x0;
+            for (x = x0; x < x1; ++x) {
                 pixel = (pixelData[(32 * (y - y0)) + ((x - x0))]);
 
                 if (pixel == transparency) {
@@ -463,9 +486,11 @@ void render() {
         int centerX = 320 / 2;
         int centerY = 200 / 2;
 
-        for ( int y = 0; y < height; ++y ) {
+        int y = 0;
+        for ( y = 0; y < height; ++y ) {
             int py = centerY - (height / 2) + y;
-            for ( int x = 0; x < width; ++x ) {
+            int x = 0;
+            for ( x = 0; x < width; ++x ) {
                 int px = centerX - (width / 2) + x;
 
                 uint8_t pixel = (pixelsPause[(width * y) + x]);
@@ -485,12 +510,14 @@ void render() {
     }
 
     if (ticksToShowHealth > 0) {
-        for ( int y = 192; y < 200; ++y ) {
-            for ( int x = 0; x < (8 * player.mHealth); ++x ) {
+    	int y = 192;
+        for ( y = 192; y < 200; ++y ) {
+        	int x = 0;
+            for ( x = 0; x < (8 * player.mHealth); ++x ) {
                 imageBuffer[(320 * y) + (x)] = heroHealthColour;
             }
 
-            for ( int x = (8 * player.mHealth); x < (80); ++x ) {
+            for ( x = (8 * player.mHealth); x < (80); ++x ) {
                 imageBuffer[(320 * y) + (x)] = backgroundColour;
             }
 
@@ -500,9 +527,10 @@ void render() {
     if (hasBossOnScreen) {
         int bossHealth = 0;
 
-        Actor** foePtr = (Actor**)foes.items;
-        for (size_t pos = 0; pos < foes.used; ++pos ) {
-            Actor* foe = *foePtr;
+        struct Actor** foePtr = (struct Actor**)foes.items;
+        size_t pos = 0;
+        for (pos = 0; pos < foes.used; ++pos ) {
+            struct Actor* foe = *foePtr;
 
 			if (!foe->mActive) {
 				continue;
@@ -515,12 +543,14 @@ void render() {
 			++foePtr;
         }
 
-        for ( int y = 184; y < 192; ++y ) {
-            for ( int x = 0; x < (8 * bossHealth ); ++x ) {
+        int y = 0;
+        for ( y = 184; y < 192; ++y ) {
+        	int x = 0;
+            for ( x = 0; x < (8 * bossHealth ); ++x ) {
                 imageBuffer[(320 * y) + (x)] = bossHealthColour;
             }
 
-            for ( int x = (8 * bossHealth); x < (totalBossHealth * 8); ++x ) {
+            for ( x = (8 * bossHealth); x < (totalBossHealth * 8); ++x ) {
                 imageBuffer[(320 * y) + (x)] = backgroundColour;
             }
         }
@@ -529,21 +559,21 @@ void render() {
     copyImageBufferToVideoMemory(imageBuffer);
 }
 
-bool done = false;
+int done = FALSE;
 
 void sysTick() {
     beginFrame();
 
-    bool isOnGround = false;
-    bool isJumping = false;
-    bool isUpPressed = false;
-    bool isDownPressed = false;
-    bool isLeftPressed = false;
-    bool isRightPressed = false;
-    bool isAttacking = false;
-    bool isAltAttackPressed = false;
-    bool isPausePressed = false;
-    bool isOnStairs = false;
+    int isOnGround = FALSE;
+    int isJumping = FALSE;
+    int isUpPressed = FALSE;
+    int isDownPressed = FALSE;
+    int isLeftPressed = FALSE;
+    int isRightPressed = FALSE;
+    int isAttacking = FALSE;
+    int isAltAttackPressed = FALSE;
+    int isPausePressed = FALSE;
+    int isOnStairs = FALSE;
     render();
 
 
@@ -552,51 +582,51 @@ void sysTick() {
     }
 
 
-    ControlState controlState = getControlState();
+    struct ControlState controlState = getControlState();
 
     if ( controlState.sword ) {
-        isAttacking = true;
+        isAttacking = TRUE;
     }
 
     if ( controlState.jump ) {
-        isJumping = true;
+        isJumping = TRUE;
     }
 
     if ( controlState.secret ) {
-        enableSecret = true;
+        enableSecret = TRUE;
         prepareScreenFor(kIntro);
     }
 
     if ( controlState.escape ) {
-        done = true;
+        done = TRUE;
     }
 
     if ( controlState.jump ) {
-        isJumping = true;
+        isJumping = TRUE;
     }
 
     if ( controlState.moveUp && !isOnStairs && isOnGround ) {
-        isAltAttackPressed = true;
+        isAltAttackPressed = TRUE;
     }
 
     if ( controlState.moveDown ) {
-        isDownPressed = true;
+        isDownPressed = TRUE;
     }
 
     if ( controlState.moveUp ) {
-        isUpPressed = true;
+        isUpPressed = TRUE;
     }
 
     if ( controlState.moveLeft ) {
-        isLeftPressed = true;
+        isLeftPressed = TRUE;
     }
 
     if ( controlState.moveRight ) {
-        isRightPressed = true;
+        isRightPressed = TRUE;
     }
 
     if ( controlState.fireArrow ) {
-        isAltAttackPressed = true;
+        isAltAttackPressed = TRUE;
     }
 
     if ( controlState.enter ) {
@@ -607,7 +637,7 @@ void sysTick() {
                 init();
                 break;
             case kGame:
-                isPausePressed = true;
+                isPausePressed = TRUE;
                 break;
             case kGameOver:
                 screen = kGame;
@@ -674,7 +704,8 @@ void loadGraphics() {
 
 int main(int argc, char **argv) {
 
-    for ( int c = 1; c < argc; ++c ) {
+	int c = 1;
+    for ( c = 1; c < argc; ++c ) {
         char* parm = argv[ c ];
 
         if ( !strcmp(parm, "opl2lpt")) {
@@ -682,7 +713,7 @@ int main(int argc, char **argv) {
         }
 
         if ( !strcmp(parm, "secret")) {
-            enableSecret = true;
+            enableSecret = TRUE;
         }
 
         if ( !strcmp(parm, "vga")) {

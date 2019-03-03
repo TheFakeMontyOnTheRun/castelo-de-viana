@@ -28,7 +28,7 @@ uint8_t oddBuffer[320 * 100 / 4];
 
 EVideoType videoType = kCGA;
 
-ControlState getControlState() {
+extern "C" struct ControlState getControlState() {
     ControlState toReturn;
 
     while (kbhit()) {
@@ -75,11 +75,11 @@ ControlState getControlState() {
     return toReturn;
 }
 
-void beginFrame() {
+extern "C" void beginFrame() {
     t0 = uclock();
 }
 
-void doneWithFrame() {
+extern "C" void doneWithFrame() {
     t1 = uclock();
     ms = (1000 * (t1 - t0)) / UCLOCKS_PER_SEC;
     timeRendering += ms;
@@ -91,7 +91,7 @@ void doneWithFrame() {
     }
 }
 
-void onQuit() {
+extern "C" void onQuit() {
     stopSounds();
     textmode(C80);
     clrscr();
@@ -99,7 +99,7 @@ void onQuit() {
 }
 
 
-uint8_t getPaletteEntry( uint32_t origin ) {
+extern "C" uint8_t getPaletteEntry( uint32_t origin ) {
     uint8_t shade = 0;
 
     shade += (((((origin & 0x0000FF)      ) << 2) >> 8)) << 6;
@@ -165,7 +165,7 @@ void plot(int x, int y, int color) {
 
 int frame = 0;
 
-void copyImageBufferToVideoMemory(uint8_t* imageBuffer ) {
+extern "C" void copyImageBufferToVideoMemory(uint8_t* imageBuffer ) {
     if ( videoType == kVGA ) {
         uint8_t mFinalBuffer[320 * 200];
         uint8_t* currentImageBufferPos = imageBuffer;
@@ -228,7 +228,7 @@ void copyImageBufferToVideoMemory(uint8_t* imageBuffer ) {
     }
 }
 
-void initVideoFor( EVideoType videoType ) {
+extern "C" void initVideoFor( EVideoType videoType ) {
 
     if ( videoType == kVGA ) {
         __dpmi_regs reg;
@@ -256,7 +256,7 @@ void initVideoFor( EVideoType videoType ) {
     }
 }
 
-const char* getAssetsPath() {
+extern "C" const char* getAssetsPath() {
     if ( videoType == kVGA ) {
         return "vga.pfs";
     } else {

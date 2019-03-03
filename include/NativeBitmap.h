@@ -1,9 +1,5 @@
-//
-// Created by monty on 28/02/16.
-//
-
-#ifndef LESSON10_NATIVEBITMAP_H
-#define LESSON10_NATIVEBITMAP_H
+#ifndef NATIVEBITMAP_H
+#define NATIVEBITMAP_H
 
 struct NativeBitmap {
 	int mWidth;
@@ -11,4 +7,4 @@ struct NativeBitmap {
 	uint8_t *mRawData;
 };
 
-#endif //LESSON10_NATIVEBITMAP_H
+#endif
