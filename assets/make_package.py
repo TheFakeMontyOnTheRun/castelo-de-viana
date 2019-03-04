@@ -45,7 +45,6 @@ def palettize_file( filename ):
 if __name__ == "__main__":              
 
     transparency = 199
-    palettize_file( "src/tile2.png" )
-#    for filename in glob.glob('src/*.png'):
-#        palettize_file( filename )
+    for filename in glob.glob('src/*.png'):
+        palettize_file( filename )
                 
