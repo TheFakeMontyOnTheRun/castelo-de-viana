@@ -80,53 +80,54 @@ struct NativeBitmap* loadBitmap(const char *path, enum EVideoType videoType) {
     uint8_t *buffer = (uint8_t *) calloc(1, size);
 
     if (videoType == kCGA) {
-        //0 black
-        //1 shaded blue
-        //2 shaded pink
-        //3 shaded white
-        //4 black
-        //5 mid blue
-        //6 mid pink
-        //7 white
-        //8 black
-        //9 light blue
-        //10 light pink
-        //11 white
-
+        /*
+        0 black
+        1 shaded blue
+        2 shaded pink
+        3 shaded white
+        4 black
+        5 mid blue
+        6 mid pink
+        7 white
+        8 black
+        9 light blue
+        10 light pink
+        11 white
+        */
         int y = 0;
         for (y = 0; y < height; ++y) {
             int x = 0;
             for (x = 0; x < width; ++x) {
                 int pixel = ptr[(y * width) + x];
                 switch (pixel) {
-                    case 82: //dark white
+                    case 82: /* dark white */
                         pixel = 3;
                         break;
-                    case 141: //mid pink
+                    case 141: /* mid pink */
                         pixel = 6;
                         break;
-                    case 66: //dark pink
+                    case 66: /* dark pink */
                         pixel = 2;
                         break;
-                    case 215: //light pink
+                    case 215: /* light pink */
                         pixel = 10;
                         break;
-                    case 87: //light blue
+                    case 87: /* light blue */
                         pixel = 9;
                         break;
-                    case 0: //black
-                        pixel = 4; //0 would be transparent
+                    case 0: /* black */
+                        pixel = 4; /* 0 would be transparent */
                         break;
-                    case 13: //mid blue
+                    case 13: /* mid blue */
                         pixel = 5;
                         break;
-                    case 2: //dark blue
+                    case 2: /* dark blue */
                         pixel = 1;
                         break;
-                    case 255: //bright white
+                    case 255: /* bright white */
                         pixel = 11;
                         break;
-                    case 199: //transparent
+                    case 199: /* transparent */
                         pixel = 0;
                         break;
                     default:
