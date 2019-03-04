@@ -86,7 +86,7 @@ int main( int argc, char **argv ) {
     std::cout << "entry " << files[ e ].id << " starting at " << ftell(file) << std::endl;
     uint32_t offset = files[ e ].offset;
     const char *name = files[ e ].id.c_str();
-    uint8_t strLen = std::strlen(name);
+    uint8_t strLen = strlen(name);
     fwrite( &offset, 4, 1, file );
     fwrite( &strLen, 1, 1, file );
     fwrite( name, strLen + 1, 1, file );

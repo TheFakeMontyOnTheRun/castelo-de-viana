@@ -258,9 +258,9 @@ extern "C" void initVideoFor( EVideoType videoType ) {
 }
 
 extern "C" const char* getAssetsPath() {
-    if ( videoType == kVGA ) {
-        return "vga.pfs";
-    } else {
+//    if ( videoType == kVGA ) {
+//        return "vga.pfs";
+//    } else {
         return "cga.pfs";
-    }
+//    }
 }

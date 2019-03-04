@@ -18,6 +18,8 @@ struct StaticBuffer loadFileFromPath(const char* dataFilePath, const char* path)
 
 	char buffer[85];
 
+	size_t lenA = strlen(path);
+
 	int c = 0;
 	for ( c = 0; c < entries; ++c ) {
 
@@ -26,6 +28,28 @@ struct StaticBuffer loadFileFromPath(const char* dataFilePath, const char* path)
 		uint8_t stringSize = 0;
 		fread(&stringSize, 1, 1, mDataPack );
 		fread(&buffer, stringSize + 1, 1, mDataPack );
+
+		size_t lenB = strlen( buffer );
+
+
+
+		if ( !strcmp( path + (strlen(path) - 4), ".png" ) &&
+			!strcmp( buffer + (strlen(buffer) - 4), ".img" ) &&
+			lenA == lenB ) {
+
+			size_t d = 0;
+			for ( d = 0; d < lenA; ++d ) {
+				if (path[d] != buffer[d]) {
+					goto nextfile;
+				}
+
+				if (path[d] == '.') {
+					goto found;
+				}
+			}
+		}
+
+		nextfile:
 
 		if (!strcmp( buffer, path ) ) {
 			goto found;

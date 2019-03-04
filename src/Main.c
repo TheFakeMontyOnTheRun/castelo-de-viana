@@ -108,7 +108,7 @@ void render() {
         transparency = 0;
     } else {
         memset( imageBuffer, 0, 320 * 200 );
-        transparency = getPaletteEntry(0x00FF00);
+        transparency = 199;
     }
 
 
