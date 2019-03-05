@@ -22,15 +22,10 @@ packager:
 	rm -f ./packer
 	g++ -std=c++14 -opacker src/packer.cpp
 
-rescga:	packager
+res:	packager
 	rm -f ./cga.pfs
-	ls resCGA/*.*  | xargs ./packer
+	ls res/*.*  | xargs ./packer
 	mv ./data.pfs ./cga.pfs
-
-resvga:	packager
-	rm -f ./vga.pfs
-	ls resVGA/*.*  | xargs ./packer
-	mv ./data.pfs ./vga.pfs
 
 gamedata:	packager
 	rm -f ./gamedata.pfs
