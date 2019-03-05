@@ -14,7 +14,7 @@ find_package(SDL_image REQUIRED)
 set(SOURCE_FILES
         src/Main.c
         src/Game.c
-        src/MusicSDL.c
+        src/NullMusic.c
         src/LoadBitmap.c
         include/LoadImage.h
         src/CPackedFileReader.c

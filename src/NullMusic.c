@@ -1,8 +1,13 @@
 #include <assert.h>
 #include <time.h>
-#include <stdint.h>
 #include <unistd.h>
 #include <stdio.h>
+
+#ifdef AMIGA
+#include "AmigaInt.h"
+#else
+#include <stdint.h>
+#endif
 
 #include "Common.h"
 #include "NativeBitmap.h"

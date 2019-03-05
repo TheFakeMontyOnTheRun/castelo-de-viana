@@ -19,11 +19,6 @@
 #include <emscripten/html5.h>
 #endif
 
-double timeRendering = 0;
-int desiredTimeSlice = 75;
-double t0;
-double t1;
-double ms;
 SDL_Surface *video;
 struct ControlState toReturn;
 enum EVideoType videoType = kVGA;
@@ -152,9 +147,6 @@ void doneWithFrame() {
   SDL_Delay(50);
 #endif
   SDL_Flip(video);
-}
-
-void soundFrequency(int frequency) {
 }
 
 void muteSound() {

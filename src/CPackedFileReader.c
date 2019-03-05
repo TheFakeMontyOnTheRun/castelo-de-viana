@@ -14,7 +14,7 @@ struct StaticBuffer loadFileFromPath(const char* dataFilePath, const char* path)
 	uint32_t offset = 0;
 
 	uint16_t entries = 0;
-	fread(&entries, 2, 1, mDataPack);
+	assert(fread(&entries, 2, 1, mDataPack));
 
 	char buffer[85];
 
@@ -23,11 +23,11 @@ struct StaticBuffer loadFileFromPath(const char* dataFilePath, const char* path)
 	int c = 0;
 	for ( c = 0; c < entries; ++c ) {
 
-		fread(&offset, 4, 1, mDataPack );
+		assert(fread(&offset, 4, 1, mDataPack ));
 
 		uint8_t stringSize = 0;
-		fread(&stringSize, 1, 1, mDataPack );
-		fread(&buffer, stringSize + 1, 1, mDataPack );
+		assert(fread(&stringSize, 1, 1, mDataPack ));
+		assert(fread(&buffer, stringSize + 1, 1, mDataPack ));
 
 		size_t lenB = strlen( buffer );
 
@@ -68,10 +68,10 @@ struct StaticBuffer loadFileFromPath(const char* dataFilePath, const char* path)
     int result = fseek( mDataPack, offset, SEEK_SET );
 
     uint32_t size = 0;
-    fread(&size, 4, 1, mDataPack );
+    assert(fread(&size, 4, 1, mDataPack ));
     toReturn.data = (uint8_t *)(calloc(size, 1));
     toReturn.size = size;
-    fread(toReturn.data, 1, size, mDataPack );
+    assert(fread(toReturn.data, 1, size, mDataPack ));
     fclose(mDataPack);
 
     return toReturn;

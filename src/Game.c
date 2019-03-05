@@ -186,7 +186,26 @@ int isBlockedByWall(const struct Actor *actor) {
     return (foregroundTiles[(actor->mPosition.mY + 16) / 32][front] == 1);
 }
 
-int collide(const struct Actor *a, const struct Item *b, int tolerance) {
+int collideActorActor(const struct Actor *a, const struct Actor *b, int tolerance) {
+    if (abs(a->mPosition.mY - b->mPosition.mY) < tolerance) {
+
+        if (a->mDirection == kDirectionRight) {
+            int diff = a->mPosition.mX - b->mPosition.mX;
+            if (diff < (tolerance) && diff > 0) {
+                return TRUE;
+            }
+        } else {
+            int diff = b->mPosition.mX - a->mPosition.mX;
+            if (diff < (tolerance) && diff > 0) {
+                return TRUE;
+            }
+        }
+    }
+
+    return FALSE;
+}
+
+int collideActorItem(const struct Actor *a, const struct Item *b, int tolerance) {
     if (abs(a->mPosition.mY - b->mPosition.mY) < tolerance) {
 
         if (a->mDirection == kDirectionRight) {
@@ -222,7 +241,7 @@ int isOnDoor(const struct Actor *actor) {
     size_t pos = 0;
     for (pos = 0; pos < doors.used; ++pos ) {
         const struct Actor* door = *actorPtr;
-        if (door->mType == kOpenDoor && collide(door, actor, DEFAULT_TOLERANCE)) {
+        if (door->mType == kOpenDoor && collideActorActor(door, actor, DEFAULT_TOLERANCE)) {
             return TRUE;
         }
     }
@@ -389,7 +408,7 @@ Unfortunately, prevents looking up.*/
         		continue;
         	}
 
-            if ( foe->mType != kHand && collide(foe, arrow, DEFAULT_TOLERANCE)) {
+            if ( foe->mType != kHand && collideActorActor(foe, arrow, DEFAULT_TOLERANCE)) {
                 foe->mHealth--;
                 arrow->mActive = FALSE;
 
@@ -413,7 +432,7 @@ Unfortunately, prevents looking up.*/
     		continue;
     	}
 
-        if (collide(&player, item, DEFAULT_TOLERANCE)) {
+        if (collideActorItem(&player, item, DEFAULT_TOLERANCE)) {
             if (item->mType == kKey && !hasKey) {
                 hasKey = TRUE;
                 item->mActive = FALSE;
@@ -541,7 +560,7 @@ Unfortunately, prevents looking up.*/
             }
         }
 
-        if ((ticksUntilVulnerable <= 0) && collide(foe, &player, 16)) {
+        if ((ticksUntilVulnerable <= 0) && collideActorActor(foe, &player, 16)) {
             hurtPlayer(1);
         }
 
@@ -581,7 +600,7 @@ void evalutePlayerAttack() {
 		    foe->mType != kHand &&
 		    foe->mType != kCapiroto &&
 		    foe->mType != kGargoyle &&
-		    collide(foe, &player, DEFAULT_TOLERANCE)) {
+		    collideActorActor(foe, &player, DEFAULT_TOLERANCE)) {
 
             foe->mHealth -= 2;
             return; /*only one enemy per attack!*/

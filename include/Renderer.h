@@ -16,7 +16,7 @@ struct ControlState {
 
 enum EVideoType {
 	kCGA,
-	kVGA,
+	kVGA
 };
 
 #ifdef __cplusplus
