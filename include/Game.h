@@ -76,7 +76,7 @@ void init();
 
 void gameTick(int *isOnGround, int *isOnStairs);
 
-void loadTiles(struct ItemVector tilesToLoad);
+void loadTiles(struct ItemVector* tilesToLoad);
 
 void
 updateHero(int isOnGround, int isJumping, int isUpPressed,

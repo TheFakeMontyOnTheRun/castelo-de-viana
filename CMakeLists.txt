@@ -4,7 +4,7 @@ project(castleofviana)
 include_directories(stb include
         ${SDL_INCLUDE_DIRS} ${SDL_MIXER_INCLUDE_DIRS} ${SDL_IMAGE_INCLUDE_DIRS} )
 
-
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -ansi -Werror -W -pedantic")
 
 set(CMAKE_CXX_STANDARD 98)
 find_package(SDL REQUIRED)

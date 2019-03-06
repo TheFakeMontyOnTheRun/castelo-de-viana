@@ -1,8 +1,26 @@
 #include <stdlib.h>
 #include <string.h>
-#include <stdint.h>
 #include <stdio.h>
 #include <assert.h>
+
+#ifdef AMIGA
+#include "AmigaInt.h"
+
+#else
+
+#ifdef CPC
+
+#include "CPCInt.h"
+
+#else
+
+#include <stdint.h>
+#include <unistd.h>
+
+#endif
+
+#endif
+
 #include "Common.h"
 #include "NativeBitmap.h"
 #include "CPackedFileReader.h"
@@ -11,6 +29,10 @@
 
 
 struct ItemVector *loadSpriteList(const char *listName, enum EVideoType videoType) {
+    int lastPoint = 0;
+    int since = 0;
+    uint8_t *bufferBegin;
+    size_t pos;
 
     struct StaticBuffer buffer = loadFileFromPath(getAssetsPath(), listName);
     struct ItemVector *tilesToLoad = (struct ItemVector *) calloc(sizeof(struct ItemVector), 1);
@@ -19,23 +41,23 @@ struct ItemVector *loadSpriteList(const char *listName, enum EVideoType videoTyp
     initVector(tilesToLoad, items);
 
 
-    int lastPoint = 0;
-    int since = 0;
 
-    uint8_t *bufferBegin = buffer.data;
-    size_t pos = 0;
+    bufferBegin = buffer.data;
+
     for (pos = 0; pos < buffer.size; ++pos) {
         const char c = buffer.data[pos];
 
         ++since;
         if (pos == buffer.size - 1 || c == '\n') {
+            char *filename;
+            size_t diff;
 
             if (pos == buffer.size - 1) {
                 since++;
             }
 
-            char *filename = (char *) calloc(since - 1 + 1, 1);
-            size_t diff = (bufferBegin + lastPoint + since - 1) -
+            filename = (char *) calloc(since - 1 + 1, 1);
+            diff = (bufferBegin + lastPoint + since - 1) -
                           (bufferBegin + lastPoint);
             memcpy(&filename[0], bufferBegin + lastPoint, diff);
 
@@ -55,6 +77,8 @@ struct ItemVector *loadSpriteList(const char *listName, enum EVideoType videoTyp
 }
 
 struct NativeBitmap* loadBitmap(const char *path, enum EVideoType videoType) {
+    size_t size;
+    uint8_t *buffer;
 
     struct NativeBitmap *toReturn = (struct NativeBitmap *) calloc(1, sizeof(struct NativeBitmap));
 
@@ -75,9 +99,9 @@ struct NativeBitmap* loadBitmap(const char *path, enum EVideoType videoType) {
     height = *ptr++;
     toReturn->mHeight += height & 0xFF;
 
-    size_t size = toReturn->mWidth * toReturn->mHeight;
+    size = toReturn->mWidth * toReturn->mHeight;
 
-    uint8_t *buffer = (uint8_t *) calloc(1, size);
+    buffer = (uint8_t *) calloc(1, size);
 
     if (videoType == kCGA) {
         /*

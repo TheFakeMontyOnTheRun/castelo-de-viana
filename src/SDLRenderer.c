@@ -181,8 +181,10 @@ void putpixel(SDL_Surface *surface, int x, int y, Uint32 pixel)
 }
 
 void copyImageBufferToVideoMemory(uint8_t* imageBuffer ) {
-
+    SDL_Surface* screen;
   SDL_Rect rect;
+    int y = 0;
+    int x = 0;
   int pos = 0;
 
   rect.x = 0;
@@ -190,7 +192,7 @@ void copyImageBufferToVideoMemory(uint8_t* imageBuffer ) {
   rect.w = 320;
   rect.h = 200;
   SDL_FillRect( video, &rect, SDL_MapRGB( video->format, 0, 0, 0 ) );
-    SDL_Surface* screen = video;
+    screen = video;
     if ( SDL_MUSTLOCK(screen) ) {
         if ( SDL_LockSurface(screen) < 0 ) {
             fprintf(stderr, "Can't lock screen: %s\n", SDL_GetError());
@@ -198,9 +200,9 @@ void copyImageBufferToVideoMemory(uint8_t* imageBuffer ) {
         }
     }
 
-    int y = 0;
+
     for ( y = 0; y < 200; ++y ) {
-        int x = 0;
+
         for ( x = 0; x < 320; ++x ) {
           rect.x = x;
           rect.y = y;
@@ -246,6 +248,7 @@ uint8_t getPaletteEntry( uint32_t origin ) {
 
 
 void initVideoFor(enum EVideoType unused) {
+    int r, g, b;
   SDL_Init( SDL_INIT_VIDEO );
 
     memset(&toReturn, 0, sizeof(struct ControlState));
@@ -256,7 +259,7 @@ void initVideoFor(enum EVideoType unused) {
     enterFullScreenMode();
 #endif
 
-    int r, g, b;
+
     for (r = 0; r < 256; r += 16) {
         for (g = 0; g < 256; g += 8) {
             for (b = 0; b < 256; b += 8) {

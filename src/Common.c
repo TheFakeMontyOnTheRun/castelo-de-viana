@@ -1,8 +1,25 @@
-#include <stdint.h>
 #include <assert.h>
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
+
+#ifdef AMIGA
+#include "AmigaInt.h"
+
+#else
+
+#ifdef CPC
+
+#include "CPCInt.h"
+
+#else
+
+#include <stdint.h>
+#include <unistd.h>
+
+#endif
+
+#endif
 
 #include "Common.h"
 

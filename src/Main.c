@@ -1,9 +1,27 @@
 #include <assert.h>
-#include <stdint.h>
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+
+#ifdef AMIGA
+#include "AmigaInt.h"
+
+#else
+
+#ifdef CPC
+
+#include "CPCInt.h"
+
+#else
+
+#include <stdint.h>
+#include <unistd.h>
+
+#endif
+
+#endif
+
 
 #include "Common.h"
 #include "NativeBitmap.h"
@@ -74,13 +92,13 @@ void clearBuffers() {
     memset( imageBuffer, 4, 320 * 200 );
 }
 
-void loadTiles(struct ItemVector tilesToLoad) {
+void loadTiles(struct ItemVector* tilesToLoad) {
+    size_t pos;
+    char** ptr = (char**)tilesToLoad->items;
+    initVector( &tiles, tilesToLoad->used );
 
-    char** ptr = (char**)tilesToLoad.items;
-    initVector( &tiles, tilesToLoad.used );
 
-    size_t pos = 0;
-    for ( pos = 0; pos < tilesToLoad.used; ++pos ) {
+    for ( pos = 0; pos < tilesToLoad->used; ++pos ) {
 
         char* tile = *ptr;
 
@@ -100,8 +118,25 @@ void loadTiles(struct ItemVector tilesToLoad) {
 }
 
 void render() {
-
+    int y0;
+    int y1;
+    int x0;
+    int x1;
+    int ty;
+    int pixel;
+    int y;
+    int x;
+    int bossHealthColour;
+    int heroHealthColour;
+    int backgroundColour;
+    uint8_t *pixelData;
+    struct Item** itemPtr;
+    struct Actor** doorPtr;
+    struct Actor** arrowPtr;
+    struct NativeBitmap* sprite;
+    struct Actor** foePtr = (struct Actor**)foes.items;
     uint8_t transparency;
+    size_t pos;
 
     if ( videoType == kCGA ) {
         memset( imageBuffer, 4, 320 * 200 );
@@ -126,22 +161,22 @@ void render() {
     }
 
 
-    int y0 = 0;
-    int y1 = 0;
-    int x0 = 0;
-    int x1 = 0;
+    y0 = 0;
+    y1 = 0;
+    x0 = 0;
+    x1 = 0;
 
-	int ty = 0;
     for (ty = 0; ty < 6; ++ty) {
     	int tx = 0;
         for (tx = 0; tx < 10; ++tx) {
             struct NativeBitmap* tile;
             uint8_t *pixelData;
+
             y0 = (ty * 32);
             y1 = 32 + (ty * 32);
             x0 = (tx * 32);
             x1 = 32 + (tx * 32);
-            int pixel = 4;
+            pixel = 4;
 
             if (backgroundTiles[ty][tx] != 0) {
                 struct ItemVector *tileset = (struct ItemVector*)tiles.items[backgroundTiles[ty][tx]];
@@ -150,7 +185,7 @@ void render() {
                 pixelData = tile->mRawData;
 
                 pixel = 4;
-                int y = y0;
+                y = y0;
                 for (y = y0; y < y1; ++y) {
 
                     uint8_t* sourceLine = pixelData + (32 * (y - y0));
@@ -177,7 +212,7 @@ void render() {
                 pixelData = tile->mRawData;
 
                 pixel = 4;
-                int y = y0;
+                y = y0;
                 for (y = y0; y < y1; ++y) {
 
                     uint8_t* sourceLine = pixelData + (32 * (y - y0));
@@ -200,11 +235,8 @@ void render() {
         }
     }
 
-    uint8_t *pixelData;
+    doorPtr = (struct Actor**)doors.items;
 
-    struct Actor** doorPtr = (struct Actor**)doors.items;
-
-    size_t pos = 0;
     for (pos = 0; pos < doors.used; ++ pos ) {
         struct Actor* door = *doorPtr;
 
@@ -214,16 +246,17 @@ void render() {
         x0 = (door->mPosition.mX);
         x1 = 32 + x0;
 
-        int pixel = 0;
+        pixel = 0;
 
-        int y = y0;
+        y = y0;
         for (y = y0; y < y1; ++y) {
+            int x;
 
             if (y < 0 || y >= 200) {
                 continue;
             }
 
-            int x = x0;
+            x = x0;
             for (x = x0; x < x1; ++x) {
                 pixel = (pixelData[(32 * (y - y0)) + ((x - x0))]);
 
@@ -241,11 +274,13 @@ void render() {
         ++doorPtr;
     }
 
-    struct NativeBitmap* sprite = hero[player.mStance][heroFrame];
+    sprite = hero[player.mStance][heroFrame];
 
     if (((ticksUntilVulnerable <= 0) || ((counter % 2) == 0)) || paused) {
+        int spriteWidth;
+
         y0 = (player.mPosition.mY);
-        int spriteWidth = sprite->mWidth;
+        spriteWidth = sprite->mWidth;
         y1 = sprite->mHeight + y0;
         x0 = (player.mPosition.mX);
 
@@ -256,16 +291,14 @@ void render() {
         x1 = spriteWidth + x0;
         pixelData = sprite->mRawData;
 
-        int pixel = 0;
+        pixel = 0;
 
-        int y = y0;
         for (y = y0; y < y1; ++y) {
 
             if (y < 0 || y >= 200) {
                 continue;
             }
 
-            int x = x0;
             for (x = x0; x < x1; ++x) {
                 if (player.mDirection == kDirectionRight) {
                     pixel = (pixelData[(spriteWidth * (y - y0)) + ((x - x0))]);
@@ -286,10 +319,12 @@ void render() {
         }
     }
 
-    struct Actor** arrowPtr = (struct Actor**)arrows.items;
+    arrowPtr = (struct Actor**)arrows.items;
 
     for (pos = 0; pos < arrows.used; ++pos ) {
-
+        int pixel;
+        int y;
+        int x;
         struct Actor* arrow = *arrowPtr;
 
         if ( !arrow->mActive ) {
@@ -308,15 +343,14 @@ void render() {
         x0 = (arrow->mPosition.mX);
         x1 = 32 + x0;
 
-        int pixel = 0;
-        int y = 0;
+        pixel = 0;
+
         for (y = y0; y < y1; ++y) {
 
             if (y < 0 || y >= 200) {
                 continue;
             }
 
-            int x = x0;
             for (x = x0; x < x1; ++x) {
                 if (arrow->mDirection == kDirectionRight) {
                     pixel = (pixelData[(32 * (y - y0)) + ((x - x0))]);
@@ -339,9 +373,8 @@ void render() {
         ++arrowPtr;
     }
 
-    struct Actor** foePtr = (struct Actor**)foes.items;
+    foePtr = (struct Actor**)foes.items;
     for (pos = 0; pos < foes.used; ++pos ) {
-
         struct Actor* foe = *foePtr;
 
 		if (!foe->mActive) {
@@ -377,15 +410,12 @@ void render() {
         x0 = (foe->mPosition.mX);
         x1 = 32 + x0;
 
-        int pixel = 0;
-        int y = 0;
         for (y = y0; y < y1; ++y) {
 
             if (y < 0 || y >= 200) {
                 continue;
             }
 
-            int x = x0;
             for (x = x0; x < x1; ++x) {
                 if (foe->mDirection == kDirectionRight) {
                     pixel = (pixelData[(32 * (y - y0)) + ((x - x0))]);
@@ -408,7 +438,7 @@ void render() {
         foePtr++;
     }
 
-    struct Item** itemPtr = (struct Item**)items.items;
+    itemPtr = (struct Item**)items.items;
 
     for (pos = 0; pos < items.used; ++pos ) {
         struct Item* item = *itemPtr;
@@ -422,15 +452,12 @@ void render() {
         x0 = (item->mPosition.mX);
         x1 = 32 + x0;
         pixelData = itemSprites[item->mType]->mRawData;
-        int pixel = 0;
-        int y = y0;
         for (y = y0; y < y1; ++y) {
 
             if (y < 0 || y >= 200) {
                 continue;
             }
 
-            int x = x0;
             for (x = x0; x < x1; ++x) {
                 pixel = (pixelData[(32 * (y - y0)) + ((x - x0))]);
 
@@ -454,15 +481,13 @@ void render() {
         x0 = 2;
         x1 = 32 + x0;
         pixelData = itemSprites[kKey]->mRawData;
-        int pixel = 0;
-        int y = y0;
+
         for (y = y0; y < y1; ++y) {
 
             if (y < 0 || y >= 200) {
                 continue;
             }
 
-            int x = x0;
             for (x = x0; x < x1; ++x) {
                 pixel = (pixelData[(32 * (y - y0)) + ((x - x0))]);
 
@@ -499,9 +524,9 @@ void render() {
         }
     }
 
-    int bossHealthColour = 10;
-    int heroHealthColour = 9;
-    int backgroundColour = 8;
+    bossHealthColour = 10;
+    heroHealthColour = 9;
+    backgroundColour = 8;
 
     if (videoType == kVGA ) {
         bossHealthColour = 0xFFFF0000;
@@ -543,9 +568,7 @@ void render() {
 			++foePtr;
         }
 
-        int y = 0;
         for ( y = 184; y < 192; ++y ) {
-        	int x = 0;
             for ( x = 0; x < (8 * bossHealth ); ++x ) {
                 imageBuffer[(320 * y) + (x)] = bossHealthColour;
             }
@@ -562,18 +585,31 @@ void render() {
 int done = FALSE;
 
 void sysTick() {
+    int isOnGround;
+    int isJumping;
+    int isUpPressed;
+    int isDownPressed;
+    int isLeftPressed;
+    int isRightPressed;
+    int isAttacking;
+    int isAltAttackPressed;
+    int isPausePressed;
+    int isOnStairs;
+    struct ControlState controlState;
+
     beginFrame();
 
-    int isOnGround = FALSE;
-    int isJumping = FALSE;
-    int isUpPressed = FALSE;
-    int isDownPressed = FALSE;
-    int isLeftPressed = FALSE;
-    int isRightPressed = FALSE;
-    int isAttacking = FALSE;
-    int isAltAttackPressed = FALSE;
-    int isPausePressed = FALSE;
-    int isOnStairs = FALSE;
+    isOnGround = FALSE;
+    isJumping = FALSE;
+    isUpPressed = FALSE;
+    isDownPressed = FALSE;
+    isLeftPressed = FALSE;
+    isRightPressed = FALSE;
+    isAttacking = FALSE;
+    isAltAttackPressed = FALSE;
+    isPausePressed = FALSE;
+    isOnStairs = FALSE;
+
     render();
 
 
@@ -582,7 +618,7 @@ void sysTick() {
     }
 
 
-    struct ControlState controlState = getControlState();
+    controlState = getControlState();
 
     if ( controlState.sword ) {
         isAttacking = TRUE;

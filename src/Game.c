@@ -1,11 +1,27 @@
 #include <assert.h>
 #include <time.h>
-#include <unistd.h>
 #include <stdlib.h>
 #include <math.h>
 #include <stdio.h>
-#include <stdint.h>
 #include <string.h>
+
+#ifdef AMIGA
+#include "AmigaInt.h"
+
+#else
+
+#ifdef CPC
+
+#include "CPCInt.h"
+
+#else
+
+#include <stdint.h>
+#include <unistd.h>
+
+#endif
+
+#endif
 
 #include "Common.h"
 #include "NativeBitmap.h"
@@ -88,7 +104,8 @@ updateHero(int isOnGround, int isJumping, int isUpPressed, int isDownPressed,
                 struct Actor *a = (struct Actor*)calloc(sizeof(struct Actor), 1);
                 pushVector( &arrows, a );
                 a->mType = kArrow;
-                a->mPosition = player.mPosition;
+				a->mPosition.mY = player.mPosition.mX;
+                a->mPosition.mY = player.mPosition.mY;
                 initVec2i( &a->mSpeed, 0, -16 );
                 a->mActive = TRUE;
                 a->mDirection = player.mDirection;
@@ -145,8 +162,10 @@ protection stopping the player from falling*/
         pushVector( &arrows, a );
         a->mType = kArrow;
         a->mActive = TRUE;
-        a->mPosition = player.mPosition;
-        initVec2i( &a->mSpeed, player.mDirection == kDirectionRight ? 16 : -16, 0);
+		a->mPosition.mY = player.mPosition.mX;
+		a->mPosition.mY = player.mPosition.mY;
+
+		initVec2i( &a->mSpeed, player.mDirection == kDirectionRight ? 16 : -16, 0);
         a->mDirection = player.mDirection;
         player.mStance = kAltAttacking;
         arrowCooldown = 4;
@@ -271,7 +290,14 @@ void updateTimers() {
 }
 
 void gameTick(int *isOnGround, int *isOnStairs) {
-    ++counter;
+	int ceiling;
+	size_t pos;
+	struct Actor** arrowPtr;
+	struct Item** itemPtr;
+	struct Actor **foePtr;
+	size_t pos2 = 0;
+
+	++counter;
 
     if (screen != kGame) {
         return;
@@ -322,7 +348,7 @@ void gameTick(int *isOnGround, int *isOnStairs) {
         heroFrame = 0;
     }
 
-    int ceiling = (player.mPosition.mY) / 32;
+    ceiling = (player.mPosition.mY) / 32;
 
     *isOnGround = isOnFloor(&player);
 
@@ -381,9 +407,8 @@ Unfortunately, prevents looking up.*/
         player.mSpeed.mY = 0;
     }
 
-    struct Actor** arrowPtr = (struct Actor**)arrows.items;
+    arrowPtr = (struct Actor**)arrows.items;
 
-    size_t pos = 0;
     for (pos = 0; pos < arrows.used; ++pos ) {
         struct Actor* arrow = *arrowPtr;
 
@@ -399,8 +424,7 @@ Unfortunately, prevents looking up.*/
             continue;
         }
 
-        struct Actor** foePtr = (struct Actor**)foes.items;
-        size_t pos2 = 0;
+        foePtr = (struct Actor**)foes.items;
         for ( pos2 = 0; pos2 < foes.used; ++pos2) {
             struct Actor* foe = *foePtr;
 
@@ -422,7 +446,7 @@ Unfortunately, prevents looking up.*/
         ++arrowPtr;
     }
 
-    struct Item** itemPtr = (struct Item**)items.items;
+    itemPtr = (struct Item**)items.items;
 
     for (pos = 0; pos < items.used; ++pos ) {
 
@@ -453,7 +477,8 @@ Unfortunately, prevents looking up.*/
         ++itemPtr;
     }
 
-    struct Actor **foePtr = (struct Actor**)foes.items;
+	foePtr = (struct Actor**)foes.items;
+
     for (pos = 0; pos < foes.used; ++pos ) {
         struct Actor* foe = *foePtr;
 
@@ -610,14 +635,26 @@ void evalutePlayerAttack() {
 }
 
 void prepareRoom(int room) {
-    muteSound();
-    char buffer[64];
+	char buffer[64];
+	struct StaticBuffer bgmap;
+	struct StaticBuffer fgmap;
+	int position;
+	struct StaticBuffer listBuffer;
+	struct ItemVector tilestoLoad;
+	size_t amount;
+	int lastPoint;
+	int since;
+	uint8_t* bufferBegin;
+	size_t pos;
+	int y;
 
-    snprintf(buffer, 64, "%d.bg", room );
-    struct StaticBuffer bgmap = loadFileFromPath("gamedata.pfs", buffer);
+	muteSound();
 
-    snprintf(buffer, 64, "%d.fg", room );
-    struct StaticBuffer fgmap = loadFileFromPath("gamedata.pfs", buffer);
+    sprintf(buffer, "%d.bg", room );
+    bgmap = loadFileFromPath("gamedata.pfs", buffer);
+
+    sprintf(buffer, "%d.fg", room );
+    fgmap = loadFileFromPath("gamedata.pfs", buffer);
 
     memset(backgroundTiles, 0, sizeof(int) * 10 * 6 );
     memset(foregroundTiles, 0, sizeof(int) * 10 * 6 );
@@ -628,8 +665,8 @@ void prepareRoom(int room) {
     initVector(&arrows, 8);
 
     hasBossOnScreen = FALSE;
-    int position = 0;
-    int y = 0;
+    position = 0;
+
     for (y = 0; y < 6; ++y) {
     	int x = 0;
         for (x = 0; x < 10; ++x) {
@@ -642,24 +679,27 @@ void prepareRoom(int room) {
             ++position;
 
             if (ch == 'm') {
+				struct Item *item;
                 foregroundTiles[y][x] = 0;
-                struct Item *item = (struct Item*)calloc(sizeof(struct Item), 1);
+                item = (struct Item*)calloc(sizeof(struct Item), 1);
                 pushVector( &items, item );
                 item->mType = kMeat;
 				item->mActive = TRUE;
                 initVec2i(&item->mPosition, x * 32, y * 32 );
             } else if (ch == 'k') {
                 if (!hasKey) {
+					struct Item *item;
                     foregroundTiles[y][x] = 0;
-                    struct Item *item = (struct Item*)calloc( 1, sizeof(struct Item));
+                    item = (struct Item*)calloc( 1, sizeof(struct Item));
                     pushVector( &items, item );
                     item->mType = kKey;
                     item->mActive = TRUE;
                     initVec2i(&item->mPosition, x * 32, y * 32);
                 }
             } else if (ch == 'a') {
+				struct Actor *a;
                 foregroundTiles[y][x] = 0;
-                struct Actor *a = (struct Actor*)calloc(sizeof(struct Actor), 1);
+                a = (struct Actor*)calloc(sizeof(struct Actor), 1);
                 pushVector( &foes, a );
                 a->mType = kSkeleton;
                 a->mDirection = kDirectionRight;
@@ -668,9 +708,10 @@ void prepareRoom(int room) {
                 a->mSpeed.mX = 8;
                 a->mHealth = 2;
             } else if (ch == 'c') {
+				struct Actor *a;
                 foregroundTiles[y][x] = 0;
                 currentBossName = "CAPIROTO";
-                struct Actor *a = (struct Actor*)calloc( 1, sizeof(struct Actor));
+                a = (struct Actor*)calloc( 1, sizeof(struct Actor));
                 pushVector( &foes, a );
                 a->mType = kCapiroto;
                 initVec2i( &a->mPosition, x * 32, y * 32);
@@ -680,8 +721,9 @@ void prepareRoom(int room) {
                 hasBossOnScreen = TRUE;
 
                 {
+					struct Actor *a;
                     foregroundTiles[y + 2][ x + 2] = 0;
-                    struct Actor *a = (struct Actor*)calloc( 1, sizeof(struct Actor));
+                    a = (struct Actor*)calloc( 1, sizeof(struct Actor));
                     pushVector( &foes, a );
                     a->mType = kHand;
                     initVec2i( &a->mPosition, (x + 2 ) * 32, (y + 2) * 32 );
@@ -690,8 +732,9 @@ void prepareRoom(int room) {
                     a->mHealth = 100000;
                 }
                 {
+					struct Actor *a;
                     foregroundTiles[y + 2][x - 2] = 0;
-                    struct Actor *a = (struct Actor*)calloc( 1, sizeof(struct Actor));
+                    a = (struct Actor*)calloc( 1, sizeof(struct Actor));
                     pushVector( &foes, a );
                     a->mType = kHand;
                     a->mActive = TRUE;
@@ -702,10 +745,11 @@ void prepareRoom(int room) {
 
 
             } else if (ch == 't') {
+				struct Actor *a;
                 foregroundTiles[y][x] = 0;
                 currentBossName = "TINHOSO";
                 totalBossHealth = 5;
-                struct Actor *a = (struct Actor*)calloc( 1, sizeof(struct Actor));
+                a = (struct Actor*)calloc( 1, sizeof(struct Actor));
                 pushVector( &foes, a );
                 a->mType = kTinhoso;
                 a->mActive = TRUE;
@@ -713,16 +757,18 @@ void prepareRoom(int room) {
                 a->mHealth = 5;
                 hasBossOnScreen = TRUE;
             } else if (ch == 's') {
+				struct Actor *a;
                 foregroundTiles[y][x] = 0;
-                struct Actor *a = (struct Actor*)calloc( 1, sizeof(struct Actor));
+                a = (struct Actor*)calloc( 1, sizeof(struct Actor));
                 pushVector( &foes, a );
                 a->mActive = TRUE;
                 a->mType = kSpawner;
                 initVec2i( &a->mPosition, x * 32, y * 32);
                 a->mHealth = 20;
             } else if (ch == 'g') {
+				struct Actor *a;
                 foregroundTiles[y][x] = 0;
-                struct Actor *a = (struct Actor*)calloc( 1, sizeof(struct Actor));
+                a = (struct Actor*)calloc( 1, sizeof(struct Actor));
                 pushVector( &foes, a );
                 a->mType = kGargoyle;
                 initVec2i( &a->mPosition, x * 32, y * 32 );
@@ -730,15 +776,17 @@ void prepareRoom(int room) {
                 a->mActive = TRUE;
                 a->mHealth = 1;
             } else if (ch == 'd') {
+				struct Actor *a;
                 foregroundTiles[y][x] = 0;
-                struct Actor *a = (struct Actor*)calloc( 1, sizeof(struct Actor));
+                a = (struct Actor*)calloc( 1, sizeof(struct Actor));
                 pushVector( &doors, a );
                 a->mType = hasKey ? kOpenDoor : kClosedDoor;
                 initVec2i( &a->mPosition, x * 32, y * 32 );
                 a->mActive = TRUE;
             } else if (ch == 'D') {
+				struct Actor *a;
                 foregroundTiles[y][x] = 0;
-                struct Actor *a = (struct Actor*)calloc( 1, sizeof(struct Actor));
+                a = (struct Actor*)calloc( 1, sizeof(struct Actor));
                 pushVector( &doors, a );
                 a->mType = kClosedDoor;
                 initVec2i( &a->mPosition, x * 32, y * 32 );
@@ -750,29 +798,29 @@ void prepareRoom(int room) {
         ++position; /* \n */
     }
 
-    snprintf(buffer, 64, "%d.lst", room );
+    sprintf(buffer, "%d.lst", room );
 
-    struct StaticBuffer listBuffer = loadFileFromPath( "gamedata.pfs", buffer);
+    listBuffer = loadFileFromPath( "gamedata.pfs", buffer);
 
-    size_t amount = countTokens((char*)listBuffer.data, listBuffer.size) + 1;
-    struct ItemVector tilestoLoad;
+	amount = countTokens((char*)listBuffer.data, listBuffer.size) + 1;
     initVector( &tilestoLoad, amount );
 
-    int lastPoint = 0;
-    int since = 0;
-    uint8_t* bufferBegin = listBuffer.data;
-	size_t pos = 0;
+	lastPoint = 0;
+    since = 0;
+    bufferBegin = listBuffer.data;
+
     for ( pos = 0; pos < listBuffer.size; ++pos ) {
         char c = listBuffer.data[ pos ];
         ++since;
 
         if ( pos == listBuffer.size - 1 || c == '\n') {
+			char* filename;
 
             if ( pos == listBuffer.size - 1 ) {
                 since++;
             }
 
-            char* filename = (char *)(calloc(since - 1 + 1, 1 ));
+            filename = (char *)(calloc(since - 1 + 1, 1 ));
             memcpy( filename,  bufferBegin + lastPoint, since -1  );
             lastPoint += since;
             if ( strlen(filename) > 0 ) {
@@ -782,7 +830,7 @@ void prepareRoom(int room) {
         }
     }
 
-    loadTiles(tilestoLoad);
+    loadTiles(&tilestoLoad);
 
     clearBuffers();
 	free( listBuffer.data );

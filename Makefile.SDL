@@ -1,7 +1,8 @@
 SDL_LIB = -L/usr/lib -lSDL
 SDL_INCLUDE = -I/usr/local/include `sdl-config --cflags `
 
-CFLAGS = -ansi --pedantic -O2 -DSDL -Iinclude -c -g  $(SDL_INCLUDE) -Iinclude -Wno-declaration-after-statement
+# -Wno-declaration-after-statement
+CFLAGS = -ansi --pedantic -O2 -DSDL -Iinclude -c -g  $(SDL_INCLUDE) -Iinclude -Werror
 OBJS = src/Game.o src/Main.o src/SDLRenderer.o src/LoadBitmap.o src/NullMusic.o \
             src/CPackedFileReader.o\
             src/Common.o

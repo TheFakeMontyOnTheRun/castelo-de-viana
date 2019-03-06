@@ -1,0 +1,37 @@
+CXX = m68k-amigaos-g++
+CC = m68k-amigaos-gcc
+
+CFLAGS = -Os -DAMIGA -Iinclude -c -g  -Iinclude -m68020 -s -fpermissive -noixemul
+LDFLAGS =  -fstrength-reduce -msmall-code -s -Os -fomit-frame-pointer -noixemul -fpermissive
+
+OBJS = src/Game.o src/Main.o \
+     src/LoadBitmap.o \
+     src/NullMusic.o \
+     src/AmigaRenderer.o \
+     src/CPackedFileReader.o\
+     src/Common.o
+
+TARGET = game12k
+
+$(TARGET):	$(OBJS)
+	$(CC) -o $(TARGET) $(OBJS) $(LDFLAGS)
+
+all:   $(TARGET)
+
+clean:
+	rm -f $(OBJS) $(TARGET)
+
+packager:
+	rm -f ./packer
+	g++ -std=c++14 -opacker src/packer.cpp
+
+res:	packager
+	rm -f ./sdl.pfs
+	ls res/*.*  | xargs ./packer
+	mv ./data.pfs ./sdl.pfs
+
+gamedata:	packager
+	rm -f ./gamedata.pfs
+	ls data/*.*  | xargs ./packer
+	mv ./data.pfs ./gamedata.pfs
+
