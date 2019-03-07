@@ -759,7 +759,7 @@ int main(int argc, char **argv) {
     initVideoFor(videoType);
     loadGraphics();
     init();
-    prepareScreenFor(kIntro);
+    prepareScreenFor(kGame);
 
 
 

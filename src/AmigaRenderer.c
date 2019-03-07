@@ -128,7 +128,7 @@ void beginFrame() {
 }
 
 void doneWithFrame() {
-  Delay(1);
+
 }
 
 void muteSound() {
@@ -139,22 +139,9 @@ void onQuit() {
   CloseLibrary( (struct Library*)IntuitionBase );
 }
 
-void putpixel(int x0, int y0, uint32_t pixel){
-//  WritePixel(my_window->RPort, x, y);
-  quadPoints[0] = 2 * x0;
-  quadPoints[1] = 2 * y0;
-  quadPoints[2] = 2 * x0 + 1;
-  quadPoints[3] = 2 * y0;
-  quadPoints[4] = 2 * x0 + 1;
-  quadPoints[5] = 2 * y0 + 1;
-  quadPoints[6] = 2 * x0;
-  quadPoints[7] = 2 * y0 + 1;
-  quadPoints[8] = 2 * x0;
-  quadPoints[9] = 2 * y0;
-
-  quad.FrontPen = index;
-
-  DrawBorder(my_window->RPort, &quad, 0, 0);
+void putpixel(int x, int y, uint32_t pixel){
+	my_window->RPort->FgPen = pixel + 1;
+  	WritePixel(my_window->RPort, x, y);
 }
 
 void copyImageBufferToVideoMemory(uint8_t* imageBuffer ) {

@@ -45,6 +45,32 @@ int min(int val1, int val2) {
 	return val1 < val2 ? val1 : val2;
 }
 
+int isBigEndian() {
+	union {
+		uint32_t i;
+		char c[4];
+	} e = { 0x01000000 };
+
+	return e.c[0];
+}
+
+uint32_t toNativeEndianess(uint32_t val) {
+	uint32_t  val2 = val;
+
+	if (isBigEndian()) {
+		uint32_t b0,b1,b2,b3;
+
+		b0 = (val & 0x000000ff) << 24u;
+		b1 = (val & 0x0000ff00) << 8u;
+		b2 = (val & 0x00ff0000) >> 8u;
+		b3 = (val & 0xff000000) >> 24u;
+
+		val2 = b0 | b1 | b2 | b3;
+	}
+
+	return val2;
+}
+
 size_t countTokens(const char *text, size_t length) {
 
 	size_t count = 0;

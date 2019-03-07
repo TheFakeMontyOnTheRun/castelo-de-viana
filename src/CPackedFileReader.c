@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <errno.h>
 
 #ifdef AMIGA
 #include "AmigaInt.h"
@@ -34,10 +35,13 @@ struct StaticBuffer loadFileFromPath(const char* dataFilePath, const char* path)
 	uint16_t entries = 0;
 	size_t lenA;
 	int c;
+	int toRead = 0;
+	uint32_t pos = 0;
+	uint32_t until = 0;
 	uint32_t size;
 
 	assert(fread(&entries, 2, 1, mDataPack));
-
+	pos += 2;
 	lenA = strlen(path);
 
 	printf("looking for %s\n", path);
@@ -46,11 +50,16 @@ struct StaticBuffer loadFileFromPath(const char* dataFilePath, const char* path)
 		size_t lenB;
 
 		assert(fread(&offset, 4, 1, mDataPack ));
+		offset = toNativeEndianess(offset);
+		pos += 4;
 
-
+		stringSize = 0;
 		assert(fread(&stringSize, 1, 1, mDataPack ));
+		pos += 1;
 		assert(fread(&buffer, stringSize + 1, 1, mDataPack ));
-		printf("Loading %s\n", buffer);
+		pos += stringSize + 1;
+
+		/* printf("Loading %s at %lu\n", buffer, offset ); */
 		lenB = strlen( buffer );
 
 
@@ -88,8 +97,11 @@ struct StaticBuffer loadFileFromPath(const char* dataFilePath, const char* path)
         exit(-1);
     }
 
-	status = fseek( mDataPack, offset, SEEK_SET );
-    assert(fread(&size, 4, 1, mDataPack ));
+	fseek( mDataPack, offset, SEEK_SET );
+	status = fread(&size, 4, 1, mDataPack );
+	size = toNativeEndianess(size);
+	/* printf("status: %d, errno: %d ferror: %d feof: %d\n", status, errno, ferror(mDataPack), feof(mDataPack)); */
+    assert(status != 0 );
     toReturn.data = (uint8_t *)(calloc(size, 1));
     toReturn.size = size;
     assert(fread(toReturn.data, 1, size, mDataPack ));

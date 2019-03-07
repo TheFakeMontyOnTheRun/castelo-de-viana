@@ -22,6 +22,10 @@ size_t countTokens(const char *text, size_t length);
 
 int min(int val1, int val2);
 
+int isBigEndian();
+
+uint32_t toNativeEndianess(uint32_t val);
+
 #define DEFAULT_TOLERANCE 32
 #define TRUE 1
 #define FALSE 0
