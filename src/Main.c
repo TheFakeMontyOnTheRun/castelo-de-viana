@@ -673,7 +673,7 @@ void sysTick() {
                 init();
                 break;
             case kGame:
-                isPausePressed = TRUE;
+               /* isPausePressed = TRUE */;
                 break;
             case kGameOver:
                 screen = kGame;
@@ -759,7 +759,7 @@ int main(int argc, char **argv) {
     initVideoFor(videoType);
     loadGraphics();
     init();
-    prepareScreenFor(kGame);
+    prepareScreenFor(kIntro);
 
 
 

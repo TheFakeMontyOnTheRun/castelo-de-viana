@@ -117,6 +117,55 @@ struct ControlState getControlState() {
 		micros = my_message->Micros;
 		ReplyMsg((struct Message *) my_message);
 
+		memset(&toReturn, 0, sizeof(toReturn));
+
+		if (messageClass == VANILLAKEY) {
+			switch(code) {
+
+				case 'q':
+					toReturn.escape = TRUE;
+					break;
+
+				case 'i':
+					toReturn.enter = TRUE;
+					break;
+
+				case 'a':
+					toReturn.moveLeft = TRUE;
+					break;
+
+				case 'd':
+					toReturn.moveRight = TRUE;
+					break;
+
+				case 'w':
+					toReturn.moveUp = TRUE;
+					break;
+
+				case 'l':
+					toReturn.secret = TRUE;
+					break;
+
+				case 's':
+					toReturn.moveDown = TRUE;
+					break;
+
+
+				case 'e':
+					toReturn.jump = TRUE;
+					break;
+
+				case 'o':
+					toReturn.sword = TRUE;
+					break;
+
+				case 'p':
+					toReturn.fireArrow = TRUE;
+					break;
+
+			}
+		}
+
 	}
 
 

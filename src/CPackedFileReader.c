@@ -44,7 +44,6 @@ struct StaticBuffer loadFileFromPath(const char* dataFilePath, const char* path)
 	pos += 2;
 	lenA = strlen(path);
 
-	printf("looking for %s\n", path);
 	for ( c = 0; c < entries; ++c ) {
 		uint8_t stringSize = 0;
 		size_t lenB;
