@@ -27,16 +27,31 @@
 #include "CPackedFileReader.h"
 #include "LoadImage.h"
 
-
-
-
 struct IntuitionBase *IntuitionBase;
-struct Window *my_window;
+struct GfxBase *GfxBase;
+extern struct ExecBase *SysBase;
 
+struct Window *my_window;
+struct Screen  *myscreen;
+struct NewScreen xnewscreen 	=			{
+		0,               /* LeftEdge  Daima 0 olmali */
+		0,               /* TopEdge   */
+		640,             /* Width     */
+		200,             /* Height    */
+		8,               /* Depth     16 colours. */
+		0,               /* DetailPen */
+		1,               /* BlockPen */
+		0, /* ViewModes High-resolution, Interlaced */
+		CUSTOMSCREEN,    /* Type customized screen. */
+		NULL,            /* Font */
+		"Castle of Viana",     /* Title */
+		NULL,            /* Gadget */
+		NULL             /* BitMap */
+};
 struct NewWindow my_new_window = {
-		50,            /* LeftEdge    pencerenin X pozisyonu */
-		30,            /* TopEdge     pencerenin Y pozisyonu */
-		300,           /* Width       pencerenin genisligi */
+		0,            /* LeftEdge    pencerenin X pozisyonu */
+		0,            /* TopEdge     pencerenin Y pozisyonu */
+		320,           /* Width       pencerenin genisligi */
 		200,            /* Height      pencerenin yuksekligi */
 		0,             /* DetailPen   colour reg. 0 ile text cizilir */
 		1,             /* BlockPen    colour reg. 1 ile block cizilir */
@@ -57,7 +72,7 @@ struct NewWindow my_new_window = {
 		200,             /* MinHeight   */
 		320,             /* MaxWidth    */
 		200,             /* MaxHeight   */
-		WBENCHSCREEN   /* Type        Workbench Screen. */
+		CUSTOMSCREEN   /* Type        Workbench Screen. */
 };
 
 SHORT my_points[] = {
@@ -90,6 +105,7 @@ struct Border quad = {
 		NULL,        /* NextBorder */
 };
 
+
 struct ControlState toReturn;
 enum EVideoType videoType = kVGA;
 
@@ -104,8 +120,7 @@ struct ControlState getControlState() {
 	USHORT qualifier;
 	ULONG seconds;
 	ULONG micros;
-
-	//  Wait( 1 << my_window->UserPort->mp_SigBit );
+	memset(&toReturn, 0, sizeof(toReturn));
 
 	if (my_message = (struct IntuiMessage *) GetMsg(my_window->UserPort)) {
 		messageClass = my_message->Class;
@@ -117,7 +132,7 @@ struct ControlState getControlState() {
 		micros = my_message->Micros;
 		ReplyMsg((struct Message *) my_message);
 
-		memset(&toReturn, 0, sizeof(toReturn));
+
 
 		if (messageClass == VANILLAKEY) {
 			switch(code) {
@@ -185,6 +200,7 @@ void muteSound() {
 
 void onQuit() {
 	CloseWindow(my_window);
+	CloseScreen(myscreen);
 	CloseLibrary((struct Library *) IntuitionBase);
 }
 
@@ -208,15 +224,42 @@ uint8_t getPaletteEntry(uint32_t origin) {
 	return shade;
 }
 
+struct RGB8 {
+	uint8_t r;
+	uint8_t g;
+	uint8_t b;
+};
 
 void initVideoFor(enum EVideoType unused) {
-	IntuitionBase = (struct IntuitionBase *) OpenLibrary("intuition.library",
-														 0);
+	int r, g, b;
+	int c;
+	struct RGB8 palete[256];
+	struct ColorMap* cm;
+	struct Window  *window;
+	struct IntuiMessage *msg;
+	struct DisplayInfo displayinfo;
+	struct TagItem  taglist[3];
+	int OpenA2024 = FALSE;
+	int IsV36 = FALSE;
+	int IsPAL;
+
+	IntuitionBase = (struct IntuitionBase *) OpenLibrary("intuition.library", 0);
 
 	if (IntuitionBase == NULL) {
 		puts("nope 1!");
 		exit(0);
 	}
+
+
+
+
+
+
+	if ((myscreen = OpenScreen(&xnewscreen)) == NULL) {
+	}
+
+
+	my_new_window.Screen = myscreen;
 
 	my_window = (struct Window *) OpenWindow(&my_new_window);
 
@@ -224,6 +267,23 @@ void initVideoFor(enum EVideoType unused) {
 		puts("nope 2!");
 		CloseLibrary((struct Library *) IntuitionBase);
 		exit(0);
+	}
+
+	for (r = 0; r < 256; r += 16) {
+		for (g = 0; g < 256; g += 8) {
+			for (b = 0; b < 256; b += 8) {
+				uint32_t pixel = 0xFF000000 + (r << 16) + (g << 8) + (b);
+				uint8_t paletteEntry = getPaletteEntry(pixel);
+				palete[paletteEntry].r = ((16 * b) / 256);
+				palete[paletteEntry].g = ((16 * g) / 256);
+				palete[paletteEntry].b = ((16 * r) / 256);
+			}
+		}
+	}
+
+
+	for (c = 0; c < 256; ++c ) {
+		SetRGB4( &myscreen->ViewPort, c, palete[c].r, palete[c].g, palete[c].b );
 	}
 }
 

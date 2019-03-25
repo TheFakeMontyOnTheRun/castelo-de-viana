@@ -136,6 +136,9 @@ struct NativeBitmap* loadBitmap(const char *path, enum EVideoType videoType) {
                     case 215: /* light pink */
                         pixel = 10;
                         break;
+                    case 173: /* mid white*/
+                        pixel = 7;
+                        break;
                     case 87: /* light blue */
                         pixel = 9;
                         break;
