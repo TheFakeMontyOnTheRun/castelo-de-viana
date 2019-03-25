@@ -1,8 +1,8 @@
 CXX = m68k-amigaos-g++
 CC = m68k-amigaos-gcc
 
-CFLAGS = -Os -DAMIGA -Iinclude -c -g  -Iinclude -m68020 -s -fpermissive -noixemul
-LDFLAGS =  -fstrength-reduce -msmall-code -s -Os -fomit-frame-pointer -noixemul -fpermissive
+CFLAGS = -DAMIGA -Iinclude -c -m68040 -s -fexpensive-optimizations -O3
+LDFLAGS =  -mfast-code -fexpensive-optimizations -O3 -s -fomit-frame-pointer -noixemul
 
 OBJS = src/Game.o src/Main.o \
      src/LoadBitmap.o \
