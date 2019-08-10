@@ -36,9 +36,9 @@ struct Screen  *myscreen;
 struct NewScreen xnewscreen 	=			{
 		0,               /* LeftEdge  Daima 0 olmali */
 		0,               /* TopEdge   */
-		640,             /* Width     */
+		320,             /* Width     */
 		200,             /* Height    */
-		8,               /* Depth     16 colours. */
+		4,               /* Depth     16 colours. */
 		0,               /* DetailPen */
 		1,               /* BlockPen */
 		0, /* ViewModes High-resolution, Interlaced */
@@ -107,7 +107,7 @@ struct Border quad = {
 
 
 struct ControlState toReturn;
-enum EVideoType videoType = kVGA;
+enum EVideoType videoType = kCGA;
 
 struct ControlState getControlState() {
 
@@ -269,22 +269,19 @@ void initVideoFor(enum EVideoType unused) {
 		exit(0);
 	}
 
-	for (r = 0; r < 256; r += 16) {
-		for (g = 0; g < 256; g += 8) {
-			for (b = 0; b < 256; b += 8) {
-				uint32_t pixel = 0xFF000000 + (r << 16) + (g << 8) + (b);
-				uint8_t paletteEntry = getPaletteEntry(pixel);
-				palete[paletteEntry].r = ((16 * b) / 256);
-				palete[paletteEntry].g = ((16 * g) / 256);
-				palete[paletteEntry].b = ((16 * r) / 256);
-			}
-		}
-	}
 
-
-	for (c = 0; c < 256; ++c ) {
-		SetRGB4( &myscreen->ViewPort, c, palete[c].r, palete[c].g, palete[c].b );
-	}
+	SetRGB4( &my_window->WScreen->ViewPort, 0, 0, 0, 0 );
+	SetRGB4( &my_window->WScreen->ViewPort, 1, 0, 5, 5 );
+	SetRGB4( &my_window->WScreen->ViewPort, 2, 5, 0, 5 );
+	SetRGB4( &my_window->WScreen->ViewPort, 3, 5, 5, 5 );
+	SetRGB4( &my_window->WScreen->ViewPort, 4, 0, 0, 0 );
+	SetRGB4( &my_window->WScreen->ViewPort, 5, 0,10,10 );
+	SetRGB4( &my_window->WScreen->ViewPort, 6,10, 0,10 );
+	SetRGB4( &my_window->WScreen->ViewPort, 7,10,10,10 );
+	SetRGB4( &my_window->WScreen->ViewPort, 8, 0, 0, 0 );
+	SetRGB4( &my_window->WScreen->ViewPort, 9, 0,15,15 );
+	SetRGB4( &my_window->WScreen->ViewPort,10,15, 0,15 );
+	SetRGB4( &my_window->WScreen->ViewPort,11,15,15,15 );
 }
 
 const char *getAssetsPath() {

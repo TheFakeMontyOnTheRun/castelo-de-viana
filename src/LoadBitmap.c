@@ -158,7 +158,8 @@ struct NativeBitmap* loadBitmap(const char *path, enum EVideoType videoType) {
                         pixel = 0;
                         break;
                     default:
-                        pixel = 0;
+                        printf("pixel color: %d\n", pixel);
+                        assert(FALSE);
                         break;
                 }
                 buffer[(y * width) + x] = pixel;
