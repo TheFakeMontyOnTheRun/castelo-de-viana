@@ -14,7 +14,7 @@ TARGET = game
 $(TARGET):	$(OBJS)
 	$(CXX) -o $(TARGET) $(OBJS) $(LIBS)
 
-all:   $(TARGET)
+all:   $(TARGET) res gamedata
 
 clean:
 	rm -f $(OBJS) $(TARGET)
