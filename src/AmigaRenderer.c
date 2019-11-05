@@ -137,7 +137,7 @@ struct ControlState getControlState() {
 		if (messageClass == VANILLAKEY) {
 			switch(code) {
 
-				case 'q':
+				case 'r':
 					toReturn.escape = TRUE;
 					break;
 
@@ -145,15 +145,15 @@ struct ControlState getControlState() {
 					toReturn.enter = TRUE;
 					break;
 
-				case 'a':
+				case 'f':
 					toReturn.moveLeft = TRUE;
 					break;
 
-				case 'd':
+				case 'h':
 					toReturn.moveRight = TRUE;
 					break;
 
-				case 'w':
+				case 't':
 					toReturn.moveUp = TRUE;
 					break;
 
@@ -161,12 +161,12 @@ struct ControlState getControlState() {
 					toReturn.secret = TRUE;
 					break;
 
-				case 's':
+				case 'g':
 					toReturn.moveDown = TRUE;
 					break;
 
 
-				case 'e':
+				case 'y':
 					toReturn.jump = TRUE;
 					break;
 
