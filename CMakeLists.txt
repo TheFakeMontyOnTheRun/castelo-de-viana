@@ -1,15 +1,19 @@
 cmake_minimum_required(VERSION 3.7)
 project(castleofviana)
 
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake_find")
+
+include_directories(
+		${SDL2_INCLUDE_DIR}
+)
+
 include_directories(stb include
         ${SDL_INCLUDE_DIRS} ${SDL_MIXER_INCLUDE_DIRS} ${SDL_IMAGE_INCLUDE_DIRS} )
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -ansi -Werror -W -pedantic")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Werror -W -pedantic")
 
 set(CMAKE_CXX_STANDARD 98)
-find_package(SDL REQUIRED)
-find_package(SDL_mixer REQUIRED)
-find_package(SDL_image REQUIRED)
+find_package(SDL2 REQUIRED)
 
 set(SOURCE_FILES
         src/Main.c
@@ -19,10 +23,12 @@ set(SOURCE_FILES
         include/LoadImage.h
         src/CPackedFileReader.c
         src/Common.c
-        include/NativeBitmap.h src/SDLRenderer.c include/Renderer.h
+        include/NativeBitmap.h src/SDL2Renderer.c include/Renderer.h
         )
 
-find_package(OpenGL REQUIRED)
-include (FindPkgConfig)
 add_executable(castleofviana ${SOURCE_FILES})
-target_link_libraries(castleofviana m ${OPENGL_LIBRARIES} ${SDL_LIBRARY}  ${SDL_MIXER_LIBRARY} ${SDL_IMAGE_LIBRARY} ${OPENGL_LIBRARIES}  )
+
+include(FindPkgConfig)
+
+target_include_directories(castleofviana PUBLIC ${SDL2_INCLUDE_DIR})
+target_link_libraries(castleofviana LINK_PUBLIC ${SDL2_LIBRARY} m)
