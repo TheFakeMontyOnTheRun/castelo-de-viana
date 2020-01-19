@@ -27,9 +27,53 @@
 
 int status;
 
+#ifdef ANDROID
+#include <jni.h>
+#include <android/asset_manager.h>
+#include <android/asset_manager_jni.h>
+#include <android/bitmap.h>
+#include <android/asset_manager.h>
+
+extern AAssetManager *defaultAssetManager;
+
+int android_read(void *cookie, char *buf, int size) {
+	return AAsset_read((AAsset *) cookie, buf, size);
+}
+
+int android_write(void *cookie, const char *buf, int size) {
+	return EACCES;
+}
+
+fpos_t android_seek(void *cookie, fpos_t offset, int whence) {
+	return AAsset_seek((AAsset *) cookie, offset, whence);
+}
+
+int android_close(void *cookie) {
+	AAsset_close((AAsset *) cookie);
+	return 0;
+}
+
+
+FILE *android_fopen(const char* filename) {
+
+	AAsset *asset = AAssetManager_open(defaultAssetManager, filename, 0);
+	if (!asset) {
+		return NULL;
+	}
+
+	return funopen(asset, android_read, android_write, android_seek, android_close);
+
+}
+#endif
+
 struct StaticBuffer loadFileFromPath(const char* dataFilePath, const char* path) {
 	struct StaticBuffer toReturn;
-    FILE* mDataPack = fopen(dataFilePath, "rb");
+#ifndef ANDROID
+	FILE *mDataPack = fopen(dataFilePath, "rb");
+#else
+	FILE *mDataPack = android_fopen(dataFilePath);
+#endif
+
 	uint32_t offset = 0;
 	char buffer[85];
 	uint16_t entries = 0;

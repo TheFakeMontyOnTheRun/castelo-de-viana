@@ -4,6 +4,7 @@
 #include <string.h>
 #include <stdio.h>
 
+
 #ifdef AMIGA
 #include "AmigaInt.h"
 
@@ -34,6 +35,9 @@
 #include <emscripten.h>
 #include <emscripten/html5.h>
 #endif
+
+enum EVideoType videoType;
+
 
 int enableSecret = FALSE;
 
@@ -738,6 +742,7 @@ void loadGraphics() {
     hero[5][1] = loadBitmap( "arrow1.png", videoType);
 }
 
+#ifndef ANDROID
 int main(int argc, char **argv) {
 
 	int c = 1;
@@ -778,3 +783,4 @@ int main(int argc, char **argv) {
 
     return 0;
 }
+#endif
