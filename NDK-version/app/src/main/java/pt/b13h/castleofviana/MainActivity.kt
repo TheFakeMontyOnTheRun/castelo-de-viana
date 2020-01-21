@@ -7,12 +7,13 @@ import android.media.AudioManager
 import android.media.SoundPool
 import android.os.Build
 import android.os.Bundle
+import android.view.MotionEvent
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_main.*
 import java.nio.ByteBuffer
 
-class MainActivity : AppCompatActivity(), View.OnClickListener {
+class MainActivity : AppCompatActivity(), View.OnTouchListener {
     companion object {
         init {
             System.loadLibrary("native-lib")
@@ -26,9 +27,22 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     private var running = false
     private external fun getPixelsFromNative(javaSide: ByteArray?)
     private external fun initAssets(assetManager: AssetManager?)
-    private external fun sendCommand(cmd: Char)
+    private external fun sendCommand(cmd: Int)
     private external fun getSoundToPlay() : Int
     private external fun isOnMainMenu() : Int
+
+
+    val KEY_UP =    1.shl(0)
+    val KEY_RIGHT = 1.shl(1)
+    val KEY_DOWN =  1.shl(2)
+    val KEY_LEFT =  1.shl(3)
+    val KEY_SWORD = 1.shl(4)
+    val KEY_JUMP =  1.shl(5)
+    val KEY_ARROW = 1.shl(6)
+    val KEY_START = 1.shl(7)
+
+
+    var keyState : Int = 0
 
 
     private fun initAudio() {
@@ -71,14 +85,14 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         }
 
 
-        btnUp.setOnClickListener(this)
-        btnDown.setOnClickListener(this)
-        btnFire.setOnClickListener(this)
-        btnPick.setOnClickListener(this)
-        btnAim.setOnClickListener(this)
-        btnLeft.setOnClickListener(this)
-        btnRight.setOnClickListener(this)
-        btnStart.setOnClickListener(this)
+        btnUp.setOnTouchListener(this)
+        btnDown.setOnTouchListener(this)
+        btnFire.setOnTouchListener(this)
+        btnPick.setOnTouchListener(this)
+        btnAim.setOnTouchListener(this)
+        btnLeft.setOnTouchListener(this)
+        btnRight.setOnTouchListener(this)
+        btnStart.setOnTouchListener(this)
 
         initAudio()
         imageView.setImageBitmap(bitmap)
@@ -95,6 +109,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         running = true
         Thread(Runnable {
             while (running) {
+                sendCommand(keyState);
                 runOnUiThread { redraw() }
                 Thread.sleep(75)
             }
@@ -115,13 +130,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         ).start()
     }
 
-    override fun onBackPressed() {
-        if (isOnMainMenu() != 0 ) {
-            super.onBackPressed()
-        } else {
-            sendCommand('q')
-        }
-    }
     override fun onPause() {
         super.onPause()
         running = false
@@ -133,18 +141,35 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         imageView.invalidate()
     }
 
-    override fun onClick(v: View) {
-        var toSend = '.'
-        when (v.id) {
-            R.id.btnUp -> toSend = 'w'
-            R.id.btnDown -> toSend = 's'
-            R.id.btnLeft -> toSend = 'a'
-            R.id.btnRight -> toSend = 'd'
-            R.id.btnFire -> toSend = 'z'
-            R.id.btnAim -> toSend = 'x'
-            R.id.btnPick -> toSend = 'c'
-            R.id.btnStart-> toSend = 'e'
+    override fun onTouch(v: View?, event: MotionEvent?): Boolean {
+        if ( event != null && v != null ) {
+            if (event.action == MotionEvent.ACTION_DOWN) {
+                when (v.id) {
+                    R.id.btnUp -> keyState = (keyState or    KEY_UP)
+                    R.id.btnDown -> keyState = (keyState or  KEY_DOWN)
+                    R.id.btnLeft -> keyState = (keyState or  KEY_LEFT)
+                    R.id.btnRight -> keyState = (keyState or KEY_RIGHT)
+                    R.id.btnFire -> keyState = (keyState or  KEY_SWORD)
+                    R.id.btnAim -> keyState = (keyState or   KEY_JUMP)
+                    R.id.btnPick -> keyState = (keyState or  KEY_ARROW)
+                    R.id.btnStart-> keyState = (keyState or  KEY_START)
+                }
+            } else if (event.action == MotionEvent.ACTION_UP) {
+                when (v.id) {
+                    R.id.btnUp -> keyState = (keyState and    KEY_UP.inv())
+                    R.id.btnDown -> keyState = (keyState and  KEY_DOWN.inv())
+                    R.id.btnLeft -> keyState = (keyState and  KEY_LEFT.inv())
+                    R.id.btnRight -> keyState = (keyState and KEY_RIGHT.inv())
+                    R.id.btnFire -> keyState = (keyState and  KEY_SWORD.inv())
+                    R.id.btnAim -> keyState = (keyState and   KEY_JUMP.inv())
+                    R.id.btnPick -> keyState = (keyState and  KEY_ARROW.inv())
+                    R.id.btnStart-> keyState = (keyState and  KEY_START.inv())
+                }
+            }
         }
-        sendCommand(toSend)
+
+        return true
     }
+
+
 }

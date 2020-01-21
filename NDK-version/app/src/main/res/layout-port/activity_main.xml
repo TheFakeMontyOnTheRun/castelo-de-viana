@@ -146,31 +146,32 @@
                 android:orientation="vertical"
                 android:paddingTop="10dp">
 
+                <Button
+                    android:id="@+id/btnStart"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Start" />
 
                 <Button
                     android:id="@+id/btnFire"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Fire" />
+                    android:text="Sword" />
 
 
                 <Button
                     android:id="@+id/btnAim"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Aim" />
+                    android:text="Jump" />
 
                 <Button
                     android:id="@+id/btnPick"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Pick" />
+                    android:text="Arrow" />
 
-                <Button
-                    android:id="@+id/btnStart"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Start" />
+
 
             </LinearLayout>
 

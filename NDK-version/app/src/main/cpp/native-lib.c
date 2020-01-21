@@ -145,7 +145,7 @@ Java_pt_b13h_castleofviana_MainActivity_getSoundToPlay(JNIEnv *env, jobject thiz
 
 
 JNIEXPORT void JNICALL
-Java_pt_b13h_castleofviana_MainActivity_sendCommand(JNIEnv *env, jobject thiz, jchar cmd) {
+Java_pt_b13h_castleofviana_MainActivity_sendCommand(JNIEnv *env, jobject thiz, jint cmd) {
     mBufferedCommand = cmd;
 }
 
@@ -153,47 +153,19 @@ struct ControlState getControlState() {
     struct ControlState toReturn;
     memset(&toReturn, 0, sizeof(struct ControlState));
 
-            switch ( mBufferedCommand ) {
-                case 'q':
-                    toReturn.escape = TRUE;
-                    break;
-
-                case 'e':
-                    toReturn.enter = TRUE;
-                    break;
-
-                case 'a':
-                    toReturn.moveLeft = TRUE;
-                    break;
-
-                case 'd':
-                    toReturn.moveRight = TRUE;
-                    break;
-
-                case 'w':
-                    toReturn.moveUp = TRUE;
-                    break;
 
 
-                case 's':
-                    toReturn.moveDown = TRUE;
-                    break;
+    toReturn.moveUp = mBufferedCommand &    (1 << 0);
+    toReturn.moveRight = mBufferedCommand & (1 << 1);
+    toReturn.moveDown = mBufferedCommand &  (1 << 2);
+    toReturn.moveLeft = mBufferedCommand &  (1 << 3);
+    toReturn.sword = mBufferedCommand &     (1 << 4);
+    toReturn.jump = mBufferedCommand &      (1 << 5);
+    toReturn.fireArrow = mBufferedCommand & (1 << 6);
+    toReturn.enter = mBufferedCommand & (    1 << 7);
 
 
-                case 'x':
-                    toReturn.jump = TRUE;
-                    break;
-
-                case 'c':
-                    toReturn.sword = TRUE;
-                    break;
-
-                case 'z':
-                    toReturn.fireArrow = TRUE;
-                    break;
-            }
-
-    mBufferedCommand = '.';
+    mBufferedCommand = 0;
 
     return toReturn;
 }
