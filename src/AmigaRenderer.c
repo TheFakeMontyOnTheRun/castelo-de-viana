@@ -31,49 +31,61 @@ struct IntuitionBase *IntuitionBase;
 struct GfxBase *GfxBase;
 extern struct ExecBase *SysBase;
 
+#define REG(xn, parm) parm __asm(#xn)
+#define REGARGS __regargs
+
+
+extern void REGARGS c2p1x1_4_c5_bm(
+        REG(d0, UWORD chunky_x),
+        REG(d1, UWORD chunky_y),
+        REG(d2, UWORD offset_x),
+        REG(d3, UWORD offset_y),
+        REG(a0, UBYTE *chunky_buffer),
+        REG(a1, struct BitMap *bitmap));
+
+
 struct Window *my_window;
 struct Screen  *myscreen;
-struct NewScreen xnewscreen 	=			{
-		0,               /* LeftEdge  Daima 0 olmali */
-		0,               /* TopEdge   */
-		320,             /* Width     */
-		200,             /* Height    */
-		4,               /* Depth     16 colours. */
-		0,               /* DetailPen */
-		1,               /* BlockPen */
-		0, /* ViewModes High-resolution, Interlaced */
-		CUSTOMSCREEN,    /* Type customized screen. */
-		NULL,            /* Font */
-		"Castle of Viana",     /* Title */
-		NULL,            /* Gadget */
-		NULL             /* BitMap */
+struct NewScreen xnewscreen = {
+        0,			  /* LeftEdge*/
+        0,			  /* TopEdge   */
+        320,		  /* Width     */
+        200,		  /* Height    */
+        5,			  /* Depth   */
+        0,			  /* DetailPen */
+        1,			  /* BlockPen */
+        0,			  /* ViewModes High-resolution, Interlaced */
+        CUSTOMSCREEN,	  /* Type customized screen. */
+        NULL,		  /* Font */
+        "Castle of Viana", /* Title */
+        NULL,		  /* Gadget */
+        NULL		  /* BitMap */
 };
+
 struct NewWindow my_new_window = {
-		0,            /* LeftEdge    pencerenin X pozisyonu */
-		0,            /* TopEdge     pencerenin Y pozisyonu */
-		320,           /* Width       pencerenin genisligi */
-		200,            /* Height      pencerenin yuksekligi */
-		0,             /* DetailPen   colour reg. 0 ile text cizilir */
-		1,             /* BlockPen    colour reg. 1 ile block cizilir */
-		ACTIVEWINDOW |
-		VANILLAKEY |
-		CLOSEWINDOW |
-		RAWKEY,        /* IDCMPFlags  */
-		SMART_REFRESH | /* Flags       */
-		WINDOWDRAG |    /*             */
-		WINDOWDEPTH |   /*             */
-		ACTIVATE,      /*             acildiginda pencereyi aktif hale getir*/
-		NULL,          /* FirstGadget */
-		NULL,          /* CheckMark   */
-		(UBYTE *) "Squares",     /* Title       pencere basligi */
-		NULL,          /* Screen      */
-		NULL,          /* BitMap      */
-		320,             /* MinWidth    */
-		200,             /* MinHeight   */
-		320,             /* MaxWidth    */
-		200,             /* MaxHeight   */
-		CUSTOMSCREEN   /* Type        Workbench Screen. */
+        0,                              /* LeftEdge*/
+        0,                              /* TopEdge*/
+        320,                          /* Width */
+        200,                          /* Height */
+        0,                              /* DetailPen  */
+        1,                              /* BlockPen   */
+        ACTIVEWINDOW | VANILLAKEY | CLOSEWINDOW | RAWKEY, /* IDCMPFlags  */
+        SMART_REFRESH |                      /* Flags       */
+        WINDOWDRAG |                      /*             */
+        WINDOWDEPTH |                      /*             */
+        ACTIVATE,                      /*            */
+        NULL,                          /* FirstGadget */
+        NULL,                          /* CheckMark   */
+        (UBYTE * ) "Castle of Viana",              /* Title       */
+NULL,                          /* Screen      */
+NULL,                          /* BitMap      */
+        320,                          /* MinWidth    */
+        200,                          /* MinHeight   */
+        320,                          /* MaxWidth    */
+        200,                          /* MaxHeight   */
+        CUSTOMSCREEN                      /* Type */
 };
+
 
 SHORT my_points[] = {
 		0, 0,
@@ -208,7 +220,7 @@ void putpixel(int x, int y, uint32_t pixel) {
 }
 
 void copyImageBufferToVideoMemory(uint8_t *imageBuffer) {
-	WriteChunkyPixels(my_window->RPort, 0, 0, 319, 199, imageBuffer, 320);
+    c2p1x1_4_c5_bm(320, 200, 0, 0, imageBuffer, my_window->RPort->BitMap);
 }
 
 

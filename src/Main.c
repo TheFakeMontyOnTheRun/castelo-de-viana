@@ -160,7 +160,7 @@ void render() {
             imageBuffer[c] = pixelData[c];
         }
 
-        copyImageBufferToVideoMemory(imageBuffer);
+        copyImageBufferToVideoMemory(&imageBuffer[0]);
         return;
     }
 
@@ -583,7 +583,7 @@ void render() {
         }
     }
 
-    copyImageBufferToVideoMemory(imageBuffer);
+    copyImageBufferToVideoMemory(&imageBuffer[0]);
 }
 
 int done = FALSE;

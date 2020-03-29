@@ -1,13 +1,17 @@
 CXX = m68k-amigaos-g++
 CC = m68k-amigaos-gcc
+STRIP=m68k-amigaos-strip
+AS = vasmm68k_mot
 
-CFLAGS = -DAMIGA -Iinclude -c -m68040 -s -fexpensive-optimizations -O3
+CFLAGS = -DAMIGA -Iinclude -c -m68000 -s -fexpensive-optimizations -O3
 LDFLAGS =  -msmall-code -fexpensive-optimizations -O3 -s -fomit-frame-pointer -noixemul
+ASFLAGS = -phxass -Fhunk -m68000 -chklabels -no-fpu -wfail -I/opt/amiga/m68k-amigaos/ndk-include
 
 OBJS = src/Game.o src/Main.o \
      src/LoadBitmap.o \
      src/NullMusic.o \
      src/AmigaRenderer.o \
+     src/c2p1x1_4_c5_bm.o \
      src/CPackedFileReader.o\
      src/Common.o
 
