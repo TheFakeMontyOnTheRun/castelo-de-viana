@@ -218,7 +218,7 @@ void initVideoFor(enum EVideoType unused) {
 	assert(unused != kCGA);
 
 	SDL_Init(SDL_INIT_EVERYTHING);
-
+    SDL_SetHint(SDL_HINT_RENDER_DRIVER, "opengl");
 	window =
 			SDL_CreateWindow("The Mistral Report", SDL_WINDOWPOS_CENTERED,
 							 SDL_WINDOWPOS_CENTERED, 640, 480, SDL_WINDOW_SHOWN);
