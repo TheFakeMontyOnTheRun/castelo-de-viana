@@ -34,6 +34,11 @@ res:	packager
 	ls res/*.*  | xargs ./packer
 	mv ./data.pfs ./sdl.pfs
 
+adf: $(MENU_TARGET)
+	rm -f viana.adf
+	xdftool viana.adf format "Castle of Viana" + write game12k game12k + write gamedata.pfs gamedata.pfs + write sdl.pfs sdl.pfs
+	xdftool viana.adf list
+
 gamedata:	packager
 	rm -f ./gamedata.pfs
 	ls data/*.*  | xargs ./packer
