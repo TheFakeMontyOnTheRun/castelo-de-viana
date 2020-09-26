@@ -1,7 +1,7 @@
 CXX = em++
-CXXFLAGS = -std=c++11 -ferror-limit=1 -c -g -Iinclude -Istb -O3  --preload-file sdl.pfs --preload-file gamedata.pfs --use-preload-plugins
+CXXFLAGS = -std=c++14 -ferror-limit=1 -c -g -Iinclude -Istb -O3  --preload-file sdl.pfs --preload-file gamedata.pfs --use-preload-plugins -s DISABLE_DEPRECATED_FIND_EVENT_TARGET_BEHAVIOR=0 -s ASSERTIONS=1
 
-LDFLAGS = -O3 -s USE_ZLIB=1 -s USE_LIBPNG=1 -s --preload-file sdl.pfs --preload-file gamedata.pfs --use-preload-plugins
+LDFLAGS = -O3 -s USE_ZLIB=1 -s USE_LIBPNG=1 -s --preload-file sdl.pfs --preload-file gamedata.pfs --use-preload-plugins -s DISABLE_DEPRECATED_FIND_EVENT_TARGET_BEHAVIOR=0 -s ASSERTIONS=1
 
 OBJS = src/Game.o src/Main.o src/SDLRenderer.o src/LoadImageCGA.o src/MusicSDL.o src/CPackedFileReader.o src/Common.o
 

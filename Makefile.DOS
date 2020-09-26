@@ -16,7 +16,7 @@ $(TARGET):	$(OBJS)
 	$(CXX) -o $(TARGET) $(OBJS) $(LDFLAGS)
 	i586-pc-msdosdjgpp-strip $(TARGET)
 
-all:	$(TARGET)
+all:	$(TARGET) rescga resvga gamedata
 
 packager:
 	rm -f ./packer
