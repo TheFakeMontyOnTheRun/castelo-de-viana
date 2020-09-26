@@ -100,11 +100,11 @@ updateHero(int isOnGround, int isJumping, int isUpPressed, int isDownPressed,
             player.mSpeed.mY = -8;
             player.mStance = kClimbing;
         } else if (isOnGround) {
-            if ( !isOnStairs && arrowCooldown <= 0) {
+            if ( !isOnStairs && arrowCooldown <= 0 && arrows.used == 0) {
                 struct Actor *a = (struct Actor*)calloc(sizeof(struct Actor), 1);
                 pushVector( &arrows, a );
                 a->mType = kArrow;
-				a->mPosition.mY = player.mPosition.mX;
+				a->mPosition.mX = player.mPosition.mX;
                 a->mPosition.mY = player.mPosition.mY;
                 initVec2i( &a->mSpeed, 0, -16 );
                 a->mActive = TRUE;
@@ -157,12 +157,12 @@ protection stopping the player from falling*/
         playTune(swordSound);
     }
 
-    if (isUsingSpecial && arrowCooldown <= 0) {
+    if (isUsingSpecial && arrowCooldown <= 0 && arrows.used == 0) {
         struct Actor *a = (struct Actor*)calloc( 1, sizeof(struct Actor));
-        pushVector( &arrows, a );
+        assert(pushVector( &arrows, a ));
         a->mType = kArrow;
         a->mActive = TRUE;
-		a->mPosition.mY = player.mPosition.mX;
+		a->mPosition.mX = player.mPosition.mX;
 		a->mPosition.mY = player.mPosition.mY;
 
 		initVec2i( &a->mSpeed, player.mDirection == kDirectionRight ? 16 : -16, 0);
@@ -412,6 +412,12 @@ Unfortunately, prevents looking up.*/
     for (pos = 0; pos < arrows.used; ++pos ) {
         struct Actor* arrow = *arrowPtr;
 
+        if ( arrow == NULL) {
+            ++arrowPtr;
+            --pos;
+            continue;
+        }
+
     	if ( !arrow->mActive ) {
     		continue;
     	}
@@ -420,7 +426,8 @@ Unfortunately, prevents looking up.*/
         arrow->mPosition.mY += arrow->mSpeed.mY;
 
         if (isBlockedByWall(arrow)) {
-            arrow->mActive = FALSE;
+            removeFromVector(&arrows, arrow);
+            free(arrow);
             continue;
         }
 
