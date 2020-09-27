@@ -483,6 +483,7 @@ Unfortunately, prevents looking up.*/
                 pushVector( &foes, a );
                 a->mType = kSkeleton;
                 a->mSpeed.mX = 8;
+                a->mPosition = foe->mPosition;
                 a->mDirection = kDirectionRight;
                 a->mActive = TRUE;
                 a->mHealth = 2;
