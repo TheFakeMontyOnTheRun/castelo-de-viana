@@ -73,7 +73,11 @@ void initOPL2() {
 }
 
 void prepareScreenFor(enum EScreen screenState) {
+
     muteSound();
+
+    pauseCoolDown = 10;
+
     switch (screenState) {
         case kIntro:
             currentScreen = loadBitmap((enableSecret ? "secret.img" : "intro.png"), videoType);
@@ -603,6 +607,9 @@ void sysTick() {
 
     render();
 
+    if (pauseCoolDown > 0 ) {
+        --pauseCoolDown;
+    }
 
     if (!paused) {
         gameTick(&isOnGround, &isOnStairs);
@@ -664,7 +671,7 @@ void sysTick() {
                 init();
                 break;
             case kGame:
-               /* isPausePressed = TRUE */;
+                isPausePressed = TRUE;
                 break;
             case kGameOver:
                 screen = kGame;

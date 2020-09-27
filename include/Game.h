@@ -69,6 +69,7 @@ extern struct NativeBitmap *currentScreen;
 extern enum EScreen screen;
 extern const char *currentBossName;
 extern int totalBossHealth;
+extern int pauseCoolDown;
 
 extern void clearBuffers();
 

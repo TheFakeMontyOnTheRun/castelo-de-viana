@@ -40,6 +40,7 @@ int ticksToShowHealth = 14;
 int arrowCooldown = 0;
 int paused = FALSE;
 int hasBossOnScreen = FALSE;
+int pauseCoolDown = 0;
 
 int backgroundTiles[6][10];
 int foregroundTiles[6][10];
@@ -173,8 +174,11 @@ protection stopping the player from falling*/
     }
 
     if (isPausePressed) {
-        paused = !paused;
-        ticksToShowHealth = 14;
+        if (pauseCoolDown <= 0 ) {
+            ticksToShowHealth = 14;
+            pauseCoolDown = 10;
+            paused = !paused;
+        }
     }
 }
 
