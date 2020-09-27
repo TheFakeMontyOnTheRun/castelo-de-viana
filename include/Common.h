@@ -2,17 +2,19 @@
 #define COMMON_H
 
 struct ItemVector {
-	void **items;
-	size_t capacity;
-	size_t used;
+    void **items;
+    size_t capacity;
+    size_t used;
 };
 
 struct StaticBuffer {
-	uint8_t *data;
-	size_t size;
+    uint8_t *data;
+    size_t size;
 };
 
-void pushVector(struct ItemVector *vector, void *item);
+int pushVector(struct ItemVector *vector, void *item);
+
+int removeFromVector(struct ItemVector *vector, void *item);
 
 void initVector(struct ItemVector *vector, size_t capacity);
 

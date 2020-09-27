@@ -41,7 +41,6 @@ struct ItemVector *loadSpriteList(const char *listName, enum EVideoType videoTyp
     initVector(tilesToLoad, items);
 
 
-
     bufferBegin = buffer.data;
 
     for (pos = 0; pos < buffer.size; ++pos) {
@@ -58,7 +57,7 @@ struct ItemVector *loadSpriteList(const char *listName, enum EVideoType videoTyp
 
             filename = (char *) calloc(since - 1 + 1, 1);
             diff = (bufferBegin + lastPoint + since - 1) -
-                          (bufferBegin + lastPoint);
+                   (bufferBegin + lastPoint);
             memcpy(&filename[0], bufferBegin + lastPoint, diff);
 
             lastPoint += since;
@@ -76,7 +75,7 @@ struct ItemVector *loadSpriteList(const char *listName, enum EVideoType videoTyp
     return tilesToLoad;
 }
 
-struct NativeBitmap* loadBitmap(const char *path, enum EVideoType videoType) {
+struct NativeBitmap *loadBitmap(const char *path, enum EVideoType videoType) {
     size_t size;
     uint8_t *buffer;
 
@@ -86,7 +85,7 @@ struct NativeBitmap* loadBitmap(const char *path, enum EVideoType videoType) {
 
     uint16_t width = 0;
     uint16_t height = 0;
-    uint8_t* ptr = (uint8_t*)src.data;
+    uint8_t *ptr = (uint8_t *) src.data;
     toReturn->mWidth = 0;
     width = *ptr++;
     toReturn->mWidth += (width & 0xFF) << 8;
@@ -166,10 +165,8 @@ struct NativeBitmap* loadBitmap(const char *path, enum EVideoType videoType) {
             }
         }
     } else {
-        memcpy( &buffer[0], ptr, size );
+        memcpy(&buffer[0], ptr, size);
     }
-
-
 
 
     toReturn->mRawData = buffer;
@@ -177,7 +174,7 @@ struct NativeBitmap* loadBitmap(const char *path, enum EVideoType videoType) {
     return toReturn;
 }
 
-void releaseBitmap(struct NativeBitmap* ptr) {
+void releaseBitmap(struct NativeBitmap *ptr) {
     assert(ptr != NULL);
 
     free(ptr->mRawData);

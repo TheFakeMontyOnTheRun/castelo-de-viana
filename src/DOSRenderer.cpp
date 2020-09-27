@@ -30,7 +30,7 @@ EVideoType videoType = kCGA;
 
 extern "C" struct ControlState getControlState() {
     ControlState toReturn;
-	memset(&toReturn, 0, sizeof(struct ControlState));
+    memset(&toReturn, 0, sizeof(struct ControlState));
 
     while (kbhit()) {
         auto getched = getch();
@@ -46,7 +46,7 @@ extern "C" struct ControlState getControlState() {
                 break;
             case 'c':
             case ' ':
-                toReturn.sword= true;
+                toReturn.sword = true;
                 break;
             case 13:
                 toReturn.enter = true;
@@ -54,7 +54,7 @@ extern "C" struct ControlState getControlState() {
             case 224:
             case 0:
                 auto arrow = getch();
-                switch(arrow) {
+                switch (arrow) {
                     case 75:
                         toReturn.moveLeft = true;
                         break;
@@ -100,79 +100,79 @@ extern "C" void onQuit() {
 }
 
 
-extern "C" uint8_t getPaletteEntry( uint32_t origin ) {
+extern "C" uint8_t getPaletteEntry(uint32_t origin) {
     uint8_t shade = 0;
 
-    shade += (((((origin & 0x0000FF)      ) << 2) >> 8)) << 6;
-    shade += (((((origin & 0x00FF00)  >> 8) << 3) >> 8)) << 3;
+    shade += (((((origin & 0x0000FF)) << 2) >> 8)) << 6;
+    shade += (((((origin & 0x00FF00) >> 8) << 3) >> 8)) << 3;
     shade += (((((origin & 0xFF0000) >> 16) << 3) >> 8)) << 0;
 
     return shade;
 }
 
 void plot(int x, int y, int color) {
-        int b, m; /* bits and mask */
-        unsigned char c;
-        /* address section differs depending on odd/even scanline */
-        bool odd = (1 == (y & 0x1));
+    int b, m; /* bits and mask */
+    unsigned char c;
+    /* address section differs depending on odd/even scanline */
+    bool odd = (1 == (y & 0x1));
 
-        /* divide by 2 (each address section is 100 pixels) */
-        y >>= 1;
+    /* divide by 2 (each address section is 100 pixels) */
+    y >>= 1;
 
-        /* start bit (b) and mask (m) for 2-bit pixels */
-        switch (x & 0x3) {
-            case 0:
-                b = 6;
-                m = 0xC0;
-                break;
-            case 1:
-                b = 4;
-                m = 0x30;
-                break;
-            case 2:
-                b = 2;
-                m = 0x0C;
-                break;
-            case 3:
-                b = 0;
-                m = 0x03;
-                break;
-        }
+    /* start bit (b) and mask (m) for 2-bit pixels */
+    switch (x & 0x3) {
+        case 0:
+            b = 6;
+            m = 0xC0;
+            break;
+        case 1:
+            b = 4;
+            m = 0x30;
+            break;
+        case 2:
+            b = 2;
+            m = 0x0C;
+            break;
+        case 3:
+            b = 0;
+            m = 0x03;
+            break;
+    }
 
-        /* divide X by 4 (2 bits for each pixel) */
-        x >>= 2;
+    /* divide X by 4 (2 bits for each pixel) */
+    x >>= 2;
 
-        unsigned int offset = ((80 * y) + x);
+    unsigned int offset = ((80 * y) + x);
 
-        /* read current pixel */
-        if (odd) {
-            c = oddBuffer[offset];
-        } else {
-            c = evenBuffer[offset];
-        }
+    /* read current pixel */
+    if (odd) {
+        c = oddBuffer[offset];
+    } else {
+        c = evenBuffer[offset];
+    }
 
-        /* remove bits at new position */
-        c = c & ~m;
+    /* remove bits at new position */
+    c = c & ~m;
 
-        /* set bits at new position */
-        c = c | (color << b);
+    /* set bits at new position */
+    c = c | (color << b);
 
-        if (odd) {
-            oddBuffer[offset] = c;
-        } else {
-            evenBuffer[offset] = c;
-        }
+    if (odd) {
+        oddBuffer[offset] = c;
+    } else {
+        evenBuffer[offset] = c;
+    }
 }
 
 int frame = 0;
 
-extern "C" void copyImageBufferToVideoMemory(uint8_t* imageBuffer ) {
-    if ( videoType == kVGA ) {
+extern "C" void copyImageBufferToVideoMemory(uint8_t *imageBuffer) {
+    if (videoType == kVGA) {
         uint8_t mFinalBuffer[320 * 200];
-        uint8_t* currentImageBufferPos = imageBuffer;
-        uint8_t* currentBufferPos = mFinalBuffer;
+        uint8_t *currentImageBufferPos = imageBuffer;
+        uint8_t *currentBufferPos = mFinalBuffer;
 
-        memset( mFinalBuffer, 0, 320 * 200 );
+        memset(mFinalBuffer, 0, 320 * 200);
 
         for (int y = 0; y < 200; ++y) {
             for (int x = 0; x < 320; ++x) {
@@ -184,7 +184,7 @@ extern "C" void copyImageBufferToVideoMemory(uint8_t* imageBuffer ) {
         int origin = 0;
         int value = 0;
         int last = 0;
-        uint8_t* currentImageBufferPos = imageBuffer;
+        uint8_t *currentImageBufferPos = imageBuffer;
 
         for (int y = 0; y < 200; ++y) {
             for (int x = 0; x < 320; ++x) {
@@ -229,9 +229,9 @@ extern "C" void copyImageBufferToVideoMemory(uint8_t* imageBuffer ) {
     }
 }
 
-extern "C" void initVideoFor( EVideoType videoType ) {
+extern "C" void initVideoFor(EVideoType videoType) {
 
-    if ( videoType == kVGA ) {
+    if (videoType == kVGA) {
         __dpmi_regs reg;
 
         reg.x.ax = 0x13;
@@ -239,12 +239,12 @@ extern "C" void initVideoFor( EVideoType videoType ) {
 
         outp(0x03c8, 0);
 
-        for ( int r = 0; r < 4; ++r ) {
-            for ( int g = 0; g < 8; ++g ) {
-                for ( int b = 0; b < 8; ++b ) {
-                    outp(0x03c9, (r * (21) ) );
-                    outp(0x03c9, (g * (8) ) );
-                    outp(0x03c9, (b * (8) ) );
+        for (int r = 0; r < 4; ++r) {
+            for (int g = 0; g < 8; ++g) {
+                for (int b = 0; b < 8; ++b) {
+                    outp(0x03c9, (r * (21)));
+                    outp(0x03c9, (g * (8)));
+                    outp(0x03c9, (b * (8)));
                 }
             }
         }
@@ -257,6 +257,6 @@ extern "C" void initVideoFor( EVideoType videoType ) {
     }
 }
 
-extern "C" const char* getAssetsPath() {
+extern "C" const char *getAssetsPath() {
     return "cga.pfs";
 }
