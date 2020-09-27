@@ -134,11 +134,7 @@ void render() {
     int heroHealthColour;
     int backgroundColour;
     uint8_t *pixelData;
-    struct Item** itemPtr;
-    struct Actor** doorPtr;
-    struct Actor** arrowPtr;
     struct NativeBitmap* sprite;
-    struct Actor** foePtr = (struct Actor**)foes.items;
     uint8_t transparency;
     size_t pos;
 
@@ -239,10 +235,12 @@ void render() {
         }
     }
 
-    doorPtr = (struct Actor**)doors.items;
-
     for (pos = 0; pos < doors.used; ++ pos ) {
-        struct Actor* door = *doorPtr;
+        struct Actor* door = doors.items[pos];
+
+        if (door == NULL ) {
+            continue;
+        }
 
         pixelData = doorStates[door->mType - kClosedDoor]->mRawData;
         y0 = (door->mPosition.mY);
@@ -275,7 +273,6 @@ void render() {
                 imageBuffer[(320 * y) + (x)] = pixel;
             }
         }
-        ++doorPtr;
     }
 
     sprite = hero[player.mStance][heroFrame];
@@ -323,15 +320,13 @@ void render() {
         }
     }
 
-    arrowPtr = (struct Actor**)arrows.items;
-
     for (pos = 0; pos < arrows.used; ++pos ) {
         int pixel;
         int y;
         int x;
-        struct Actor* arrow = *arrowPtr;
+        struct Actor* arrow = arrows.items[pos];
 
-        if ( !arrow->mActive ) {
+        if ( arrow == NULL || !arrow->mActive ) {
             continue;
         }
 
@@ -374,14 +369,12 @@ void render() {
                 imageBuffer[(320 * y) + (x)] = pixel;
             }
         }
-        ++arrowPtr;
     }
 
-    foePtr = (struct Actor**)foes.items;
     for (pos = 0; pos < foes.used; ++pos ) {
-        struct Actor* foe = *foePtr;
+        struct Actor* foe = foes.items[pos];
 
-		if (!foe->mActive) {
+		if (foe == NULL || !foe->mActive) {
 			continue;
 		}
 
@@ -439,15 +432,12 @@ void render() {
                 imageBuffer[(320 * y) + (x)] = pixel;
             }
         }
-        foePtr++;
     }
 
-    itemPtr = (struct Item**)items.items;
-
     for (pos = 0; pos < items.used; ++pos ) {
-        struct Item* item = *itemPtr;
+        struct Item* item = items.items[pos];
 
-        if (!item->mActive ) {
+        if (item == NULL ||!item->mActive ) {
             continue;
         }
 
@@ -476,7 +466,6 @@ void render() {
                 imageBuffer[(320 * y) + (x)] = pixel;
             }
         }
-        ++itemPtr;
     }
 
     if ((hasKey && ((counter % 2) == 0 || paused))) {
@@ -556,20 +545,17 @@ void render() {
     if (hasBossOnScreen) {
         int bossHealth = 0;
 
-        struct Actor** foePtr = (struct Actor**)foes.items;
         size_t pos = 0;
         for (pos = 0; pos < foes.used; ++pos ) {
-            struct Actor* foe = *foePtr;
+            struct Actor* foe = foes.items[pos];
 
-			if (!foe->mActive) {
+			if (foe == NULL || !foe->mActive) {
 				continue;
 			}
 
 			if (foe->mType == kTinhoso || foe->mType == kCapiroto) {
                 bossHealth = foe->mHealth;
             }
-
-			++foePtr;
         }
 
         for ( y = 184; y < 192; ++y ) {

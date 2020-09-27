@@ -256,11 +256,10 @@ void hurtPlayer(int ammount) {
 }
 
 int isOnDoor(const struct Actor *actor) {
-    struct Actor** actorPtr = (struct Actor**)doors.items;
     size_t pos = 0;
     for (pos = 0; pos < doors.used; ++pos ) {
-        const struct Actor* door = *actorPtr;
-        if (door->mType == kOpenDoor && collideActorActor(door, actor, DEFAULT_TOLERANCE)) {
+        const struct Actor* door = doors.items[pos];
+        if (door != NULL && door->mType == kOpenDoor && collideActorActor(door, actor, DEFAULT_TOLERANCE)) {
             return TRUE;
         }
     }
@@ -292,9 +291,6 @@ void updateTimers() {
 void gameTick(int *isOnGround, int *isOnStairs) {
 	int ceiling;
 	size_t pos;
-	struct Actor** arrowPtr;
-	struct Item** itemPtr;
-	struct Actor **foePtr;
 	size_t pos2 = 0;
 
 	++counter;
@@ -407,14 +403,10 @@ Unfortunately, prevents looking up.*/
         player.mSpeed.mY = 0;
     }
 
-    arrowPtr = (struct Actor**)arrows.items;
-
     for (pos = 0; pos < arrows.used; ++pos ) {
-        struct Actor* arrow = *arrowPtr;
+        struct Actor* arrow = arrows.items[pos];
 
         if ( arrow == NULL) {
-            ++arrowPtr;
-            --pos;
             continue;
         }
 
@@ -431,35 +423,31 @@ Unfortunately, prevents looking up.*/
             continue;
         }
 
-        foePtr = (struct Actor**)foes.items;
         for ( pos2 = 0; pos2 < foes.used; ++pos2) {
-            struct Actor* foe = *foePtr;
+            struct Actor* foe = foes.items[pos2];
 
-        	if (!foe->mActive) {
+        	if ( foe == NULL || !foe->mActive) {
         		continue;
         	}
 
             if ( foe->mType != kHand && collideActorActor(foe, arrow, DEFAULT_TOLERANCE)) {
                 foe->mHealth--;
-                arrow->mActive = FALSE;
+                removeFromVector(&arrows, arrow);
+                free(arrow);
+
 
                 if (foe->mType == kGargoyle) {
                     openAllDoors();
                 }
             }
-            ++foePtr;
         }
-
-        ++arrowPtr;
     }
-
-    itemPtr = (struct Item**)items.items;
 
     for (pos = 0; pos < items.used; ++pos ) {
 
-        struct Item* item = *itemPtr;
+        struct Item* item = items.items[pos];
 
-    	if (!item->mActive ) {
+    	if ( item == NULL || !item->mActive ) {
     		continue;
     	}
 
@@ -480,16 +468,12 @@ Unfortunately, prevents looking up.*/
                 ticksToShowHealth = 14;
             }
         }
-
-        ++itemPtr;
     }
 
-	foePtr = (struct Actor**)foes.items;
-
     for (pos = 0; pos < foes.used; ++pos ) {
-        struct Actor* foe = *foePtr;
+        struct Actor* foe = foes.items[pos];
 
-		if (!foe->mActive) {
+		if ( foe == NULL || !foe->mActive) {
 			continue;
 		}
 
@@ -552,20 +536,16 @@ Unfortunately, prevents looking up.*/
                 screen = kVictory;
                 prepareScreenFor(screen);
                 return;
-            }
-
-            if (foe->mType == kTinhoso) {
+            } else if (foe->mType == kTinhoso) {
                 hasBossOnScreen = FALSE;
 
                 clearVector(&doors);
             }
 
-            ++foePtr;
             continue;
         }
 
         if (foe->mType != kSkeleton && foe->mType != kHand ) {
-            ++foePtr;
             continue;
         }
 
@@ -602,29 +582,34 @@ Unfortunately, prevents looking up.*/
             foe->mSpeed.mY = 0;
             foe->mPosition.mY = (foe->mPosition.mY / 32) * 32;
         }
+    }
 
-        ++foePtr;
+    for (pos = 0; pos < foes.used; ++pos ) {
+        struct Actor *foe = foes.items[pos];
+
+        if (foe != NULL && !foe->mActive) {
+            removeFromVector(&foes, foe);
+        }
     }
 }
 
 void openAllDoors() {
-    struct Actor** doorPtr = (struct Actor**)doors.items;
 	size_t pos = 0;
     for (pos = 0; pos < doors.used; ++pos) {
-        struct Actor* door = *doorPtr;
-        door->mType = kOpenDoor;
-        ++doorPtr;
+        struct Actor* door = doors.items[pos];
+        if (door != NULL ) {
+            door->mType = kOpenDoor;
+        }
     }
 }
 
 void evaluatePlayerAttack() {
 
-    struct Actor** foePtr = (struct Actor**)foes.items;
     size_t pos = 0;
     for (pos = 0; pos < foes.used; pos++ ) {
-        struct Actor* foe = *foePtr;
+        struct Actor* foe = foes.items[pos];
 
-		if (!foe->mActive) {
+		if (foe == NULL || !foe->mActive) {
 			continue;
 		}
 
@@ -637,7 +622,6 @@ void evaluatePlayerAttack() {
             foe->mHealth -= 2;
             return; /*only one enemy per attack!*/
         }
-		++foePtr;
     }
 }
 

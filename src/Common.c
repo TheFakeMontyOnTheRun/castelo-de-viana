@@ -24,21 +24,45 @@
 #include "Common.h"
 
 void clearVector(struct ItemVector *vector) {
-	memset(vector->items, 0, sizeof(void *) * vector->capacity);
-	vector->used = 0;
+    vector->used = 0;
+    for ( size_t c = 0; c < vector->capacity; ++c ) {
+        if (vector->items[c] != NULL) {
+            free(vector->items[c]);
+            vector->items[c] = NULL;
+        }
+    }
 }
 
 void initVector(struct ItemVector *vector, size_t capacity) {
 	vector->capacity = capacity;
 	vector->used = 0;
-	vector->items = (void **) (malloc(sizeof(void *) * capacity));
+	vector->items = (void **) (calloc(capacity, sizeof(void *)));
 }
 
-void pushVector(struct ItemVector *vector, void *item) {
+int removeFromVector(struct ItemVector *vector, void *item) {
 
-	assert(vector->used + 1 <= vector->capacity);
-	vector->items[vector->used] = item;
-	vector->used++;
+    for ( size_t c = 0; c < vector->capacity; ++c ) {
+        if (vector->items[c] == item) {
+            vector->used--;
+            vector->items[c] = NULL;
+            return 1;
+        }
+    }
+
+    return 0;
+}
+
+int pushVector(struct ItemVector *vector, void *item) {
+
+	for ( size_t c = 0; c < vector->capacity; ++c ) {
+		if (vector->items[c] == NULL) {
+			vector->used++;
+			vector->items[c] = item;
+			return 1;
+		}
+	}
+
+	return 0;
 }
 
 int min(int val1, int val2) {
