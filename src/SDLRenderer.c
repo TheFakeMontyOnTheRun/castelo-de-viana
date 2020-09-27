@@ -26,196 +26,195 @@ uint32_t mPalette[256];
 
 struct ControlState getControlState() {
 
-  SDL_Event event;
+    SDL_Event event;
 
-  while ( SDL_PollEvent( &event ) ) {
-    
-    if( event.type == SDL_QUIT ) {
+    while (SDL_PollEvent(&event)) {
+
+        if (event.type == SDL_QUIT) {
 #ifndef __EMSCRIPTEN__
-      exit(0);
+            exit(0);
 #endif
-    } else if ( event.type == SDL_KEYDOWN ) {
-          switch ( event.key.keysym.sym ) {
-              case SDLK_q:
+        } else if (event.type == SDL_KEYDOWN) {
+            switch (event.key.keysym.sym) {
+                case SDLK_q:
 #ifndef __EMSCRIPTEN__
-                  exit(0);
+                    exit(0);
 #endif
 
 
-              case SDLK_ESCAPE:
-                  toReturn.escape = TRUE;
-                  break;
+                case SDLK_ESCAPE:
+                    toReturn.escape = TRUE;
+                    break;
 
-              case SDLK_RETURN:
-                  toReturn.enter = TRUE;
-                  break;
+                case SDLK_RETURN:
+                    toReturn.enter = TRUE;
+                    break;
 
-              case SDLK_LEFT:
-                  toReturn.moveLeft = TRUE;
-                  break;
+                case SDLK_LEFT:
+                    toReturn.moveLeft = TRUE;
+                    break;
 
-              case SDLK_RIGHT:
-                  toReturn.moveRight = TRUE;
-                  break;
+                case SDLK_RIGHT:
+                    toReturn.moveRight = TRUE;
+                    break;
 
-              case SDLK_UP:
-                  toReturn.moveUp = TRUE;
-                  break;
+                case SDLK_UP:
+                    toReturn.moveUp = TRUE;
+                    break;
 
-              case SDLK_l:
-                  toReturn.secret = TRUE;
-                  break;
+                case SDLK_l:
+                    toReturn.secret = TRUE;
+                    break;
 
-              case SDLK_DOWN:
-                  toReturn.moveDown = TRUE;
-                  break;
-
-
-              case SDLK_LSHIFT:
-              case SDLK_RSHIFT:
-                  toReturn.jump = TRUE;
-                  break;
-
-              case SDLK_LCTRL:
-              case SDLK_RCTRL:
-                  toReturn.sword = TRUE;
-                  break;
-
-              case SDLK_SPACE:
-                  toReturn.fireArrow = TRUE;
-                  break;
-          }
-      } else if ( event.type == SDL_KEYUP ) {
-          switch ( event.key.keysym.sym ) {
+                case SDLK_DOWN:
+                    toReturn.moveDown = TRUE;
+                    break;
 
 
-              case SDLK_ESCAPE:
-                  toReturn.escape = FALSE;
-                  break;
+                case SDLK_LSHIFT:
+                case SDLK_RSHIFT:
+                    toReturn.jump = TRUE;
+                    break;
 
-              case SDLK_RETURN:
-                  toReturn.enter = FALSE;
-                  break;
+                case SDLK_LCTRL:
+                case SDLK_RCTRL:
+                    toReturn.sword = TRUE;
+                    break;
 
-              case SDLK_LEFT:
-                  toReturn.moveLeft = FALSE;
-                  break;
-
-              case SDLK_RIGHT:
-                  toReturn.moveRight = FALSE;
-                  break;
-
-              case SDLK_UP:
-                  toReturn.moveUp = FALSE;
-                  break;
-
-              case SDLK_l:
-                  toReturn.secret = FALSE;
-                  break;
-
-              case SDLK_DOWN:
-                  toReturn.moveDown = FALSE;
-                  break;
+                case SDLK_SPACE:
+                    toReturn.fireArrow = TRUE;
+                    break;
+            }
+        } else if (event.type == SDL_KEYUP) {
+            switch (event.key.keysym.sym) {
 
 
-              case SDLK_LSHIFT:
-              case SDLK_RSHIFT:
-                  toReturn.jump = FALSE;
-                  break;
+                case SDLK_ESCAPE:
+                    toReturn.escape = FALSE;
+                    break;
 
-              case SDLK_LCTRL:
-              case SDLK_RCTRL:
-                  toReturn.sword = FALSE;
-                  break;
+                case SDLK_RETURN:
+                    toReturn.enter = FALSE;
+                    break;
 
-              case SDLK_SPACE:
-                  toReturn.fireArrow = FALSE;
-                  break;
-          }
-      }
+                case SDLK_LEFT:
+                    toReturn.moveLeft = FALSE;
+                    break;
 
-  }
-  return toReturn;
+                case SDLK_RIGHT:
+                    toReturn.moveRight = FALSE;
+                    break;
+
+                case SDLK_UP:
+                    toReturn.moveUp = FALSE;
+                    break;
+
+                case SDLK_l:
+                    toReturn.secret = FALSE;
+                    break;
+
+                case SDLK_DOWN:
+                    toReturn.moveDown = FALSE;
+                    break;
+
+
+                case SDLK_LSHIFT:
+                case SDLK_RSHIFT:
+                    toReturn.jump = FALSE;
+                    break;
+
+                case SDLK_LCTRL:
+                case SDLK_RCTRL:
+                    toReturn.sword = FALSE;
+                    break;
+
+                case SDLK_SPACE:
+                    toReturn.fireArrow = FALSE;
+                    break;
+            }
+        }
+
+    }
+    return toReturn;
 }
-  
+
 void beginFrame() {
-  clearBuffers();
+    clearBuffers();
 }
 
 void doneWithFrame() {
 #ifndef __EMSCRIPTEN__
-  SDL_Delay(50);
+    SDL_Delay(50);
 #endif
-  SDL_Flip(video);
+    SDL_Flip(video);
 }
 
 void muteSound() {
 }
 
 void onQuit() {
-  SDL_Quit();
+    SDL_Quit();
 }
 
 
-void putpixel(SDL_Surface *surface, int x, int y, Uint32 pixel)
-{
+void putpixel(SDL_Surface *surface, int x, int y, Uint32 pixel) {
     int bpp = surface->format->BytesPerPixel;
 
-    Uint8 *p = (Uint8 *)surface->pixels + y * surface->pitch + x * bpp;
+    Uint8 *p = (Uint8 *) surface->pixels + y * surface->pitch + x * bpp;
 
-            if(SDL_BYTEORDER == SDL_BIG_ENDIAN) {
-                *(Uint32 *)p = SDL_MapRGBA( surface->format,
-                                            ( pixel & 0xFF0000 ) >> 16,
-                                            ( pixel & 0x00FF00 ) >> 8,
-                                            ( pixel & 0x0000FF ),
-                                            255
-                );
-            } else {
-                *(Uint32 *)p = SDL_MapRGBA( surface->format,
-                                            ( pixel & 0x0000FF ),
-                                            ( pixel & 0x00FF00 ) >> 8,
-                                            ( pixel & 0xFF0000 ) >> 16,
-                                            255
-                        );
-            }
+    if (SDL_BYTEORDER == SDL_BIG_ENDIAN) {
+        *(Uint32 *) p = SDL_MapRGBA(surface->format,
+                                    (pixel & 0xFF0000) >> 16,
+                                    (pixel & 0x00FF00) >> 8,
+                                    (pixel & 0x0000FF),
+                                    255
+        );
+    } else {
+        *(Uint32 *) p = SDL_MapRGBA(surface->format,
+                                    (pixel & 0x0000FF),
+                                    (pixel & 0x00FF00) >> 8,
+                                    (pixel & 0xFF0000) >> 16,
+                                    255
+        );
+    }
 }
 
-void copyImageBufferToVideoMemory(uint8_t* imageBuffer ) {
-    SDL_Surface* screen;
-  SDL_Rect rect;
+void copyImageBufferToVideoMemory(uint8_t *imageBuffer) {
+    SDL_Surface *screen;
+    SDL_Rect rect;
     int y = 0;
     int x = 0;
-  int pos = 0;
+    int pos = 0;
 
-  rect.x = 0;
-  rect.y = 0;
-  rect.w = 320;
-  rect.h = 200;
-  SDL_FillRect( video, &rect, SDL_MapRGB( video->format, 0, 0, 0 ) );
+    rect.x = 0;
+    rect.y = 0;
+    rect.w = 320;
+    rect.h = 200;
+    SDL_FillRect(video, &rect, SDL_MapRGB(video->format, 0, 0, 0));
     screen = video;
-    if ( SDL_MUSTLOCK(screen) ) {
-        if ( SDL_LockSurface(screen) < 0 ) {
+    if (SDL_MUSTLOCK(screen)) {
+        if (SDL_LockSurface(screen) < 0) {
             fprintf(stderr, "Can't lock screen: %s\n", SDL_GetError());
             return;
         }
     }
 
 
-    for ( y = 0; y < 200; ++y ) {
+    for (y = 0; y < 200; ++y) {
 
-        for ( x = 0; x < 320; ++x ) {
-          rect.x = x;
-          rect.y = y;
-          rect.w = 1;
-          rect.h = 1;
+        for (x = 0; x < 320; ++x) {
+            rect.x = x;
+            rect.y = y;
+            rect.w = 1;
+            rect.h = 1;
 
-          pos = ( 320 * y ) + x;
+            pos = (320 * y) + x;
 
-        putpixel(video, x, y, mPalette[imageBuffer[ pos ]]);
+            putpixel(video, x, y, mPalette[imageBuffer[pos]]);
 
+        }
     }
-  }
-    if ( SDL_MUSTLOCK(screen) ) {
+    if (SDL_MUSTLOCK(screen)) {
         SDL_UnlockSurface(screen);
     }
 
@@ -233,14 +232,13 @@ void enterFullScreenMode() {
 #endif
 
 
-
-uint8_t getPaletteEntry( uint32_t origin ) {
+uint8_t getPaletteEntry(uint32_t origin) {
 
     uint8_t shade = 0;
 
 
-    shade += (((((origin & 0x0000FF)      ) << 2) >> 8)) << 6;
-    shade += (((((origin & 0x00FF00)  >> 8) << 3) >> 8)) << 3;
+    shade += (((((origin & 0x0000FF)) << 2) >> 8)) << 6;
+    shade += (((((origin & 0x00FF00) >> 8) << 3) >> 8)) << 3;
     shade += (((((origin & 0xFF0000) >> 16) << 3) >> 8)) << 0;
 
     return shade;
@@ -249,11 +247,11 @@ uint8_t getPaletteEntry( uint32_t origin ) {
 
 void initVideoFor(enum EVideoType unused) {
     int r, g, b;
-  SDL_Init( SDL_INIT_VIDEO );
+    SDL_Init(SDL_INIT_VIDEO);
 
     memset(&toReturn, 0, sizeof(struct ControlState));
 
-  video = SDL_SetVideoMode( 320, 200, 0, SDL_ASYNCBLIT | SDL_HWACCEL | SDL_HWSURFACE);
+    video = SDL_SetVideoMode(320, 200, 0, SDL_ASYNCBLIT | SDL_HWACCEL | SDL_HWSURFACE);
 
 #ifdef __EMSCRIPTEN__
     enterFullScreenMode();
@@ -272,6 +270,6 @@ void initVideoFor(enum EVideoType unused) {
 
 }
 
-const char* getAssetsPath() {
+const char *getAssetsPath() {
     return "sdl.pfs";
 }

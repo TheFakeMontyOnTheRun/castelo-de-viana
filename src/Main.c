@@ -31,6 +31,7 @@
 
 #include "CPackedFileReader.h"
 #include "LoadImage.h"
+
 #ifdef __EMSCRIPTEN__
 #include <emscripten.h>
 #include <emscripten/html5.h>
@@ -43,29 +44,29 @@ int enableSecret = FALSE;
 
 struct ItemVector tiles;
 
-struct NativeBitmap* pausedSign;
+struct NativeBitmap *pausedSign;
 
-struct NativeBitmap* arrowSprite[2];
+struct NativeBitmap *arrowSprite[2];
 
-struct NativeBitmap* doorStates[2];
+struct NativeBitmap *doorStates[2];
 
-struct NativeBitmap* foeSprites[2];
+struct NativeBitmap *foeSprites[2];
 
-struct NativeBitmap* itemSprites[2];
+struct NativeBitmap *itemSprites[2];
 
-struct NativeBitmap* gargoyleSprites[2];
+struct NativeBitmap *gargoyleSprites[2];
 
-struct NativeBitmap* capirotoSprites[2];
+struct NativeBitmap *capirotoSprites[2];
 
-struct NativeBitmap* handSprites[2];
+struct NativeBitmap *handSprites[2];
 
-struct NativeBitmap* tinhosoSprites[2];
+struct NativeBitmap *tinhosoSprites[2];
 
-struct NativeBitmap* hero[6][2];
+struct NativeBitmap *hero[6][2];
 
-uint8_t imageBuffer[ 320 * 200 ];
+uint8_t imageBuffer[320 * 200];
 
-struct NativeBitmap* currentScreen = NULL;
+struct NativeBitmap *currentScreen = NULL;
 
 void initOPL2() {
     setupOPL2();
@@ -82,39 +83,39 @@ void prepareScreenFor(enum EScreen screenState) {
             currentScreen = NULL;
             break;
         case kGameOver:
-            currentScreen = loadBitmap( "gameover.png", videoType );
+            currentScreen = loadBitmap("gameover.png", videoType);
             playTune("gggefffd");
             break;
         case kVictory:
-            currentScreen = loadBitmap( "victory.png", videoType );
+            currentScreen = loadBitmap("victory.png", videoType);
             playTune("eefggfedccdeed12d4eefggfedccdedc12c4ddecde12f12ecde12f12edcdpeefggfedccdedc12c4");
             break;
     }
 }
 
 void clearBuffers() {
-    memset( imageBuffer, 4, 320 * 200 );
+    memset(imageBuffer, 4, 320 * 200);
 }
 
-void loadTiles(struct ItemVector* tilesToLoad) {
+void loadTiles(struct ItemVector *tilesToLoad) {
     size_t pos;
-    char** ptr = (char**)tilesToLoad->items;
-    initVector( &tiles, tilesToLoad->used );
+    char **ptr = (char **) tilesToLoad->items;
+    initVector(&tiles, tilesToLoad->used);
 
 
-    for ( pos = 0; pos < tilesToLoad->used; ++pos ) {
+    for (pos = 0; pos < tilesToLoad->used; ++pos) {
 
-        char* tile = *ptr;
+        char *tile = *ptr;
 
-        struct ItemVector* strip = (struct ItemVector*)calloc(sizeof(struct ItemVector), 1);
+        struct ItemVector *strip = (struct ItemVector *) calloc(sizeof(struct ItemVector), 1);
 
 
-        if ( !strcmp( tile + (strlen(tile) - 4), ".png" ) ) {
-            initVector( strip, 1 );
-            pushVector( strip, loadBitmap( tile, videoType ) );
-            pushVector( &tiles, strip);
+        if (!strcmp(tile + (strlen(tile) - 4), ".png")) {
+            initVector(strip, 1);
+            pushVector(strip, loadBitmap(tile, videoType));
+            pushVector(&tiles, strip);
         } else {
-            pushVector( &tiles, loadSpriteList( tile, videoType));
+            pushVector(&tiles, loadSpriteList(tile, videoType));
         }
 
         ++ptr;
@@ -134,22 +135,22 @@ void render() {
     int heroHealthColour;
     int backgroundColour;
     uint8_t *pixelData;
-    struct NativeBitmap* sprite;
+    struct NativeBitmap *sprite;
     uint8_t transparency;
     size_t pos;
 
-    if ( videoType == kCGA ) {
-        memset( imageBuffer, 4, 320 * 200 );
+    if (videoType == kCGA) {
+        memset(imageBuffer, 4, 320 * 200);
         transparency = 0;
     } else {
-        memset( imageBuffer, 0, 320 * 200 );
+        memset(imageBuffer, 0, 320 * 200);
         transparency = 199;
     }
 
 
     if (currentScreen != NULL) {
 
-        uint8_t* pixelData = currentScreen->mRawData;
+        uint8_t *pixelData = currentScreen->mRawData;
 
         int c = 0;
         for (c = 0; c < 320 * 200; ++c) {
@@ -167,9 +168,9 @@ void render() {
     x1 = 0;
 
     for (ty = 0; ty < 6; ++ty) {
-    	int tx = 0;
+        int tx = 0;
         for (tx = 0; tx < 10; ++tx) {
-            struct NativeBitmap* tile;
+            struct NativeBitmap *tile;
             uint8_t *pixelData;
 
             y0 = (ty * 32);
@@ -179,8 +180,8 @@ void render() {
             pixel = 4;
 
             if (backgroundTiles[ty][tx] != 0) {
-                struct ItemVector *tileset = (struct ItemVector*)tiles.items[backgroundTiles[ty][tx]];
-                tile = (struct NativeBitmap*)tileset->items[counter % tileset->used];
+                struct ItemVector *tileset = (struct ItemVector *) tiles.items[backgroundTiles[ty][tx]];
+                tile = (struct NativeBitmap *) tileset->items[counter % tileset->used];
 
                 pixelData = tile->mRawData;
 
@@ -188,8 +189,8 @@ void render() {
                 y = y0;
                 for (y = y0; y < y1; ++y) {
 
-                    uint8_t* sourceLine = pixelData + (32 * (y - y0));
-                    uint8_t* destLine = &imageBuffer[0] + (320 * y) + x0;
+                    uint8_t *sourceLine = pixelData + (32 * (y - y0));
+                    uint8_t *destLine = &imageBuffer[0] + (320 * y) + x0;
 
                     int x = x0;
                     for (x = x0; x < x1; ++x) {
@@ -207,16 +208,16 @@ void render() {
             }
 
             if (foregroundTiles[ty][tx] != 0) {
-                struct ItemVector *tileset = (struct ItemVector*)tiles.items[foregroundTiles[ty][tx]];
-                tile = (struct NativeBitmap*)tileset->items[counter % tileset->used];
+                struct ItemVector *tileset = (struct ItemVector *) tiles.items[foregroundTiles[ty][tx]];
+                tile = (struct NativeBitmap *) tileset->items[counter % tileset->used];
                 pixelData = tile->mRawData;
 
                 pixel = 4;
                 y = y0;
                 for (y = y0; y < y1; ++y) {
 
-                    uint8_t* sourceLine = pixelData + (32 * (y - y0));
-                    uint8_t* destLine = &imageBuffer[0] + (320 * y) + x0;
+                    uint8_t *sourceLine = pixelData + (32 * (y - y0));
+                    uint8_t *destLine = &imageBuffer[0] + (320 * y) + x0;
 
                     int x = x0;
                     for (x = x0; x < x1; ++x) {
@@ -235,10 +236,10 @@ void render() {
         }
     }
 
-    for (pos = 0; pos < doors.used; ++ pos ) {
-        struct Actor* door = doors.items[pos];
+    for (pos = 0; pos < doors.used; ++pos) {
+        struct Actor *door = doors.items[pos];
 
-        if (door == NULL ) {
+        if (door == NULL) {
             continue;
         }
 
@@ -320,17 +321,17 @@ void render() {
         }
     }
 
-    for (pos = 0; pos < arrows.used; ++pos ) {
+    for (pos = 0; pos < arrows.used; ++pos) {
         int pixel;
         int y;
         int x;
-        struct Actor* arrow = arrows.items[pos];
+        struct Actor *arrow = arrows.items[pos];
 
-        if ( arrow == NULL || !arrow->mActive ) {
+        if (arrow == NULL || !arrow->mActive) {
             continue;
         }
 
-        if (abs(arrow->mSpeed.mX) > abs(arrow->mSpeed.mY) ) {
+        if (abs(arrow->mSpeed.mX) > abs(arrow->mSpeed.mY)) {
             pixelData = arrowSprite[0]->mRawData;
         } else {
             pixelData = arrowSprite[1]->mRawData;
@@ -371,18 +372,18 @@ void render() {
         }
     }
 
-    for (pos = 0; pos < foes.used; ++pos ) {
-        struct Actor* foe = foes.items[pos];
+    for (pos = 0; pos < foes.used; ++pos) {
+        struct Actor *foe = foes.items[pos];
 
-		if (foe == NULL || !foe->mActive) {
-			continue;
-		}
+        if (foe == NULL || !foe->mActive) {
+            continue;
+        }
 
-		if (foe->mType != kSkeleton &&
-		    foe->mType != kGargoyle &&
-		    foe->mType != kHand &&
+        if (foe->mType != kSkeleton &&
+            foe->mType != kGargoyle &&
+            foe->mType != kHand &&
             foe->mType != kTinhoso &&
-            foe->mType != kCapiroto ) {
+            foe->mType != kCapiroto) {
             continue;
         }
 
@@ -434,10 +435,10 @@ void render() {
         }
     }
 
-    for (pos = 0; pos < items.used; ++pos ) {
-        struct Item* item = items.items[pos];
+    for (pos = 0; pos < items.used; ++pos) {
+        struct Item *item = items.items[pos];
 
-        if (item == NULL ||!item->mActive ) {
+        if (item == NULL || !item->mActive) {
             continue;
         }
 
@@ -498,17 +499,17 @@ void render() {
     }
 
     if (paused) {
-        uint8_t* pixelsPause = pausedSign->mRawData;
+        uint8_t *pixelsPause = pausedSign->mRawData;
         int width = pausedSign->mWidth;
         int height = pausedSign->mHeight;
         int centerX = 320 / 2;
         int centerY = 200 / 2;
 
         int y = 0;
-        for ( y = 0; y < height; ++y ) {
+        for (y = 0; y < height; ++y) {
             int py = centerY - (height / 2) + y;
             int x = 0;
-            for ( x = 0; x < width; ++x ) {
+            for (x = 0; x < width; ++x) {
                 int px = centerX - (width / 2) + x;
 
                 uint8_t pixel = (pixelsPause[(width * y) + x]);
@@ -521,21 +522,21 @@ void render() {
     heroHealthColour = 9;
     backgroundColour = 8;
 
-    if (videoType == kVGA ) {
+    if (videoType == kVGA) {
         bossHealthColour = 0xFFFF0000;
         heroHealthColour = 0xFFFFFFFF;
         backgroundColour = 0xFFAAAAAA;
     }
 
     if (ticksToShowHealth > 0) {
-    	int y = 192;
-        for ( y = 192; y < 200; ++y ) {
-        	int x = 0;
-            for ( x = 0; x < (8 * player.mHealth); ++x ) {
+        int y = 192;
+        for (y = 192; y < 200; ++y) {
+            int x = 0;
+            for (x = 0; x < (8 * player.mHealth); ++x) {
                 imageBuffer[(320 * y) + (x)] = heroHealthColour;
             }
 
-            for ( x = (8 * player.mHealth); x < (80); ++x ) {
+            for (x = (8 * player.mHealth); x < (80); ++x) {
                 imageBuffer[(320 * y) + (x)] = backgroundColour;
             }
 
@@ -546,24 +547,24 @@ void render() {
         int bossHealth = 0;
 
         size_t pos = 0;
-        for (pos = 0; pos < foes.used; ++pos ) {
-            struct Actor* foe = foes.items[pos];
+        for (pos = 0; pos < foes.used; ++pos) {
+            struct Actor *foe = foes.items[pos];
 
-			if (foe == NULL || !foe->mActive) {
-				continue;
-			}
+            if (foe == NULL || !foe->mActive) {
+                continue;
+            }
 
-			if (foe->mType == kTinhoso || foe->mType == kCapiroto) {
+            if (foe->mType == kTinhoso || foe->mType == kCapiroto) {
                 bossHealth = foe->mHealth;
             }
         }
 
-        for ( y = 184; y < 192; ++y ) {
-            for ( x = 0; x < (8 * bossHealth ); ++x ) {
+        for (y = 184; y < 192; ++y) {
+            for (x = 0; x < (8 * bossHealth); ++x) {
                 imageBuffer[(320 * y) + (x)] = bossHealthColour;
             }
 
-            for ( x = (8 * bossHealth); x < (totalBossHealth * 8); ++x ) {
+            for (x = (8 * bossHealth); x < (totalBossHealth * 8); ++x) {
                 imageBuffer[(320 * y) + (x)] = backgroundColour;
             }
         }
@@ -610,52 +611,52 @@ void sysTick() {
 
     controlState = getControlState();
 
-    if ( controlState.sword ) {
+    if (controlState.sword) {
         isAttacking = TRUE;
     }
 
-    if ( controlState.jump ) {
+    if (controlState.jump) {
         isJumping = TRUE;
     }
 
-    if ( controlState.secret ) {
+    if (controlState.secret) {
         enableSecret = TRUE;
         prepareScreenFor(kIntro);
     }
 
-    if ( controlState.escape ) {
+    if (controlState.escape) {
         done = TRUE;
     }
 
-    if ( controlState.jump ) {
+    if (controlState.jump) {
         isJumping = TRUE;
     }
 
-    if ( controlState.moveUp && !isOnStairs && isOnGround ) {
+    if (controlState.moveUp && !isOnStairs && isOnGround) {
         isAltAttackPressed = TRUE;
     }
 
-    if ( controlState.moveDown ) {
+    if (controlState.moveDown) {
         isDownPressed = TRUE;
     }
 
-    if ( controlState.moveUp ) {
+    if (controlState.moveUp) {
         isUpPressed = TRUE;
     }
 
-    if ( controlState.moveLeft ) {
+    if (controlState.moveLeft) {
         isLeftPressed = TRUE;
     }
 
-    if ( controlState.moveRight ) {
+    if (controlState.moveRight) {
         isRightPressed = TRUE;
     }
 
-    if ( controlState.fireArrow ) {
+    if (controlState.fireArrow) {
         isAltAttackPressed = TRUE;
     }
 
-    if ( controlState.enter ) {
+    if (controlState.enter) {
         switch (screen) {
             case kIntro:
                 screen = kGame;
@@ -714,36 +715,37 @@ void loadGraphics() {
     tinhosoSprites[1] = loadBitmap("tinhoso1.png", videoType);
 
 
-    hero[0][0] = loadBitmap( "up0.png", videoType);
-    hero[0][1] = loadBitmap( "up1.png", videoType);
-    hero[1][0] = loadBitmap( "hero0.png", videoType);
-    hero[1][1] = loadBitmap( "hero1.png", videoType);
-    hero[2][0] = loadBitmap( "down0.png", videoType);
-    hero[2][1] = loadBitmap( "down1.png", videoType);
-    hero[3][0] = loadBitmap( "attack0.png", videoType);
-    hero[3][1] = loadBitmap( "attack0.png", videoType);
-    hero[4][0] = loadBitmap( "jump0.png", videoType);
-    hero[4][1] = loadBitmap( "jump0.png", videoType);
-    hero[5][0] = loadBitmap( "arrow0.png", videoType);
-    hero[5][1] = loadBitmap( "arrow1.png", videoType);
+    hero[0][0] = loadBitmap("up0.png", videoType);
+    hero[0][1] = loadBitmap("up1.png", videoType);
+    hero[1][0] = loadBitmap("hero0.png", videoType);
+    hero[1][1] = loadBitmap("hero1.png", videoType);
+    hero[2][0] = loadBitmap("down0.png", videoType);
+    hero[2][1] = loadBitmap("down1.png", videoType);
+    hero[3][0] = loadBitmap("attack0.png", videoType);
+    hero[3][1] = loadBitmap("attack0.png", videoType);
+    hero[4][0] = loadBitmap("jump0.png", videoType);
+    hero[4][1] = loadBitmap("jump0.png", videoType);
+    hero[5][0] = loadBitmap("arrow0.png", videoType);
+    hero[5][1] = loadBitmap("arrow1.png", videoType);
 }
 
 #ifndef ANDROID
+
 int main(int argc, char **argv) {
 
-	int c = 1;
-    for ( c = 1; c < argc; ++c ) {
-        char* parm = argv[ c ];
+    int c = 1;
+    for (c = 1; c < argc; ++c) {
+        char *parm = argv[c];
 
-        if ( !strcmp(parm, "opl2lpt")) {
+        if (!strcmp(parm, "opl2lpt")) {
             initOPL2();
         }
 
-        if ( !strcmp(parm, "secret")) {
+        if (!strcmp(parm, "secret")) {
             enableSecret = TRUE;
         }
 
-        if ( !strcmp(parm, "vga")) {
+        if (!strcmp(parm, "vga")) {
             videoType = kVGA;
         }
     }
@@ -751,8 +753,6 @@ int main(int argc, char **argv) {
     loadGraphics();
     init();
     prepareScreenFor(kIntro);
-
-
 
 
 #ifndef __EMSCRIPTEN__
@@ -769,4 +769,5 @@ int main(int argc, char **argv) {
 
     return 0;
 }
+
 #endif
