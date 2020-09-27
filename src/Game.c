@@ -421,7 +421,12 @@ Unfortunately, prevents looking up.*/
         arrow->mPosition.mX += arrow->mSpeed.mX;
         arrow->mPosition.mY += arrow->mSpeed.mY;
 
-        if (isBlockedByWall(arrow)) {
+        if (arrow->mPosition.mX >= 320 ||
+            arrow->mPosition.mX < 0 ||
+            arrow->mPosition.mY < 0 ||
+            arrow->mPosition.mY >= 200 ||
+            isBlockedByWall(arrow)) {
+
             removeFromVector(&arrows, arrow);
             free(arrow);
             continue;
