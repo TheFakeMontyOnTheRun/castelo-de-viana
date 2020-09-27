@@ -76,7 +76,7 @@ void prepareScreenFor(enum EScreen screenState) {
     muteSound();
     switch (screenState) {
         case kIntro:
-            currentScreen = loadBitmap( (enableSecret ? "secret.dat" : "intro.png"), videoType  );
+            currentScreen = loadBitmap((enableSecret ? "secret.img" : "intro.png"), videoType);
             playTune("eefggfedccdeedd");
             break;
         case kGame:
