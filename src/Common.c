@@ -43,8 +43,18 @@ int removeFromVector(struct ItemVector *vector, void *item) {
 
     for ( size_t c = 0; c < vector->capacity; ++c ) {
         if (vector->items[c] == item) {
+            void *replacement = NULL;
+
+            for ( size_t d = vector->used - 1; d >= c + 1; --d) {
+                replacement = vector->items[d];
+                if (replacement != NULL) {
+                    vector->items[d] = NULL;
+                    break;
+                }
+            }
             vector->used--;
-            vector->items[c] = NULL;
+            vector->items[c] = replacement;
+
             return 1;
         }
     }
