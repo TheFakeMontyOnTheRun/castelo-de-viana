@@ -63,7 +63,7 @@ void initVec2i( struct Vec2i* vec, int x, int y ) {
 	vec->mY = y;
 }
 
-void evalutePlayerAttack();
+void evaluatePlayerAttack();
 
 void openAllDoors();
 
@@ -312,7 +312,7 @@ void gameTick(int *isOnGround, int *isOnStairs) {
     }
 
     if (player.mStance == kAttacking) {
-        evalutePlayerAttack();
+        evaluatePlayerAttack();
 
         player.mStance = kStanding;
     }
@@ -617,7 +617,7 @@ void openAllDoors() {
     }
 }
 
-void evalutePlayerAttack() {
+void evaluatePlayerAttack() {
 
     struct Actor** foePtr = (struct Actor**)foes.items;
     size_t pos = 0;
