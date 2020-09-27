@@ -592,7 +592,7 @@ Unfortunately, prevents looking up.*/
     for (pos = 0; pos < foes.used; ++pos) {
         struct Actor *foe = foes.items[pos];
 
-        if (foe != NULL && !foe->mActive) {
+        if (foe != NULL && foe->mType != kGargoyle && foe->mHealth <= 0) {
             removeFromVector(&foes, foe);
         }
     }
