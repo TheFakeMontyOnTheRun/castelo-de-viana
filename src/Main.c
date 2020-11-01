@@ -527,9 +527,9 @@ void render() {
     backgroundColour = 8;
 
     if (videoType == kVGA) {
-        bossHealthColour = 0xFFFF0000;
+        bossHealthColour = 0xFFAAAAAA;
         heroHealthColour = 0xFFFFFFFF;
-        backgroundColour = 0xFFAAAAAA;
+        backgroundColour = 0xFFFF0000;
     }
 
     if (ticksToShowHealth > 0) {
