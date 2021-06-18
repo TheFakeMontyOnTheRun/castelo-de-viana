@@ -224,7 +224,9 @@ void onQuit() {
 void putpixel(int x, int y, uint32_t pixel) {
 }
 
+int frame = 0;
 void copyImageBufferToVideoMemory(uint8_t *imageBuffer) {
+    ++frame;
     c2p1x1_4_c5_bm(320, 200, 0, 0, imageBuffer, my_window->RPort->BitMap);
 }
 

@@ -29,7 +29,6 @@ class MainActivity : AppCompatActivity(), View.OnTouchListener {
     private external fun initAssets(assetManager: AssetManager?)
     private external fun sendCommand(cmd: Int)
     private external fun getSoundToPlay() : Int
-    private external fun isOnMainMenu() : Int
 
 
     val KEY_UP =    1.shl(0)
@@ -87,12 +86,12 @@ class MainActivity : AppCompatActivity(), View.OnTouchListener {
 
         btnUp.setOnTouchListener(this)
         btnDown.setOnTouchListener(this)
-        btnFire.setOnTouchListener(this)
-        btnPick.setOnTouchListener(this)
-        btnAim.setOnTouchListener(this)
+        btnArrow.setOnTouchListener(this)
+        btnJump.setOnTouchListener(this)
+        btnSword.setOnTouchListener(this)
         btnLeft.setOnTouchListener(this)
         btnRight.setOnTouchListener(this)
-        btnStart.setOnTouchListener(this)
+        imageView.setOnTouchListener(this)
 
         initAudio()
         imageView.setImageBitmap(bitmap)
@@ -149,10 +148,10 @@ class MainActivity : AppCompatActivity(), View.OnTouchListener {
                     R.id.btnDown -> keyState = (keyState or  KEY_DOWN)
                     R.id.btnLeft -> keyState = (keyState or  KEY_LEFT)
                     R.id.btnRight -> keyState = (keyState or KEY_RIGHT)
-                    R.id.btnFire -> keyState = (keyState or  KEY_SWORD)
-                    R.id.btnAim -> keyState = (keyState or   KEY_JUMP)
-                    R.id.btnPick -> keyState = (keyState or  KEY_ARROW)
-                    R.id.btnStart-> keyState = (keyState or  KEY_START)
+                    R.id.btnSword -> keyState = (keyState or  KEY_SWORD)
+                    R.id.btnJump -> keyState = (keyState or   KEY_JUMP)
+                    R.id.btnArrow -> keyState = (keyState or  KEY_ARROW)
+                    R.id.imageView -> keyState = (keyState or KEY_START)
                 }
             } else if (event.action == MotionEvent.ACTION_UP) {
                 when (v.id) {
@@ -160,10 +159,10 @@ class MainActivity : AppCompatActivity(), View.OnTouchListener {
                     R.id.btnDown -> keyState = (keyState and  KEY_DOWN.inv())
                     R.id.btnLeft -> keyState = (keyState and  KEY_LEFT.inv())
                     R.id.btnRight -> keyState = (keyState and KEY_RIGHT.inv())
-                    R.id.btnFire -> keyState = (keyState and  KEY_SWORD.inv())
-                    R.id.btnAim -> keyState = (keyState and   KEY_JUMP.inv())
-                    R.id.btnPick -> keyState = (keyState and  KEY_ARROW.inv())
-                    R.id.btnStart-> keyState = (keyState and  KEY_START.inv())
+                    R.id.btnSword -> keyState = (keyState and  KEY_SWORD.inv())
+                    R.id.btnJump -> keyState = (keyState and   KEY_JUMP.inv())
+                    R.id.btnArrow -> keyState = (keyState and  KEY_ARROW.inv())
+                    R.id.imageView -> keyState = (keyState and KEY_START.inv())
                 }
             }
         }

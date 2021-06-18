@@ -3,8 +3,8 @@ CC = m68k-amigaos-gcc
 STRIP=m68k-amigaos-strip
 AS = vasmm68k_mot
 
-CFLAGS = -DAMIGA -Iinclude -c -m68000 -s -fexpensive-optimizations -O3
-LDFLAGS =  -msmall-code -fexpensive-optimizations -O3 -s -fomit-frame-pointer -noixemul
+CFLAGS = -DAMIGA -Iinclude -c -m68000 -mtune=68020 -s -fexpensive-optimizations -fno-keep-inline-functions -fomit-frame-pointer -ffast-math -fstrength-reduce -Ofast
+LDFLAGS =  -msmall-code -fexpensive-optimizations -Ofast -s -fomit-frame-pointer -noixemul
 ASFLAGS = -phxass -Fhunk -m68000 -chklabels -no-fpu -wfail -I/opt/amiga/m68k-amigaos/ndk-include
 
 OBJS = src/Game.o src/Main.o \

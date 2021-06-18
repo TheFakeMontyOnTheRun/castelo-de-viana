@@ -210,21 +210,15 @@ int isBlockedByWall(const struct Actor *actor) {
 }
 
 int collideActorActor(const struct Actor *a, const struct Actor *b, int tolerance) {
-    if (abs(a->mPosition.mY - b->mPosition.mY) < tolerance) {
+    if (abs(a->mPosition.mY - b->mPosition.mY) < tolerance &&
+        abs(a->mPosition.mX - b->mPosition.mX) < tolerance) {
 
-        if (a->mDirection == kDirectionRight) {
-            int diff = a->mPosition.mX - b->mPosition.mX;
-            if (diff < (tolerance) && diff > 0) {
-                return TRUE;
-            }
+        if (a->mDirection == kDirectionLeft) {
+            return ((a->mPosition.mX - b->mPosition.mX) > 0);
         } else {
-            int diff = b->mPosition.mX - a->mPosition.mX;
-            if (diff < (tolerance) && diff > 0) {
-                return TRUE;
-            }
+            return ((a->mPosition.mX - b->mPosition.mX) < 0);
         }
     }
-
     return FALSE;
 }
 
@@ -233,12 +227,12 @@ int collideActorItem(const struct Actor *a, const struct Item *b, int tolerance)
 
         if (a->mDirection == kDirectionRight) {
             int diff = a->mPosition.mX - b->mPosition.mX;
-            if (diff < (tolerance) && diff > 0) {
+            if (diff < (tolerance) && diff >= 0) {
                 return TRUE;
             }
         } else {
             int diff = b->mPosition.mX - a->mPosition.mX;
-            if (diff < (tolerance) && diff > 0) {
+            if (abs(diff) < (tolerance) && diff <= 0) {
                 return TRUE;
             }
         }
@@ -623,11 +617,11 @@ void evaluatePlayerAttack() {
             continue;
         }
 
-		if ( foe->mType != kTinhoso &&
-		    foe->mType != kHand &&
-		    foe->mType != kCapiroto &&
-		    foe->mType != kGargoyle &&
-		    collideActorActor(foe, &player, DEFAULT_TOLERANCE)) {
+        if (foe->mType != kTinhoso &&
+            foe->mType != kHand &&
+            foe->mType != kCapiroto &&
+            foe->mType != kGargoyle &&
+            collideActorActor(foe, &player, (3 * DEFAULT_TOLERANCE) / 4)) {
 
             foe->mHealth -= 2;
             return; /*only one enemy per attack!*/
