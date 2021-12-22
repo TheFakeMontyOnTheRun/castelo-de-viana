@@ -108,8 +108,8 @@ struct NativeBitmap *loadBitmap(const char *path, enum EVideoType videoType) {
         4 black
         5 mid blue
         6 mid pink
-        7 white
-        8 black
+        7 mix between pink and blue
+        8 gray
         9 light blue
         10 light pink
         11 white
@@ -133,7 +133,7 @@ struct NativeBitmap *loadBitmap(const char *path, enum EVideoType videoType) {
                         pixel = 10;
                         break;
                     case 173: /* mid white*/
-                        pixel = 7;
+                        pixel = 11;
                         break;
                     case 87: /* light blue */
                         pixel = 9;
@@ -153,9 +153,14 @@ struct NativeBitmap *loadBitmap(const char *path, enum EVideoType videoType) {
                     case 199: /* transparent */
                         pixel = 0;
                         break;
+                    case 91:
+                        pixel = 8;
+                        break;
+                    case 77:
+                        pixel = 7;
+                        break;
                     default:
-                        printf("pixel color: %d\n", pixel);
-                        assert(FALSE);
+                        pixel = 0;
                         break;
                 }
                 buffer[(y * toReturn->mWidth) + x] = pixel;

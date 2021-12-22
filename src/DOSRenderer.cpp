@@ -206,11 +206,27 @@ extern "C" void copyImageBufferToVideoMemory(uint8_t *imageBuffer) {
                     }
                 }
 
-                if (4 <= origin && origin < 8) {
+                if (4 <= origin && origin < 7) {
                     value = origin - 4;
                 }
 
-                if (origin >= 8) {
+                if (origin == 7) {
+                    if (((x + y) % 2) == 0) {
+                        value = 1;
+                    } else {
+                        value = 2;
+                    }
+                }
+
+                if (origin == 8) {
+                    if (((x + y) % 2) == 0) {
+                        value = 3;
+                    } else {
+                        value = 0;
+                    }
+                }
+
+                if (origin > 8) {
                     if (((x + y) % 2) == 0) {
                         value = 3;
                     } else {
