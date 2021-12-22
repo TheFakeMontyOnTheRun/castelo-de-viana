@@ -83,20 +83,17 @@ struct NativeBitmap *loadBitmap(const char *path, enum EVideoType videoType) {
 
     struct StaticBuffer src = loadFileFromPath(getAssetsPath(), path);
 
-    uint16_t width = 0;
-    uint16_t height = 0;
-    uint8_t *ptr = (uint8_t *) src.data;
-    toReturn->mWidth = 0;
-    width = *ptr++;
-    toReturn->mWidth += (width & 0xFF) << 8;
-    width = *ptr++;
-    toReturn->mWidth += width & 0xFF;
+    uint16_t tmp = 0;
+    uint8_t *ptr = src.data;
+    tmp = *ptr++;
+    toReturn->mWidth = (tmp & 0xFF) << 8;
+    tmp = *ptr++;
+    toReturn->mWidth += tmp & 0xFF;
 
-    toReturn->mHeight = 0;
-    height = *ptr++;
-    toReturn->mHeight += (height & 0xFF) << 8;
-    height = *ptr++;
-    toReturn->mHeight += height & 0xFF;
+    tmp = *ptr++;
+    toReturn->mHeight = (tmp & 0xFF) << 8;
+    tmp = *ptr++;
+    toReturn->mHeight += tmp & 0xFF;
 
     size = toReturn->mWidth * toReturn->mHeight;
 
@@ -118,10 +115,10 @@ struct NativeBitmap *loadBitmap(const char *path, enum EVideoType videoType) {
         11 white
         */
         int y = 0;
-        for (y = 0; y < height; ++y) {
+        for (y = 0; y < toReturn->mHeight; ++y) {
             int x = 0;
-            for (x = 0; x < width; ++x) {
-                int pixel = ptr[(y * width) + x];
+            for (x = 0; x < toReturn->mWidth; ++x) {
+                int pixel = ptr[(y * toReturn->mWidth) + x];
                 switch (pixel) {
                     case 82: /* dark white */
                         pixel = 3;
@@ -161,7 +158,7 @@ struct NativeBitmap *loadBitmap(const char *path, enum EVideoType videoType) {
                         assert(FALSE);
                         break;
                 }
-                buffer[(y * width) + x] = pixel;
+                buffer[(y * toReturn->mWidth) + x] = pixel;
             }
         }
     } else {
