@@ -2,8 +2,8 @@ CXXFLAGS = -g -c -DCGA -Istb -Iinclude -IOPL2LPT -O6 -Os  -funroll-loops -funrol
 CFLAGS = -g -c -DCGA -Istb -Iinclude -IOPL2LPT -O6 -Os  -funroll-loops -funroll-all-loops -fomit-frame-pointer -fno-exceptions -fno-rtti -ffast-math -mtune=i486 -march=i486 -fpermissive -Wno-narrowing
 LDFLAGS = -lemu
 
-CXX = i586-pc-msdosdjgpp-g++
-CC = i586-pc-msdosdjgpp-gcc
+CXX = i386-pc-msdosdjgpp-g++
+CC = i386-pc-msdosdjgpp-gcc
 
 OBJS = src/Main.o src/Game.o src/LoadBitmap.o src/MusicDOS.o src/DOSRenderer.o OPL2LPT/controller.o OPL2LPT/timer.o OPL2LPT/OPL2.o \
         src/CPackedFileReader.o\
@@ -14,7 +14,7 @@ TARGET = viana.exe
 
 $(TARGET):	$(OBJS)
 	$(CXX) -o $(TARGET) $(OBJS) $(LDFLAGS)
-	i586-pc-msdosdjgpp-strip $(TARGET)
+	i386-pc-msdosdjgpp-strip $(TARGET)
 
 all:	$(TARGET) rescga resvga gamedata
 

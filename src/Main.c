@@ -37,7 +37,7 @@
 #include <emscripten/html5.h>
 #endif
 
-enum EVideoType videoType;
+extern enum EVideoType videoType;
 
 
 int enableSecret = FALSE;
