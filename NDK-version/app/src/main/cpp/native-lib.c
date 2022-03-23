@@ -33,6 +33,7 @@
 void sysTick();
 void loadGraphics();
 
+enum EVideoType videoType = kVGA;
 
 uint8_t framebufferFinal[320 * 240 * 4];
 uint32_t palette[256];
