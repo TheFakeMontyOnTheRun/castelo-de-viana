@@ -2,25 +2,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <errno.h>
-
-#ifdef AMIGA
-#include "AmigaInt.h"
-
-#else
-
-#ifdef CPC
-
-#include "CPCInt.h"
-
-#else
-
-#include <stdint.h>
-#include <unistd.h>
-
-#endif
-
-#endif
 
 #include "Common.h"
 #include "CPackedFileReader.h"
@@ -28,10 +9,7 @@
 int status;
 
 #ifdef ANDROID
-#include <jni.h>
-#include <android/asset_manager.h>
-#include <android/asset_manager_jni.h>
-#include <android/bitmap.h>
+
 #include <android/asset_manager.h>
 
 extern AAssetManager *defaultAssetManager;
@@ -54,7 +32,7 @@ int android_close(void *cookie) {
 }
 
 
-FILE *android_fopen(const char* filename) {
+FILE *android_fopen(const char *filename) {
 
     AAsset *asset = AAssetManager_open(defaultAssetManager, filename, 0);
     if (!asset) {
@@ -64,6 +42,7 @@ FILE *android_fopen(const char* filename) {
     return funopen(asset, android_read, android_write, android_seek, android_close);
 
 }
+
 #endif
 
 struct StaticBuffer loadFileFromPath(const char *dataFilePath, const char *path) {

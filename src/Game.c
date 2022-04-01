@@ -1,30 +1,8 @@
 #include <assert.h>
 #include <time.h>
 #include <stdlib.h>
-#include <math.h>
-#include <stdio.h>
-#include <string.h>
-
-#ifdef AMIGA
-#include "AmigaInt.h"
-
-#else
-
-#ifdef CPC
-
-#include "CPCInt.h"
-
-#else
-
-#include <stdint.h>
-#include <unistd.h>
-
-#endif
-
-#endif
 
 #include "Common.h"
-#include "NativeBitmap.h"
 #include "Game.h"
 #include "Renderer.h"
 #include "CPackedFileReader.h"
@@ -174,7 +152,7 @@ protection stopping the player from falling*/
     }
 
     if (isPausePressed) {
-        if (pauseCoolDown <= 0 ) {
+        if (pauseCoolDown <= 0) {
             ticksToShowHealth = 14;
             pauseCoolDown = 10;
             paused = !paused;
@@ -190,7 +168,8 @@ int isOnFloor(const struct Actor *actor) {
     } else {
         if (foregroundTiles[ground][(actor->mPosition.mX + 16) / 32] == 1 ||
             (foregroundTiles[ground][(actor->mPosition.mX + 16) / 32] == 3 &&
-             foregroundTiles[((actor->mPosition.mY + 16) / 32)][(actor->mPosition.mX + 16) / 32] != 3)
+             foregroundTiles[((actor->mPosition.mY + 16) / 32)][(actor->mPosition.mX + 16) / 32] !=
+             3)
                 ) {
             return TRUE;
         }
@@ -257,7 +236,8 @@ int isOnDoor(const struct Actor *actor) {
     size_t pos = 0;
     for (pos = 0; pos < doors.used; ++pos) {
         const struct Actor *door = doors.items[pos];
-        if (door != NULL && door->mType == kOpenDoor && collideActorActor(door, actor, DEFAULT_TOLERANCE)) {
+        if (door != NULL && door->mType == kOpenDoor &&
+            collideActorActor(door, actor, DEFAULT_TOLERANCE)) {
             return TRUE;
         }
     }
@@ -311,7 +291,8 @@ void gameTick(int *isOnGround, int *isOnStairs) {
         player.mStance = kStanding;
     }
 
-    *isOnStairs = (foregroundTiles[(player.mPosition.mY + 16) / 32][(player.mPosition.mX + 16) / 32] == 3);
+    *isOnStairs = (
+            foregroundTiles[(player.mPosition.mY + 16) / 32][(player.mPosition.mX + 16) / 32] == 3);
 
     if (isBlockedByWall(&player)) {
         player.mSpeed.mX = 0;
@@ -388,7 +369,8 @@ void gameTick(int *isOnGround, int *isOnStairs) {
         player.mSpeed.mY = -player.mSpeed.mY;
     }
 
-    if (player.mSpeed.mY < 0 && foregroundTiles[player.mPosition.mY / 32][(player.mPosition.mX + 16) / 32] == 1) {
+    if (player.mSpeed.mY < 0 &&
+        foregroundTiles[player.mPosition.mY / 32][(player.mPosition.mX + 16) / 32] == 1) {
         player.mSpeed.mY = -player.mSpeed.mY;
     }
 

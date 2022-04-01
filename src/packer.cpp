@@ -96,7 +96,8 @@ int main(int argc, char **argv) {
 
     for (uint16_t e = 0; e < entries; ++e) {
         uint32_t size = files[e].mContent.size();
-        std::cout << "writing a file " << files[e].id << " with " << size << " bytes at " << ftell(file) << std::endl;
+        std::cout << "writing a file " << files[e].id << " with " << size << " bytes at "
+                  << ftell(file) << std::endl;
         fwrite(&size, 4, 1, file);
 
         for (const auto &c : files[e].mContent) {

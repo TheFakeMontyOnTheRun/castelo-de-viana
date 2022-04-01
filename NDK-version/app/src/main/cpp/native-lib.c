@@ -4,31 +4,11 @@
 #include <android/asset_manager_jni.h>
 
 #include <time.h>
-#include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
-#include <stddef.h>
-#include <stdint.h>
-#include <string.h>
-#include <stdio.h>
 
 
-#include <assert.h>
-#include <math.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdio.h>
-
-#include <stdint.h>
-#include <unistd.h>
-
-#include "Common.h"
-#include "NativeBitmap.h"
 #include "Game.h"
 #include "Renderer.h"
-#include "CPackedFileReader.h"
-#include "LoadImage.h"
-#include "CPackedFileReader.h"
 
 void sysTick();
 void loadGraphics();
@@ -79,7 +59,7 @@ void copyImageBufferToVideoMemory(uint8_t* imageBuffer ) {
     for (int y = 0; y < 240; ++y) {
         for (int x = 0; x < 320; ++x) {
 
-            int32_t pixel = palette[imageBuffer[(int)(320 * ((200 * y) / 240 )) + x]];
+            int32_t pixel = palette[imageBuffer[320 * ((200 * y) / 240) + x]];
 
             uint8_t r = (pixel & 0x000000FF) - 0x38;
             uint8_t g = ((pixel & 0x0000FF00) >> 8) - 0x18;

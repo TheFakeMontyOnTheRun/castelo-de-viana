@@ -1,27 +1,6 @@
-#include <assert.h>
-#include <math.h>
+
 #include <stdlib.h>
 #include <string.h>
-#include <stdio.h>
-
-
-#ifdef AMIGA
-#include "AmigaInt.h"
-
-#else
-
-#ifdef CPC
-
-#include "CPCInt.h"
-
-#else
-
-#include <stdint.h>
-#include <unistd.h>
-
-#endif
-
-#endif
 
 
 #include "Common.h"
@@ -29,7 +8,6 @@
 #include "Game.h"
 #include "Renderer.h"
 
-#include "CPackedFileReader.h"
 #include "LoadImage.h"
 
 #ifdef __EMSCRIPTEN__
@@ -92,7 +70,8 @@ void prepareScreenFor(enum EScreen screenState) {
             break;
         case kVictory:
             currentScreen = loadBitmap("victory.png", videoType);
-            playTune("eefggfedccdeed12d4eefggfedccdedc12c4ddecde12f12ecde12f12edcdpeefggfedccdedc12c4");
+            playTune(
+                    "eefggfedccdeed12d4eefggfedccdedc12c4ddecde12f12ecde12f12edcdpeefggfedccdedc12c4");
             break;
     }
 }
@@ -607,7 +586,7 @@ void sysTick() {
 
     render();
 
-    if (pauseCoolDown > 0 ) {
+    if (pauseCoolDown > 0) {
         --pauseCoolDown;
     }
 

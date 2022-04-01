@@ -1,25 +1,6 @@
 #include <stdlib.h>
 #include <string.h>
-#include <stdio.h>
 #include <assert.h>
-
-#ifdef AMIGA
-#include "AmigaInt.h"
-
-#else
-
-#ifdef CPC
-
-#include "CPCInt.h"
-
-#else
-
-#include <stdint.h>
-#include <unistd.h>
-
-#endif
-
-#endif
 
 #include "Common.h"
 #include "NativeBitmap.h"

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/bgrepeat"
@@ -34,7 +35,7 @@
                 android:focusable="false"
                 android:scaleType="fitCenter"
                 android:soundEffectsEnabled="false"
-                android:src="@drawable/up"
+                app:srcCompat="@drawable/up"
                 android:text="" />
 
             <ImageView
@@ -60,7 +61,7 @@
                 android:focusable="false"
                 android:scaleType="fitCenter"
                 android:soundEffectsEnabled="false"
-                android:src="@drawable/left"
+                app:srcCompat="@drawable/left"
                 android:text="" />
 
             <ImageButton
@@ -82,7 +83,7 @@
                 android:focusable="false"
                 android:scaleType="fitCenter"
                 android:soundEffectsEnabled="false"
-                android:src="@drawable/right"
+                app:srcCompat="@drawable/right"
                 android:text="" />
 
         </LinearLayout>
@@ -107,7 +108,7 @@
                 android:focusable="false"
                 android:scaleType="fitCenter"
                 android:soundEffectsEnabled="false"
-                android:src="@drawable/down"
+                app:srcCompat="@drawable/down"
                 android:text="" />
 
             <ImageView
@@ -181,7 +182,7 @@
                 android:background="#000000FF"
                 android:scaleType="fitEnd"
                 android:soundEffectsEnabled="false"
-                android:src="@drawable/action_sword"
+                app:srcCompat="@drawable/action_sword"
                 android:text="Sword" />
 
 
@@ -193,7 +194,7 @@
                 android:background="#000000FF"
                 android:scaleType="fitCenter"
                 android:soundEffectsEnabled="false"
-                android:src="@drawable/action_jump"
+                app:srcCompat="@drawable/action_jump"
                 android:text="Jump" />
 
             <ImageButton
@@ -204,7 +205,7 @@
                 android:background="#000000FF"
                 android:scaleType="fitStart"
                 android:soundEffectsEnabled="false"
-                android:src="@drawable/action_arrow"
+                app:srcCompat="@drawable/action_arrow"
                 android:text="Arrow" />
 
             <LinearLayout
