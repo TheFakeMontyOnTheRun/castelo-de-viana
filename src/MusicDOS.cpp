@@ -148,7 +148,7 @@ extern "C" void soundTick() {
     }
 }
 
-void stopSounds() {
+extern "C" void stopSounds() {
     if (enableOPL2) {
         music_shutdown();
     } else {

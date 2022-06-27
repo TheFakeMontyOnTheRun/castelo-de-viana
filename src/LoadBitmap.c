@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
+#include <stdint.h>
 
 #include "Common.h"
 #include "NativeBitmap.h"
@@ -25,7 +26,7 @@ struct ItemVector *loadSpriteList(const char *listName, enum EVideoType videoTyp
     bufferBegin = buffer.data;
 
     for (pos = 0; pos < buffer.size; ++pos) {
-        const char c = buffer.data[pos];
+        uint8_t c = buffer.data[pos];
 
         ++since;
         if (pos == buffer.size - 1 || c == '\n') {

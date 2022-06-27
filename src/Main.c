@@ -1,4 +1,4 @@
-
+#include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -114,9 +114,9 @@ void render() {
     int pixel;
     int y;
     int x;
-    int bossHealthColour;
-    int heroHealthColour;
-    int backgroundColour;
+    uint32_t bossHealthColour;
+    uint32_t heroHealthColour;
+    uint32_t backgroundColour;
     uint8_t *pixelData;
     struct NativeBitmap *sprite;
     uint8_t transparency;

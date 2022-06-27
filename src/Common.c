@@ -1,12 +1,14 @@
 
 #include <string.h>
 #include <stdlib.h>
+#include <stdint.h>
 
 #include "Common.h"
 
 void clearVector(struct ItemVector *vector) {
     vector->used = 0;
-    for (size_t c = 0; c < vector->capacity; ++c) {
+    size_t c = 0;
+    for (; c < vector->capacity; ++c) {
         if (vector->items[c] != NULL) {
             free(vector->items[c]);
             vector->items[c] = NULL;
@@ -21,12 +23,13 @@ void initVector(struct ItemVector *vector, size_t capacity) {
 }
 
 int removeFromVector(struct ItemVector *vector, void *item) {
-
-    for (size_t c = 0; c < vector->capacity; ++c) {
+    size_t c = 0;
+    size_t d;
+    for (; c < vector->capacity; ++c) {
         if (vector->items[c] == item) {
             void *replacement = NULL;
 
-            for (size_t d = vector->used - 1; d >= c + 1; --d) {
+            for (d = vector->used - 1; d >= c + 1; --d) {
                 replacement = vector->items[d];
                 if (replacement != NULL) {
                     vector->items[d] = NULL;
@@ -44,8 +47,8 @@ int removeFromVector(struct ItemVector *vector, void *item) {
 }
 
 int pushVector(struct ItemVector *vector, void *item) {
-
-    for (size_t c = 0; c < vector->capacity; ++c) {
+    size_t c = 0;
+    for (; c < vector->capacity; ++c) {
         if (vector->items[c] == NULL) {
             vector->used++;
             vector->items[c] = item;
@@ -91,7 +94,7 @@ size_t countTokens(const char *text, size_t length) {
     size_t count = 0;
     char *ptr = (char *) text;
 
-    size_t pos = 0;
+    size_t pos;
     for (pos = 0; pos < length; ++pos) {
         if (*ptr == '\n') {
             count++;

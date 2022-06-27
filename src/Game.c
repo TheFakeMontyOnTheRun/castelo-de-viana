@@ -1,5 +1,6 @@
 #include <assert.h>
 #include <time.h>
+#include <stdint.h>
 #include <stdlib.h>
 
 #include "Common.h"
@@ -647,7 +648,7 @@ void prepareRoom(int room) {
     for (y = 0; y < 6; ++y) {
         int x = 0;
         for (x = 0; x < 10; ++x) {
-            char ch = '0';
+            uint8_t ch;
 
             ch = bgmap.data[position];
             backgroundTiles[y][x] = ch - '0';

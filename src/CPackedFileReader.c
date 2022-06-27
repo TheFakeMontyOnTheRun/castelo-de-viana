@@ -2,11 +2,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdint.h>
 
 #include "Common.h"
 #include "CPackedFileReader.h"
 
-int status;
+size_t status;
 
 #ifdef ANDROID
 
@@ -58,7 +59,6 @@ struct StaticBuffer loadFileFromPath(const char *dataFilePath, const char *path)
     uint16_t entries = 0;
     size_t lenA;
     int c;
-    int toRead = 0;
     uint32_t pos = 0;
     uint32_t until = 0;
     uint32_t size;

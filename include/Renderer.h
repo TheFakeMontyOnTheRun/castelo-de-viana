@@ -21,7 +21,7 @@ enum EVideoType {
 
 struct ControlState getControlState();
 
-void copyImageBufferToVideoMemory(uint8_t *imageBuffer);
+void copyImageBufferToVideoMemory(const uint8_t *imageBuffer);
 
 void onQuit();
 
