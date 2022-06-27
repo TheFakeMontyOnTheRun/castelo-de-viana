@@ -7,7 +7,7 @@ cmake_minimum_required(VERSION 3.4.1)
 
 include_directories(../../../../../include)
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DSDLSW -std=c90 -DANDROID  -D_BSD_SOURCE")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DSDLSW -DANDROID  -D_BSD_SOURCE")
 
 
 # Creates and names a library, sets it as either STATIC

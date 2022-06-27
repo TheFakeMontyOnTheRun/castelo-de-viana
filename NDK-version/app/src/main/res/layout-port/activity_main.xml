@@ -171,7 +171,7 @@
             <LinearLayout
                 android:layout_width="16dp"
                 android:layout_height="match_parent"
-                android:orientation="vertical"></LinearLayout>
+                android:orientation="vertical" />
 
             <LinearLayout
                 android:layout_width="0dp"

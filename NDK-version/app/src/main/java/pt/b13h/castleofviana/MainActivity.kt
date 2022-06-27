@@ -31,25 +31,24 @@ class MainActivity : AppCompatActivity(), View.OnTouchListener {
     private lateinit var btnDown: AppCompatImageButton
     private lateinit var btnUp: AppCompatImageButton
     private lateinit var soundPool: SoundPool
-    private var sounds = IntArray(8)
     private var pixels = ByteArray(320 * 240 * 4)
-    val bitmap: Bitmap = Bitmap.createBitmap(320, 240, Bitmap.Config.ARGB_8888)
+    private val bitmap: Bitmap = Bitmap.createBitmap(320, 240, Bitmap.Config.ARGB_8888)
     private var running = false
     private external fun getPixelsFromNative(javaSide: ByteArray?)
     private external fun initAssets(assetManager: AssetManager?)
     private external fun sendCommand(cmd: Int)
     private external fun getSoundToPlay(): Int
 
-    val KEY_UP = 1.shl(0)
-    val KEY_RIGHT = 1.shl(1)
-    val KEY_DOWN = 1.shl(2)
-    val KEY_LEFT = 1.shl(3)
-    val KEY_SWORD = 1.shl(4)
-    val KEY_JUMP = 1.shl(5)
-    val KEY_ARROW = 1.shl(6)
-    val KEY_START = 1.shl(7)
+    private val KEY_UP = 1.shl(0)
+    private val KEY_RIGHT = 1.shl(1)
+    private val KEY_DOWN = 1.shl(2)
+    private val KEY_LEFT = 1.shl(3)
+    private val KEY_SWORD = 1.shl(4)
+    private val KEY_JUMP = 1.shl(5)
+    private val KEY_ARROW = 1.shl(6)
+    private val KEY_START = 1.shl(7)
 
-    var keyState: Int = 0
+    private var keyState: Int = 0
 
     private fun initAudio() {
         soundPool = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -130,7 +129,7 @@ class MainActivity : AppCompatActivity(), View.OnTouchListener {
             }
         }.start()
 
-        Thread({
+        Thread {
             /*
             while (running) {
                 when (val sound = getSoundToPlay()) {
@@ -140,8 +139,7 @@ class MainActivity : AppCompatActivity(), View.OnTouchListener {
             }
 
              */
-        }
-        ).start()
+        }.start()
     }
 
     override fun onPause() {

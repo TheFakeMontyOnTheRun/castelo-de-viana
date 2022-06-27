@@ -140,7 +140,7 @@
         android:layout_width="8dp"
         android:layout_height="match_parent"
         android:background="@drawable/border_left_repeat"
-        android:orientation="horizontal"></LinearLayout>
+        android:orientation="horizontal" />
 
     <ImageView
         android:id="@+id/imageView"

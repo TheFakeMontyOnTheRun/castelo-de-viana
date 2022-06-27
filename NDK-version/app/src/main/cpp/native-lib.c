@@ -51,15 +51,16 @@ void initVideoFor(enum EVideoType unused) {
     }
 }
 
-void copyImageBufferToVideoMemory(uint8_t* imageBuffer ) {
+void copyImageBufferToVideoMemory(const uint8_t* imageBuffer ) {
     uint8_t *ptr = &framebufferFinal[0];
+    int x,y;
 
     memset(ptr, 0, 320 * 240 * 4);
 
-    for (int y = 0; y < 240; ++y) {
-        for (int x = 0; x < 320; ++x) {
+    for (y = 0; y < 240; ++y) {
+        for (x = 0; x < 320; ++x) {
 
-            int32_t pixel = palette[imageBuffer[320 * ((200 * y) / 240) + x]];
+            uint32_t pixel = palette[imageBuffer[320 * ((200 * y) / 240) + x]];
 
             uint8_t r = (pixel & 0x000000FF) - 0x38;
             uint8_t g = ((pixel & 0x0000FF00) >> 8) - 0x18;
