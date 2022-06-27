@@ -156,7 +156,7 @@ void onQuit() {
 }
 
 
-void copyImageBufferToVideoMemory(uint8_t *imageBuffer) {
+void copyImageBufferToVideoMemory(const uint8_t *imageBuffer) {
     SDL_Rect rect;
     uint32_t pixel;
     int x, y;
