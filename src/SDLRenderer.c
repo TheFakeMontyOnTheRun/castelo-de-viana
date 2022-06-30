@@ -179,7 +179,7 @@ void putpixel(SDL_Surface *surface, int x, int y, Uint32 pixel) {
     }
 }
 
-void copyImageBufferToVideoMemory(uint8_t *imageBuffer) {
+void copyImageBufferToVideoMemory(const uint8_t *imageBuffer) {
     SDL_Surface *screen;
     SDL_Rect rect;
     int y = 0;
