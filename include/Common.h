@@ -1,19 +1,35 @@
-//
-// Created by monty on 26/09/16.
-//
+#ifndef COMMON_H
+#define COMMON_H
 
-#ifndef DUNGEONSOFNOUDAR_NDK_COMMON_H
-#define DUNGEONSOFNOUDAR_NDK_COMMON_H
-namespace odb {
+struct ItemVector {
+    void **items;
+    size_t capacity;
+    size_t used;
+};
 
-    int intFrom(std::string str);
+struct StaticBuffer {
+    uint8_t *data;
+    size_t size;
+};
 
-    std::string filterComments(std::string input);
+int pushVector(struct ItemVector *vector, void *item);
 
-    std::string readToString(FILE *fileDescriptor);
+int removeFromVector(struct ItemVector *vector, void *item);
 
-    vector<char> readToBuffer(FILE *fileDescriptor);
+void initVector(struct ItemVector *vector, size_t capacity);
 
-    std::string fileFromString( const std::string& path );
-}
-#endif //DUNGEONSOFNOUDAR_NDK_COMMON_H
+void clearVector(struct ItemVector *vector);
+
+size_t countTokens(const char *text, size_t length);
+
+int min(int val1, int val2);
+
+int isBigEndian();
+
+uint32_t toNativeEndianess(uint32_t val);
+
+#define DEFAULT_TOLERANCE 32
+#define TRUE 1
+#define FALSE 0
+
+#endif

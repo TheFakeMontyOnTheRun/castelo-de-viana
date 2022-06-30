@@ -1,29 +1,10 @@
-//
-// Created by monty on 28/02/16.
-//
+#ifndef NATIVEBITMAP_H
+#define NATIVEBITMAP_H
 
-#ifndef LESSON10_NATIVEBITMAP_H
-#define LESSON10_NATIVEBITMAP_H
+struct NativeBitmap {
+	int mWidth;
+	int mHeight;
+	uint8_t *mRawData;
+};
 
-#include <cstdint>
-
-namespace odb {
-    class NativeBitmap {
-        int mWidth;
-        int mHeight;
-        uint8_t *mRawData;
-
-    public:
-        NativeBitmap(int aWidth, int aHeight, uint8_t *aRawData);
-
-        int getWidth() const;
-
-        int getHeight() const;
-
-        uint8_t *getPixelData() const;
-
-        ~NativeBitmap();
-    };
-}
-
-#endif //LESSON10_NATIVEBITMAP_H
+#endif

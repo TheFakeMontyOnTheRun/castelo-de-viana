@@ -1,24 +1,6 @@
-//
-// Created by monty on 06-12-2017.
-//
+#ifndef CPACKEDFILEREADER_H
+#define CPACKEDFILEREADER_H
 
-#ifndef DUNGEONSOFNOUDAR486_CPACKEDFILEREADER_H
-#define DUNGEONSOFNOUDAR486_CPACKEDFILEREADER_H
+struct StaticBuffer loadFileFromPath(const char *dataFilePath, const char *path);
 
-namespace odb {
-    class CPackedFileReader : public odb::IFileLoaderDelegate {
-        FILE *mDataPack = nullptr;
-        std::string mPackPath;
-        std::unordered_map<std::string, size_t > mOffsets;
-    public:
-        CPackedFileReader() = delete;
-        explicit CPackedFileReader( std::string dataFilePath );
-        vector<char> loadBinaryFileFromPath( const std::string& path ) override;
-        std::string loadFileFromPath( const std::string& path ) override ;
-        std::string getFilePathPrefix() override;
-
-
-    };
-}
-
-#endif //DUNGEONSOFNOUDAR486_CPACKEDFILEREADER_H
+#endif

@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bgrepeat"
+    android:orientation="horizontal">
+
+
+    <LinearLayout
+        android:id="@+id/llDirections"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="3"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+
+            <ImageView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:focusable="false" />
+
+            <ImageButton
+                android:id="@+id/btnUp"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:background="#000000FF"
+                android:focusable="false"
+                android:scaleType="fitCenter"
+                android:soundEffectsEnabled="false"
+                app:srcCompat="@drawable/up"
+                android:text="" />
+
+            <ImageView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:focusable="false" />
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <ImageButton
+                android:id="@+id/btnLeft"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="#000000FF"
+                android:focusable="false"
+                android:scaleType="fitCenter"
+                android:soundEffectsEnabled="false"
+                app:srcCompat="@drawable/left"
+                android:text="" />
+
+            <ImageButton
+                android:id="@+id/btnCenter"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="#000000FF"
+                android:focusable="false"
+                android:scaleType="fitCenter"
+                android:soundEffectsEnabled="false" />
+
+            <ImageButton
+                android:id="@+id/btnRight"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:background="#000000FF"
+                android:focusable="false"
+                android:scaleType="fitCenter"
+                android:soundEffectsEnabled="false"
+                app:srcCompat="@drawable/right"
+                android:text="" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <ImageView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:focusable="false" />
+
+            <ImageButton
+                android:id="@+id/btnDown"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:background="#000000FF"
+                android:focusable="false"
+                android:scaleType="fitCenter"
+                android:soundEffectsEnabled="false"
+                app:srcCompat="@drawable/down"
+                android:text="" />
+
+            <ImageView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:focusable="false" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_margin="10dp"
+            android:layout_weight="1"
+            android:minHeight="50dp"
+            android:orientation="vertical">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="4dp"
+                android:text="Tap the screen to Start/Pause"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="8dp"
+        android:layout_height="match_parent"
+        android:background="@drawable/border_left_repeat"
+        android:orientation="horizontal" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="7"
+        android:background="#000"
+        android:contentDescription="TODO"
+        android:scaleType="fitCenter" />
+
+
+    <LinearLayout
+        android:layout_width="8dp"
+        android:layout_height="match_parent"
+        android:background="@drawable/border_right_repeat"
+        android:orientation="horizontal">
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/llActions"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="3"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:minHeight="50dp"
+            android:orientation="vertical">
+
+            <ImageButton
+                android:id="@+id/btnSword"
+                android:layout_width="fill_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:background="#000000FF"
+                android:scaleType="fitEnd"
+                android:soundEffectsEnabled="false"
+                app:srcCompat="@drawable/action_sword"
+                android:text="Sword" />
+
+
+            <ImageButton
+                android:id="@+id/btnJump"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:background="#000000FF"
+                android:scaleType="fitCenter"
+                android:soundEffectsEnabled="false"
+                app:srcCompat="@drawable/action_jump"
+                android:text="Jump" />
+
+            <ImageButton
+                android:id="@+id/btnArrow"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:background="#000000FF"
+                android:scaleType="fitStart"
+                android:soundEffectsEnabled="false"
+                app:srcCompat="@drawable/action_arrow"
+                android:text="Arrow" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_margin="10dp"
+                android:layout_weight="1"
+                android:minHeight="50dp"
+                android:orientation="vertical">
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+</LinearLayout>

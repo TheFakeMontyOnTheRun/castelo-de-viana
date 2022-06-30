@@ -1,12 +1,12 @@
 CXXFLAGS = -g -c -DCGA -Istb -Iinclude -IOPL2LPT -O6 -Os  -funroll-loops -funroll-all-loops -fomit-frame-pointer -fno-exceptions -fno-rtti -ffast-math -mtune=i486 -march=i486 -fpermissive -Wno-narrowing
-
+CFLAGS = -g -c -DCGA -Istb -Iinclude -IOPL2LPT -O6 -Os  -funroll-loops -funroll-all-loops -fomit-frame-pointer -fno-exceptions -fno-rtti -ffast-math -mtune=i486 -march=i486 -fpermissive -Wno-narrowing
 LDFLAGS = -lemu
 
-CXX = i586-pc-msdosdjgpp-g++
+CXX = i386-pc-msdosdjgpp-g++
+CC = i386-pc-msdosdjgpp-gcc
 
-OBJS = src/Main.o src/Game.o src/LoadImageCGA.o src/NativeBitmap.o src/MusicDOS.o src/DOSRenderer.o OPL2LPT/controller.o OPL2LPT/timer.o OPL2LPT/OPL2.o \
+OBJS = src/Main.o src/Game.o src/LoadBitmap.o src/MusicDOS.o src/DOSRenderer.o OPL2LPT/controller.o OPL2LPT/timer.o OPL2LPT/OPL2.o \
         src/CPackedFileReader.o\
-        src/IFileLoaderDelegate.o\
         src/Common.o
 
 			
@@ -14,7 +14,7 @@ TARGET = viana.exe
 
 $(TARGET):	$(OBJS)
 	$(CXX) -o $(TARGET) $(OBJS) $(LDFLAGS)
-	i586-pc-msdosdjgpp-strip $(TARGET)
+	i386-pc-msdosdjgpp-strip $(TARGET)
 
 all:	$(TARGET) rescga resvga gamedata
 
@@ -22,15 +22,10 @@ packager:
 	rm -f ./packer
 	g++ -std=c++14 -opacker src/packer.cpp
 
-rescga:	packager
+res:	packager
 	rm -f ./cga.pfs
-	ls resCGA/*.*  | xargs ./packer
+	ls res/*.*  | xargs ./packer
 	mv ./data.pfs ./cga.pfs
-
-resvga:	packager
-	rm -f ./vga.pfs
-	ls resVGA/*.*  | xargs ./packer
-	mv ./data.pfs ./vga.pfs
 
 gamedata:	packager
 	rm -f ./gamedata.pfs

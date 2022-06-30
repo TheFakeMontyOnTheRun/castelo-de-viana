@@ -1,11 +1,8 @@
+#ifndef LOADIMAGE_H
+#define LOADIMAGE_H
 
-#ifndef BF_CDOSRenderer_H
-#define BF_CDOSRenderer_H
+struct NativeBitmap *loadBitmap(const char *path, enum EVideoType videoType);
 
-namespace odb {
+struct ItemVector *loadSpriteList(const char *listName, enum EVideoType videoType);
 
-    std::shared_ptr<NativeBitmap> loadBitmap(std::string path, std::shared_ptr<odb::IFileLoaderDelegate> fileLoader, EVideoType videoType);
-
-    std::vector<std::shared_ptr<odb::NativeBitmap>> loadSpriteList(std::string listName, std::shared_ptr<odb::IFileLoaderDelegate> fileLoader, EVideoType videoType);
-}
 #endif

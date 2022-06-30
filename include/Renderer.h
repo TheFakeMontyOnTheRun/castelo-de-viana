@@ -1,45 +1,52 @@
-//
-// Created by monty on 01-07-2017.
-//
+#ifndef RENDERER_H
+#define RENDERER_H
 
-#ifndef CASTLEVANIA_RENDERER_H
-#define CASTLEVANIA_RENDERER_H
-
-
-class ControlState {
-public:
-    bool moveLeft = false;
-    bool moveRight = false;
-    bool moveUp = false;
-    bool moveDown = false;
-    bool fireArrow = false;
-    bool sword = false;
-    bool jump = false;
-    bool secret = false;
-    bool escape = false;
-    bool enter = false;
+struct ControlState {
+	int moveLeft;
+	int moveRight;
+	int moveUp;
+	int moveDown;
+	int fireArrow;
+	int sword;
+	int jump;
+	int secret;
+	int escape;
+	int enter;
 };
 
-enum EVideoType : uint8_t {
-    kCGA,
-    kVGA,
+enum EVideoType {
+	kCGA,
+	kVGA
 };
 
-ControlState getControlState();
-void copyImageBufferToVideoMemory(const std::array<uint8_t , 320 * 200>& imageBuffer );
+struct ControlState getControlState();
+
+void copyImageBufferToVideoMemory(const uint8_t *imageBuffer);
+
 void onQuit();
+
 void beginFrame();
+
 void doneWithFrame();
+
 void soundFrequency(int frequency);
+
 void muteSound();
+
 void onQuit();
-void initVideoFor(EVideoType videoType);
+
+void initVideoFor(enum EVideoType videoType);
+
 void setupOPL2();
+
 void stopSounds();
+
 void soundTick();
-uint8_t getPaletteEntry( uint32_t origin );
-std::string getAssetsPath();
 
-extern EVideoType videoType;
+uint8_t getPaletteEntry(uint32_t origin);
 
-#endif //CASTLEVANIA_RENDERER_H_H
+const char *getAssetsPath();
+
+extern enum EVideoType videoType;
+
+#endif
