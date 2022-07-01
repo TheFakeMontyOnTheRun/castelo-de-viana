@@ -220,7 +220,7 @@ void render() {
 	}
 
 	for (pos = 0; pos < doors.used; ++pos) {
-		struct Actor *door = doors.items[pos];
+		struct Actor *door = (struct Actor*)doors.items[pos];
 
 		if (door == NULL) {
 			continue;
@@ -308,7 +308,7 @@ void render() {
 		int pixel;
 		int y;
 		int x;
-		struct Actor *arrow = arrows.items[pos];
+		struct Actor *arrow =  (struct Actor*)arrows.items[pos];
 
 		if (arrow == NULL || !arrow->mActive) {
 			continue;
@@ -356,7 +356,7 @@ void render() {
 	}
 
 	for (pos = 0; pos < foes.used; ++pos) {
-		struct Actor *foe = foes.items[pos];
+		struct Actor *foe =  (struct Actor*)foes.items[pos];
 
 		if (foe == NULL || !foe->mActive) {
 			continue;
@@ -419,7 +419,7 @@ void render() {
 	}
 
 	for (pos = 0; pos < items.used; ++pos) {
-		struct Item *item = items.items[pos];
+		struct Item *item =  (struct Item*)items.items[pos];
 
 		if (item == NULL || !item->mActive) {
 			continue;
@@ -531,7 +531,7 @@ void render() {
 
 		size_t pos = 0;
 		for (pos = 0; pos < foes.used; ++pos) {
-			struct Actor *foe = foes.items[pos];
+			struct Actor *foe =  (struct Actor*)foes.items[pos];
 
 			if (foe == NULL || !foe->mActive) {
 				continue;

@@ -81,7 +81,7 @@ void copyImageBufferToVideoMemory(const uint8_t* imageBuffer ) {
 
 void clearRenderer(void) {}
 
-JNIEXPORT void JNICALL
+extern "C"  JNIEXPORT void JNICALL
 Java_pt_b13h_castleofviana_MainActivity_initAssets(JNIEnv *env, jobject thiz,
                                                       jobject assetManager) {
 
@@ -96,17 +96,17 @@ Java_pt_b13h_castleofviana_MainActivity_initAssets(JNIEnv *env, jobject thiz,
     prepareScreenFor(kIntro);
 }
 
-JNIEXPORT void JNICALL
+extern "C"  JNIEXPORT void JNICALL
 Java_pt_b13h_castleofviana_MainActivity_getPixelsFromNative(JNIEnv *env, jobject thiz,
                                                                jbyteArray array) {
     sysTick();
-    jbyte *narr = (*env)->GetByteArrayElements(env, array, NULL);
+    jbyte *narr = env->GetByteArrayElements(array, NULL);
     memcpy(narr, &framebufferFinal[0], 320 * 240 * 4);
 }
 
 int soundToPlay = -1;
 
-void setupOPL2(int port) {}
+void setupOPL2() {}
 
 void stopSounds() {}
 
@@ -118,7 +118,7 @@ void soundTick() {}
 
 void muteSound() {}
 
-JNIEXPORT jint JNICALL
+extern "C"  JNIEXPORT jint JNICALL
 Java_pt_b13h_castleofviana_MainActivity_getSoundToPlay(JNIEnv *env, jobject thiz) {
     int toReturn = soundToPlay;
     soundToPlay = -1;
@@ -126,7 +126,7 @@ Java_pt_b13h_castleofviana_MainActivity_getSoundToPlay(JNIEnv *env, jobject thiz
 }
 
 
-JNIEXPORT void JNICALL
+extern "C"  JNIEXPORT void JNICALL
 Java_pt_b13h_castleofviana_MainActivity_sendCommand(JNIEnv *env, jobject thiz, jint cmd) {
     mBufferedCommand = cmd;
 }

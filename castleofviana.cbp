@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6"/>
+	<Project>
+		<Option title="castleofviana"/>
+		<Option makefile_is_custom="1"/>
+		<Option compiler="gcc"/>
+		<Option virtualFolders="CMake Files\;CMake Files\cmake_find\;"/>
+		<Build>
+			<Target title="all">
+				<Option working_dir="/Users/monty/git/castelo-de-viana"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/local/bin/gmake -f &quot;/Users/monty/git/castelo-de-viana/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="/usr/local/bin/gmake -f &quot;/Users/monty/git/castelo-de-viana/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/local/bin/gmake -f &quot;/Users/monty/git/castelo-de-viana/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/local/bin/gmake -f &quot;/Users/monty/git/castelo-de-viana/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="rebuild_cache">
+				<Option working_dir="/Users/monty/git/castelo-de-viana"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/local/bin/gmake -f &quot;/Users/monty/git/castelo-de-viana/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
+					<CompileFile command="/usr/local/bin/gmake -f &quot;/Users/monty/git/castelo-de-viana/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/local/bin/gmake -f &quot;/Users/monty/git/castelo-de-viana/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/local/bin/gmake -f &quot;/Users/monty/git/castelo-de-viana/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="edit_cache">
+				<Option working_dir="/Users/monty/git/castelo-de-viana"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/local/bin/gmake -f &quot;/Users/monty/git/castelo-de-viana/Makefile&quot;  VERBOSE=1 edit_cache"/>
+					<CompileFile command="/usr/local/bin/gmake -f &quot;/Users/monty/git/castelo-de-viana/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/local/bin/gmake -f &quot;/Users/monty/git/castelo-de-viana/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/local/bin/gmake -f &quot;/Users/monty/git/castelo-de-viana/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="castleofviana">
+				<Option output="/Users/monty/git/castelo-de-viana/castleofviana" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/monty/git/castelo-de-viana"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/usr/local/include/SDL2"/>
+					<Add directory="/Users/monty/git/castelo-de-viana/stb"/>
+					<Add directory="/Users/monty/git/castelo-de-viana/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/local/bin/gmake -f &quot;/Users/monty/git/castelo-de-viana/Makefile&quot;  VERBOSE=1 castleofviana"/>
+					<CompileFile command="/usr/local/bin/gmake -f &quot;/Users/monty/git/castelo-de-viana/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/local/bin/gmake -f &quot;/Users/monty/git/castelo-de-viana/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/local/bin/gmake -f &quot;/Users/monty/git/castelo-de-viana/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="castleofviana/fast">
+				<Option output="/Users/monty/git/castelo-de-viana/castleofviana" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/monty/git/castelo-de-viana"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/usr/local/include/SDL2"/>
+					<Add directory="/Users/monty/git/castelo-de-viana/stb"/>
+					<Add directory="/Users/monty/git/castelo-de-viana/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/local/bin/gmake -f &quot;/Users/monty/git/castelo-de-viana/Makefile&quot;  VERBOSE=1 castleofviana/fast"/>
+					<CompileFile command="/usr/local/bin/gmake -f &quot;/Users/monty/git/castelo-de-viana/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/local/bin/gmake -f &quot;/Users/monty/git/castelo-de-viana/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/local/bin/gmake -f &quot;/Users/monty/git/castelo-de-viana/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="/Users/monty/git/castelo-de-viana/src/CPackedFileReader.cpp">
+			<Option target="castleofviana"/>
+		</Unit>
+		<Unit filename="/Users/monty/git/castelo-de-viana/src/Common.cpp">
+			<Option target="castleofviana"/>
+		</Unit>
+		<Unit filename="/Users/monty/git/castelo-de-viana/src/Game.cpp">
+			<Option target="castleofviana"/>
+		</Unit>
+		<Unit filename="/Users/monty/git/castelo-de-viana/src/LoadBitmap.cpp">
+			<Option target="castleofviana"/>
+		</Unit>
+		<Unit filename="/Users/monty/git/castelo-de-viana/src/Main.cpp">
+			<Option target="castleofviana"/>
+		</Unit>
+		<Unit filename="/Users/monty/git/castelo-de-viana/src/NullMusic.cpp">
+			<Option target="castleofviana"/>
+		</Unit>
+		<Unit filename="/Users/monty/git/castelo-de-viana/src/SDL2Renderer.cpp">
+			<Option target="castleofviana"/>
+		</Unit>
+		<Unit filename="/Users/monty/git/castelo-de-viana/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+		<Unit filename="/Users/monty/git/castelo-de-viana/cmake_find/FindSDL2.cmake">
+			<Option virtualFolder="CMake Files\cmake_find\"/>
+		</Unit>
+	</Project>
+</CodeBlocks_project_file>

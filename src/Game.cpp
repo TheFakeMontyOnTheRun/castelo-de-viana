@@ -238,7 +238,7 @@ void hurtPlayer(int ammount) {
 int isOnDoor(const struct Actor *actor) {
 	size_t pos = 0;
 	for (pos = 0; pos < doors.used; ++pos) {
-		const struct Actor *door = doors.items[pos];
+		const struct Actor *door =  (struct Actor*)doors.items[pos];
 		if (door != NULL && door->mType == kOpenDoor &&
 			collideActorActor(door, actor, DEFAULT_TOLERANCE)) {
 			return TRUE;
@@ -387,7 +387,7 @@ Unfortunately, prevents looking up.*/
 	}
 
 	for (pos = 0; pos < arrows.used; ++pos) {
-		struct Actor *arrow = arrows.items[pos];
+		struct Actor *arrow =  (struct Actor*)arrows.items[pos];
 
 		if (arrow == NULL) {
 			continue;
@@ -412,7 +412,7 @@ Unfortunately, prevents looking up.*/
 		}
 
 		for (pos2 = 0; pos2 < foes.used; ++pos2) {
-			struct Actor *foe = foes.items[pos2];
+			struct Actor *foe =  (struct Actor*)foes.items[pos2];
 
 			if (foe == NULL || !foe->mActive) {
 				continue;
@@ -433,7 +433,7 @@ Unfortunately, prevents looking up.*/
 
 	for (pos = 0; pos < items.used; ++pos) {
 
-		struct Item *item = items.items[pos];
+		struct Item *item =  (struct Item*)items.items[pos];
 
 		if (item == NULL || !item->mActive) {
 			continue;
@@ -459,7 +459,7 @@ Unfortunately, prevents looking up.*/
 	}
 
 	for (pos = 0; pos < foes.used; ++pos) {
-		struct Actor *foe = foes.items[pos];
+		struct Actor *foe =  (struct Actor*)foes.items[pos];
 
 		if (foe == NULL || !foe->mActive) {
 			continue;
@@ -574,7 +574,7 @@ Unfortunately, prevents looking up.*/
 	}
 
 	for (pos = 0; pos < foes.used; ++pos) {
-		struct Actor *foe = foes.items[pos];
+		struct Actor *foe =  (struct Actor*)foes.items[pos];
 
 		if (foe != NULL && foe->mType != kGargoyle && foe->mHealth <= 0) {
 			removeFromVector(&foes, foe);
@@ -585,7 +585,7 @@ Unfortunately, prevents looking up.*/
 void openAllDoors() {
 	size_t pos = 0;
 	for (pos = 0; pos < doors.used; ++pos) {
-		struct Actor *door = doors.items[pos];
+		struct Actor *door =  (struct Actor*)doors.items[pos];
 		if (door != NULL) {
 			door->mType = kOpenDoor;
 		}
@@ -596,7 +596,7 @@ void evaluatePlayerAttack() {
 
 	size_t pos = 0;
 	for (pos = 0; pos < foes.used; pos++) {
-		struct Actor *foe = foes.items[pos];
+		struct Actor *foe =  (struct Actor*)foes.items[pos];
 
 		if (foe == NULL || !foe->mActive) {
 			continue;

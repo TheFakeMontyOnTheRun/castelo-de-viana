@@ -97,7 +97,7 @@ void playMusic(const char *music) {
 	}
 }
 
-extern "C" void muteSound() {
+void muteSound() {
 	if (!enableOPL2) {
 		nosound();
 		melody = NULL;
@@ -107,13 +107,13 @@ extern "C" void muteSound() {
 	}
 }
 
-extern "C" void playTune(const char *music) {
+void playTune(const char *music) {
 	if (enableOPL2) {
 		hackTune(music);
 	}
 }
 
-extern "C" void setupOPL2() {
+void setupOPL2() {
 	short lpt_base = setup();
 	opl2.init(lpt_base);
 	music_setup();
@@ -130,7 +130,7 @@ void soundFrequency(int frequency) {
 }
 
 
-extern "C" void soundTick() {
+void soundTick() {
 	if (enableOPL2) {
 		music_loop();
 	} else {
@@ -148,7 +148,7 @@ extern "C" void soundTick() {
 	}
 }
 
-extern "C" void stopSounds() {
+void stopSounds() {
 	if (enableOPL2) {
 		music_shutdown();
 	} else {

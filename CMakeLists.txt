@@ -8,7 +8,7 @@ include_directories(
 )
 
 include_directories(stb include
-        ${SDL_INCLUDE_DIRS} ${SDL_MIXER_INCLUDE_DIRS} ${SDL_IMAGE_INCLUDE_DIRS} )
+		${SDL_INCLUDE_DIRS} ${SDL_MIXER_INCLUDE_DIRS} ${SDL_IMAGE_INCLUDE_DIRS})
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Werror -W -pedantic")
 
@@ -16,15 +16,14 @@ set(CMAKE_CXX_STANDARD 98)
 find_package(SDL2 REQUIRED)
 
 set(SOURCE_FILES
-        src/Main.c
-        src/Game.c
-        src/NullMusic.c
-        src/LoadBitmap.c
-        include/LoadImage.h
-        src/CPackedFileReader.c
-        src/Common.c
-        include/NativeBitmap.h src/SDL2Renderer.c include/Renderer.h
-        )
+		src/Main.cpp
+		src/Game.cpp
+		src/NullMusic.cpp
+		src/LoadBitmap.cpp
+		src/CPackedFileReader.cpp
+		src/Common.cpp
+		src/SDL2Renderer.cpp
+		)
 
 add_executable(castleofviana ${SOURCE_FILES})
 

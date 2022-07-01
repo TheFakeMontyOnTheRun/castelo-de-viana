@@ -21,12 +21,12 @@ add_library( # Sets the name of the library.
         # Sets the library as a shared library.
         SHARED
 
-	../../../../../src/Main.c
-	../../../../../src/Game.c
-	../../../../../src/LoadBitmap.c
-	../../../../../src/CPackedFileReader.c
-	../../../../../src/Common.c
-        native-lib.c)
+		../../../../../src/Main.cpp
+		../../../../../src/Game.cpp
+		../../../../../src/LoadBitmap.cpp
+		../../../../../src/CPackedFileReader.cpp
+		../../../../../src/Common.cpp
+		native-lib.cpp)
 
 # Searches for a specified prebuilt library and stores the path as a
 # variable. Because CMake includes system libraries in the search path by
