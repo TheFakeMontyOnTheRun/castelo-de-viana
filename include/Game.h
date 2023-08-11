@@ -93,6 +93,6 @@ void prepareScreenFor(enum EScreen screenState);
 
 void playMusic(int instrument, const char *music);
 
-void playTune(const char *music);
+void playTune(const std::string& music);
 
 #endif

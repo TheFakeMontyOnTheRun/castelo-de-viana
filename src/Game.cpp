@@ -5,6 +5,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#include <string>
+
 #include "Common.h"
 #include "Game.h"
 #include "Renderer.h"

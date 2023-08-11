@@ -1,5 +1,3 @@
-#include <stdint.h>
-#include <string.h>
 #include <stdlib.h>
 #include <conio.h>
 #include <dos.h>
@@ -10,148 +8,238 @@
 #include <bios.h>
 #include <time.h>
 #include <unistd.h>
+#include <iterator>
+#include <string>
+#include <memory>
+#include <vector>
+#include <array>
 
-#include "Common.h"
+using std::vector;
+using std::array;
+
 #include "OPL2.h"
 #include "controller.h"
+#include "timer.h"
 
 #define STR(x) #x
 #define XSTR(x) STR(x)
 
+bool timerSet = false;
+int timerStart = 0;
 bool enableOPL2 = false;
 extern OPL2 opl2;
+char buffer[3][255];
+vector<uint32_t> melody;
 
-StaticBuffer noSound;
-StaticBuffer *melody;
-uint8_t *currentSoundPosition;
-
-int currentNote = 0;
+vector<uint32_t> bgSound{};
+vector<uint32_t> currentSound = bgSound;
+vector<uint32_t>::const_iterator currentSoundPosition = std::begin(bgSound);
+int lastFreq = -1;
 
 short get_lpt_port(int i) {
-	return _farpeekw(_dos_ds, 0x0408 + (2 * (i - 1)));
+    return _farpeekw(_dos_ds, 0x0408 + (2 * (i - 1)));
 }
 
 short setup(void) {
-	cputs("OPT2LPT setup\r\n\r\n");
+    cputs("OPT2LPT setup\r\n\r\n");
 
-	char num_ports, port, i;
+    char num_ports, port, i;
 
-	num_ports = 0;
-	for (i = 1; i < 4; i++) {
-		if (get_lpt_port(i)) {
-			num_ports++;
-			port = i;
-		}
-	}
+    num_ports = 0;
+    for (i = 1; i < 4; i++) {
+        if (get_lpt_port(i)) {
+            num_ports++;
+            port = i;
+        }
+    }
 
-	if (num_ports == 0) {
-		cputs("Sorry, no printer port found...\r\n");
-		exit(1);
-	} else if (num_ports == 1) {
-		cprintf("Found one printer port: LPT%d\r\n", port);
-		return get_lpt_port(port);
-	} else {
-		cputs("Found multiple printer ports:");
-		for (i = 1; i < 4; i++) {
-			if (get_lpt_port(i)) {
-				cprintf(" LPT%d", i);
-			}
-		}
-		cputs("\r\nWhich one is the OPT2LPT connected to? [");
-		for (i = 1; i < 4; i++) {
-			if (get_lpt_port(i)) {
-				cprintf("%d", i);
-			}
-		}
-		cputs("]? ");
-		do {
-			port = getch() - '0';
-		} while (port < 1 || port > 3 || !get_lpt_port(port));
-		cprintf("LPT%d\r\n", port);
-		return get_lpt_port(port);
-	}
-	return 0;
+    if (num_ports == 0) {
+        cputs("Sorry, no printer port found...\r\n");
+        exit(1);
+    } else if (num_ports == 1) {
+        cprintf("Found one printer port: LPT%d\r\n", port);
+        return get_lpt_port(port);
+    } else {
+        cputs("Found multiple printer ports:");
+        for (i = 1; i < 4; i++) {
+            if (get_lpt_port(i)) {
+                cprintf(" LPT%d", i);
+            }
+        }
+        cputs("\r\nWhich one is the OPT2LPT connected to? [");
+        for (i = 1; i < 4; i++) {
+            if (get_lpt_port(i)) {
+                cprintf("%d", i);
+            }
+        }
+        cputs("]? ");
+        do {
+            port = getch() - '0';
+        } while (port < 1 || port > 3 || !get_lpt_port(port));
+        cprintf("LPT%d\r\n", port);
+        return get_lpt_port(port);
+    }
+    return 0;
 }
 
+void playMusic(const std::string &music) {
+    if (enableOPL2) {
+        if (music.empty()) {
+            music_set("", "", "");
+            return;
+        }
+        auto melody1 = music.substr(0, music.find(';'));
+        auto melody2 = music.substr( music.find(';') + 1 );
+        auto melody3 = melody2.substr( melody2.find(';') + 1 );
+        melody2 = melody2.substr(0, melody2.find(';'));
 
-void playSound(StaticBuffer *sound) {
+        snprintf(&buffer[0][0], 254, "%s", melody1.c_str());
+        snprintf(&buffer[1][0], 254, "%s", melody2.c_str());
+        snprintf(&buffer[2][0], 254, "%s", melody3.c_str());
+        music_set(&buffer[0][0], &buffer[1][0], &buffer[2][0]);
+        return;
+    } else {
+        uint32_t frequency = 0;
+        int octave = 0;
+        melody.clear();
+        int position = 0;
+        for (const auto &note : music) {
+            ++position;
+            switch (note) {
+                case '>':
+                    octave++;
+                    break;
+                case '<':
+                    octave--;
+                    break;
+                case 'o':
+                    octave = music[ position ] - '0';
+                    break;
+                case 'a':
+                case 'A':
+                    frequency = 932;
+                    break;
+                case 'B':
+                case 'b':
+                    frequency = 988;
+                    break;
+                case 'C':
+                case 'c':
+                    frequency = 1109;
+                    break;
+                case 'D':
+                case 'd':
+                    frequency = 1175;
+                    break;
+                case 'E':
+                case 'e':
+                    frequency = 1318;
+                    break;
+                case 'F':
+                case 'f':
+                    frequency = 1397;
+                    break;
+                case 'G':
+                case 'g':
+                    frequency = 1568;
+                    break;
+                case ';':
+                    melody.clear();
+                default:
+                    frequency = 0;
+            }
 
-	if (sound == NULL || sound->size == 0) {
-		melody = &noSound;
-		return;
-	}
+            auto shifter = octave;
 
-	melody = sound;
-	currentSoundPosition = melody->data;
-}
+            if ( octave > 0 ) {
+                frequency = frequency << shifter;
+            }
 
+            melody.push_back(frequency);
+        }
 
-void playMusic(const char *music) {
-	if (enableOPL2) {
-		if (music != NULL && strlen(music) > 0) {
-			music_set("", "", "");
-			return;
-		}
-		music_set(music, music, music);
-		return;
-	}
+        if (currentSoundPosition != std::end(currentSound) && currentSound == melody) {
+            return;
+        }
+
+        currentSound = melody;
+        currentSoundPosition = std::begin(currentSound);
+        timerStart = timer_get();
+    }
 }
 
 void muteSound() {
-	if (!enableOPL2) {
-		nosound();
-		melody = NULL;
-		currentNote = 0;
-	} else {
-		playMusic("");
-	}
+    playMusic("");
 }
 
-void playTune(const char *music) {
-	if (enableOPL2) {
-		hackTune(music);
-	}
+void playTune(const std::string &music) {
+    if ( enableOPL2 ) {
+        playMusic( music + ";" + music + ";" + music );
+    } else {
+        playMusic( music );
+    }
+
 }
 
-void setupOPL2() {
-	short lpt_base = setup();
-	opl2.init(lpt_base);
-	music_setup();
-	enableOPL2 = true;
+void initOPL2(unsigned long port) {
+    if ( port == -1 ) {
+        short lpt_base = setup();
+        opl2.init(lpt_base, false);
+    } else if (port == 0)  {
+        // hack: PC Speaker
+        return;
+    } else {
+        opl2.init(0x0388, true);
+    }
+    music_setup();
+    enableOPL2 = true;
 }
-
-void soundFrequency(int frequency) {
-	if (!enableOPL2) {
-		if (frequency != 0 && currentNote != frequency) {
-			sound(frequency);
-			currentNote = frequency;
-		}
-	}
-}
-
 
 void soundTick() {
-	if (enableOPL2) {
-		music_loop();
-	} else {
-		if (melody == NULL || melody->size == 0) {
-			return;
-		}
+    if (enableOPL2) {
+        music_loop();
+    } else {
 
-		if (currentSoundPosition != (melody->data + melody->size)) {
-			soundFrequency(*currentSoundPosition);
-			currentSoundPosition = currentSoundPosition++;
-		} else {
-			muteSound();
-			melody = &noSound;
-		}
-	}
+        if (!timerSet ) {
+            timerSet = true;
+            timer_setup(10);
+        }
+
+        auto timerPosition = timer_get();
+
+        int offset = (2 * (timerPosition - timerStart)) / 3;
+
+        if (offset < currentSound.size() && !currentSound.empty()) {
+
+            currentSoundPosition = std::begin(currentSound) + offset;
+
+            auto freq = *currentSoundPosition;
+
+            if ( freq != lastFreq ) {
+
+                sound(freq);
+            }
+
+            lastFreq = freq;
+
+        } else {
+            lastFreq = -1;
+            nosound();
+            currentSound = bgSound;
+            currentSoundPosition = std::end(bgSound);
+        }
+
+
+    }
 }
 
 void stopSounds() {
-	if (enableOPL2) {
-		music_shutdown();
-	} else {
-		muteSound();
-	}
+    if (enableOPL2) {
+        music_shutdown();
+    } else {
+        timer_shutdown();
+        nosound();
+        currentSound = bgSound;
+        currentSoundPosition = std::end(bgSound);
+    }
 }

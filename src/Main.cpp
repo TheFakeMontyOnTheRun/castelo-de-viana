@@ -1,7 +1,12 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
+#ifdef __DJGPP__
+#include <conio.h>
+#endif
 
+#include <string>
 
 #include "Common.h"
 #include "NativeBitmap.h"
@@ -46,9 +51,7 @@ uint8_t imageBuffer[320 * 200];
 
 struct NativeBitmap *currentScreen = NULL;
 
-void initOPL2() {
-	setupOPL2();
-}
+void initOPL2(unsigned long base);
 
 void prepareScreenFor(enum EScreen screenState) {
 
@@ -719,22 +722,68 @@ void loadGraphics() {
 
 int main(int argc, char **argv) {
 
-	int c = 1;
+	int c;
 	for (c = 1; c < argc; ++c) {
 		char *parm = argv[c];
-
-		if (!strcmp(parm, "opl2lpt")) {
-			initOPL2();
-		}
 
 		if (!strcmp(parm, "secret")) {
 			enableSecret = TRUE;
 		}
+    }
 
-		if (!strcmp(parm, "vga")) {
-			videoType = kVGA;
-		}
-	}
+#ifdef __DJGPP__
+    {
+        puts("\n\nPlease select a sound driver:");
+        puts("1 - PC Speaker");
+        puts("2 - Adlib");
+        puts("3 - OPL2LPT on LPT1");
+        puts("4 - No sound");
+        puts("5 - Quit");
+
+        uint8_t selection = getch();
+
+        switch( selection ) {
+            case '1':
+                initOPL2(0);
+                break;
+
+            case '2':
+                initOPL2(0x0388);
+                break;
+
+            case '3':
+                initOPL2(-1);
+                break;
+
+            case '4':
+                break;
+            case '5':
+                exit(0);
+                return 0;
+        }
+
+        puts("\n\nPlease video driver:");
+        puts("1 - CGA");
+        puts("2 - VGA (WIP art based on CGA art, but might perform better on legacy machines)");
+        puts("3 - Quit");
+
+        selection = getch();
+
+        switch( selection ) {
+            case '1':
+                videoType = kCGA;
+                break;
+
+            case '2':
+                videoType = kVGA;
+                break;
+            case '5':
+                exit(0);
+                return 0;
+        }
+    }
+#endif
+
 	initVideoFor(videoType);
 	loadGraphics();
 	init();
