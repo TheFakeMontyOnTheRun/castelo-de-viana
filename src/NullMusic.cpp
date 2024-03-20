@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <unistd.h>
+#include <string>
 
 #include "Common.h"
 #include "NativeBitmap.h"
@@ -12,7 +13,7 @@
 #include "Game.h"
 
 int dummy;
-char *dummy2;
+std::string dummy2;
 
 void playMusic(int instrument, const char *music) {
     dummy = instrument;
@@ -25,8 +26,8 @@ void setupOPL2() {
 void stopSounds() {
 }
 
-void playTune(const char *music) {
-    dummy2 = (char *) music;
+void playTune(const std::string& music) {
+    dummy2 = music;
 }
 
 void soundTick() {

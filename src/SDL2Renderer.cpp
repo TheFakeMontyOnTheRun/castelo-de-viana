@@ -2,6 +2,7 @@
 #include <assert.h>
 #include <stdint.h>
 #include <stdio.h>
+#include <string>
 
 #include "Common.h"
 #include "NativeBitmap.h"
