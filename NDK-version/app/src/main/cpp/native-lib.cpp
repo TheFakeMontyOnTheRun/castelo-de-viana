@@ -5,7 +5,7 @@
 
 #include <time.h>
 #include <stdlib.h>
-
+#include <string>
 
 #include "Game.h"
 #include "Renderer.h"
@@ -157,7 +157,7 @@ struct ControlState getControlState() {
 void playMusic(int instrument, const char* music) {
 }
 
-void playTune(const char* music) {
+void playTune(const std::string &music) {
 
 }
 
