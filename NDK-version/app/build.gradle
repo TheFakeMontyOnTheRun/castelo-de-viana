@@ -8,9 +8,9 @@ android {
 
     defaultConfig {
         applicationId "pt.b13h.castleofviana"
-        minSdkVersion 17
-        targetSdkVersion 32
-        versionCode 1
+        minSdkVersion 22
+        targetSdkVersion 36
+        versionCode 3
 
         externalNativeBuild {
             cmake {
@@ -30,6 +30,7 @@ android {
             path "src/main/cpp/CMakeLists.txt"
         }
     }
+    ndkVersion '29.0.14206865'
 }
 
 task copyAssets(type: Copy) {

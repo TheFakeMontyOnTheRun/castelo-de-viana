@@ -6,6 +6,8 @@
 
 #include "Common.h"
 #include "CPackedFileReader.h"
+#include "string.h"
+#include "errno.h"
 
 size_t status;
 
